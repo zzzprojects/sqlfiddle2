@@ -14,4 +14,4 @@ sudo apt-get --yes --force-yes install oracle-java7-installer maven postgresql-c
 cd /vagrant
 mvn clean install
 cd target/sqlfiddle
-nohup ./startup.sh &
+sudo -u vagrant nohup ./startup.sh &
