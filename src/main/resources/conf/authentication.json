@@ -1,0 +1,38 @@
+{
+    "queryId" : "credential-query",
+    "queryOnResource" : "managed/user",
+    "propertyMapping" : {
+        "authenticationId" : "_id",
+        "userCredential" : "password",
+        "userRoles" : "roles"
+    },
+    "defaultUserRoles" : [ ],
+    "serverAuthContext" : {
+        "sessionModule" : {
+            "name" : "JWT_SESSION",
+            "properties" : {
+                "keyAlias" : "openidm-localhost",
+                "privateKeyPassword" : "&{openidm.keystore.password}",
+                "keystoreType" : "&{openidm.keystore.type}",
+                "keystoreFile" : "&{openidm.keystore.location}",
+                "keystorePassword" : "&{openidm.keystore.password}",
+                "maxTokenLifeMinutes" : "120",
+                "tokenIdleTimeMinutes" : "30",
+                "sessionOnly" : true
+            }
+        },
+        "authModules" : [
+            {
+                "name" : "INTERNAL_USER",
+                "properties" : {
+                    "propertyMapping" : {
+                        "authenticationId" : "_id",
+                        "userCredential" : "password",
+                        "userRoles" : "roles"
+                    },
+                    "defaultUserRoles" : [ ]
+                }
+            }
+        ]
+    }
+}

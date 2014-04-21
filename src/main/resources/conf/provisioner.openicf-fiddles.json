@@ -1,0 +1,200 @@
+{
+    "name" : "fiddles",
+    "connectorRef" : {
+        "bundleName" : "org.forgerock.openicf.connectors.scriptedsql-connector",
+        "bundleVersion" : "1.1.0.1",
+        "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
+    },
+    "producerBufferSize" : 100,
+    "connectorPoolingSupported" : true,
+    "poolConfigOption" : {
+        "maxObjects" : 10,
+        "maxIdle" : 10,
+        "maxWait" : 150000,
+        "minEvictableIdleTimeMillis" : 120000,
+        "minIdle" : 1
+    },
+    "operationTimeout" : {
+        "CREATE" : -1,
+        "TEST" : -1,
+        "AUTHENTICATE" : -1,
+        "SEARCH" : -1,
+        "VALIDATE" : -1,
+        "GET" : -1,
+        "UPDATE" : -1,
+        "DELETE" : -1,
+        "SCRIPT_ON_CONNECTOR" : -1,
+        "SCRIPT_ON_RESOURCE" : -1,
+        "SYNC" : -1,
+        "SCHEMA" : -1
+    },
+    "configurationProperties" : {
+        "host" : "SQLFIDDLE_HOST",
+        "port" : "5432",
+        "user" : "postgres",
+        "password" : "password",
+        "database" : "sqlfiddle",
+        "autoCommit" : true,
+        "reloadScriptOnExecution" : true,
+        "jdbcDriver" : "org.postgresql.Driver",
+        "jdbcConnectionUrl" : "jdbc:postgresql://SQLFIDDLE_HOST:5432/sqlfiddle",
+        "jdbcUrlTemplate" : "jdbc:postgresql://%h:%p/%d",
+        "createScriptFileName" : "&{launcher.project.location}/tools/fiddles/CreateScript.groovy",
+        "testScriptFileName" : "&{launcher.project.location}/tools/fiddles/TestScript.groovy",
+        "searchScriptFileName" : "&{launcher.project.location}/tools/fiddles/SearchScript.groovy",
+        "deleteScriptFileName" : "&{launcher.project.location}/tools/fiddles/DeleteScript.groovy",
+        "updateScriptFileName" : "&{launcher.project.location}/tools/fiddles/UpdateScript.groovy",
+        "syncScriptFileName" : "&{launcher.project.location}/tools/fiddles/SyncScript.groovy"
+    },
+    "syncFailureHandler" : {
+        "maxRetries" : 5,
+        "postRetryAction" : "logged-ignore"
+    },
+    "objectTypes" : {
+        "schema_defs" : {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "schema_defs",
+            "type" : "object",
+            "nativeType" : "schema_defs",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "id",
+                    "nativeType" : "integer"
+                },
+                "db_type_id" : {
+                    "type" : "integer",
+                    "required" : true,
+                    "nativeName" : "db_type_id",
+                    "nativeType" : "integer"
+                },
+                "context" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "context",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "md5" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },                
+                "simple_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "simple_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "full_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "full_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "short_code" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "short_code",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "minutes_since_last_used" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "minutes_since_last_used",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "last_used" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "last_used",
+                    "nativeType" : "string"
+                },
+                "fragment" : {
+                    "type" : "string",
+                    "nativeName" : "__UID__",
+                    "nativeType" : "string"
+                },
+                "ddl" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "ddl",
+                    "nativeType" : "string"
+                },
+                "statement_separator" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "statement_separator",
+                    "nativeType" : "string"
+                }
+            }
+        },
+        "queries": {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "queries",
+            "type" : "object",
+            "nativeType" : "queries",
+            "properties" : {
+                "fragment" : {
+                    "type" : "string",
+                    "nativeName" : "__UID__",
+                    "nativeType" : "string"
+                },
+                "md5" : {
+                    "type" : "string",
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string"
+                },
+                "sql" : {
+                    "type" : "string",
+                    "nativeName" : "sql",
+                    "nativeType" : "string"
+                },
+                "statement_separator" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "statement_separator",
+                    "nativeType" : "string"
+                },                
+                "schema_def_id" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "schema_def_id",
+                    "nativeType" : "integer"
+                },
+                "id" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "id",
+                    "nativeType" : "integer"
+                }
+            }
+        }
+    },
+    "operationOptions" : { }
+}

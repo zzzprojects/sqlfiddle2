@@ -1,0 +1,136 @@
+{
+    "connection" : {
+        "dbType" : "POSTGRESQL",
+        "jndiName" : "",
+        "driverClass" : "org.postgresql.Driver",
+        "jdbcUrl" : "jdbc:postgresql://OPENIDM_REPO_HOST:5432/openidm",
+        "username" : "openidm",
+        "password" : "openidm",
+        "defaultCatalog" : "openidm",
+        "maxBatchSize" : 100,
+        "maxTxRetry" : 5,
+        "enableConnectionPool" : true,
+        "connectionTimeoutInMs" : 30000
+    },
+    "queries" : {
+        "genericTables" : {
+            "credential-query" : "SELECT fullobject::text FROM ${_dbSchema}.${_mainTable} obj INNER JOIN ${_dbSchema}.objecttypes objtype ON objtype.id = obj.objecttypes_id WHERE json_extract_path_text(fullobject, 'userName') = ${username} AND json_extract_path_text(fullobject, 'accountStatus') = 'active' AND objtype.objecttype = ${_resource}",
+            "find-by-id" : "SELECT fullobject::text FROM ${_dbSchema}.${_mainTable} obj INNER JOIN ${_dbSchema}.objecttypes objtype ON objtype.id = obj.objecttypes_id WHERE obj.objectid = ${id} AND objtype.objecttype = ${_resource}",
+            "get-by-field-value" : "SELECT fullobject::text FROM ${_dbSchema}.${_mainTable} obj INNER JOIN ${_dbSchema}.objecttypes objtype ON objtype.id = obj.objecttypes_id WHERE json_extract_path_text(fullobject, ${field}) = ${value} AND objtype.objecttype = ${_resource}",
+            "query-all-ids" : "SELECT obj.objectid FROM ${_dbSchema}.${_mainTable} obj INNER JOIN objecttypes objtype ON obj.objecttypes_id = objtype.id WHERE objtype.objecttype = ${_resource}",
+            "query-all" : "SELECT obj.fullobject::text FROM ${_dbSchema}.${_mainTable} obj INNER JOIN objecttypes objtype ON obj.objecttypes_id = objtype.id WHERE objtype.objecttype = ${_resource}",
+            "scan-tasks" : "SELECT fullobject::text FROM ${_dbSchema}.${_mainTable} obj INNER JOIN ${_dbSchema}.objecttypes objtype ON objtype.id = obj.objecttypes_id WHERE (json_extract_path_text(fullobject, ${property}) < ${condition.before} AND objtype.objecttype = ${_resource} ) AND ( json_extract_path_text(fullobject, ${taskState.completed}) is NULL )"
+        },
+        "explicitTables" : {
+            "query-all-ids" : "SELECT objectid FROM ${_dbSchema}.${_table}",
+            "for-internalcredentials" : "select * FROM openidm.internaluser WHERE objectid = ${uid}",
+            "credential-query" : "SELECT * FROM ${_dbSchema}.${_table} WHERE objectid = ${username}",
+            "credential-internaluser-query" : "SELECT objectid, pwd, roles FROM ${_dbSchema}.${_table} WHERE objectid = ${username}",
+            "links-for-firstId" : "SELECT * FROM ${_dbSchema}.${_table} WHERE linkType = ${linkType} AND firstid = ${firstId}",
+            "links-for-secondId" : "SELECT * FROM ${_dbSchema}.${_table} WHERE linkType = ${linkType} AND secondid = ${secondId}",
+            "links-for-linkType" : "SELECT * FROM ${_dbSchema}.${_table} WHERE linkType = ${linkType}",
+            "scan-tasks" : "SELECT * FROM ${_dbSchema}.${_table} WHERE ${property} < ${condition.before} AND ${taskState.completed} is NULL",
+            "audit-by-mapping" : "SELECT * FROM ${_dbSchema}.auditrecon WHERE mapping = ${mappingName}",
+            "audit-by-recon-id" : "SELECT * FROM ${_dbSchema}.auditrecon WHERE reconId = ${reconId}",
+            "audit-by-recon-id-type" : "SELECT * FROM ${_dbSchema}.auditrecon WHERE reconId = ${reconId} AND entryType = ${entryType}",
+            "audit-by-recon-id-situation" : "SELECT * FROM ${_dbSchema}.auditrecon WHERE reconId = ${reconId} AND situation = ${situation}",
+            "audit-by-activity-parent-action" : "SELECT * FROM ${_dbSchema}.auditactivity WHERE parentactionid = ${parentActionId}",
+            "query-all" : "SELECT * FROM ${_dbSchema}.${_table}"
+       }
+    },
+    "resourceMapping" : {
+        "default" : {
+            "mainTable" : "genericobjects",
+            "propertiesTable" : "genericobjectproperties",
+            "searchableDefault" : true
+        },
+        "genericMapping" : {
+            "scheduler" : {
+                "mainTable" : "schedulerobjects",
+                "propertiesTable" : "schedulerobjectproperties",
+                "searchableDefault" : false
+            },
+            "cluster" : {
+                "mainTable" : "clusterobjects",
+                "propertiesTable" : "clusterobjectproperties",
+                "searchableDefault" : false
+            }
+        },
+        "explicitMapping" : {
+            "link" : {
+                "table" : "links",
+                "objectToColumn" : {
+                    "_id" : "objectid",
+                    "_rev" : "rev",
+                    "linkType" : "linktype",
+                    "firstId" : "firstid",
+                    "secondId" : "secondid"
+                }
+            },
+            "internal/user" : {
+                "table" : "internaluser",
+                "objectToColumn" : {
+                    "_id" : "objectid",
+                    "_rev" : "rev",
+                    "password" : "pwd",
+                    "roles" : "roles"
+                }
+            },
+            "audit/activity" : {
+                "table" : "auditactivity",
+                "objectToColumn" : {
+                    "_id" : "objectid",
+                    "activityId" : "activityid",
+                    "timestamp" : "activitydate",
+                    "action" : "activity",
+                    "message" : "message",
+                    "objectId" : "subjectid",
+                    "rev" : "subjectrev",
+                    "rootActionId" : "rootactionid",
+                    "parentActionId" : "parentactionid",
+                    "requester" : "requester",
+                    "approver" : "approver",
+                    "before" : "subjectbefore",
+                    "after" : "subjectafter",
+                    "status" : "status",
+                    "changedFields" : "changedfields",
+                    "passwordChanged" : "passwordchanged"
+                }
+            },
+            "audit/recon" : {
+                "table" : "auditrecon",
+                "objectToColumn" : {
+                    "_id" : "objectid",
+                    "entryType" : "entrytype",
+                    "rootActionId" : "rootactionid",
+                    "action" : "activity",
+                    "message" : "message",
+                    "reconciling" : "reconciling",
+                    "reconId" : "reconid",
+                    "situation" : "situation",
+                    "sourceObjectId" : "sourceobjectid",
+                    "status" : "status",
+                    "targetObjectId" : "targetobjectid",
+                    "ambiguousTargetObjectIds" : "ambiguoustargetobjectids",
+                    "timestamp" : "activitydate",
+                    "actionId" : "actionid",
+                    "exception" : "exceptiondetail",
+                    "mapping" : "mapping",
+                    "messageDetail" : { "column" : "messagedetail", "type" : "JSON_MAP" }
+                }
+            },
+            "audit/access" : {
+                "table" : "auditaccess",
+                "objectToColumn" : {
+                    "_id" : "objectid",
+                    "action" : "activity",
+                    "ip" : "ip",
+                    "principal" : "principal",
+                    "roles" : "roles",
+                    "status" : "status",
+                    "timestamp" : "activitydate"
+                }
+            }
+        }
+    }
+}
