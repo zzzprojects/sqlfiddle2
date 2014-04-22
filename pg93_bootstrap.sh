@@ -13,6 +13,7 @@ sudo apt-get --yes --force-yes install postgresql-9.3 postgresql-contrib-9.3
 sudo pg_dropcluster --stop 9.3 main
 sudo su -c "echo \"listen_addresses = '*'\" >> /etc/postgresql-common/createcluster.conf"
 sudo pg_createcluster --start -e UTF-8 --locale en_US.UTF-8 9.3 main -- --auth-local=trust
+sudo su -c "echo \"host    all             all             10.0.0.0/16            md5\" >> /etc/postgresql/9.3/main/pg_hba.conf"
 sudo su -c "echo \"host    all             all             192.168.50.0/24            md5\" >> /etc/postgresql/9.3/main/pg_hba.conf"
 sudo service postgresql reload
 

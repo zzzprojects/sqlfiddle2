@@ -9,6 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "postgresql93" do |postgresql93|
     postgresql93.vm.provision :shell, :path => "pg93_bootstrap.sh"
     postgresql93.vm.network "private_network", ip: "192.168.50.4"
+    postgresql93.vm.network "forwarded_port", guest: 5432, host: 5432 
     postgresql93.vm.box = "hashicorp/precise32"
   end
 
