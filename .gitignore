@@ -2,4 +2,4 @@
 .vagrant
 .DS_Store
 target
-src/main/resources/custom/dev/node_modules
+src/main/resources/dev/node_modules
