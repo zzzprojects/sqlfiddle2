@@ -13,6 +13,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     postgresql93.vm.box = "hashicorp/precise32"
   end
 
+  config.vm.define "mysql56" do |mysql56|
+    mysql56.vm.provision :shell, :path => "my56_bootstrap.sh"
+    mysql56.vm.network "private_network", ip: "192.168.50.5"
+    mysql56.vm.network "forwarded_port", guest: 3306, host: 3306 
+    mysql56.vm.box = "hashicorp/precise32"
+  end
+
   config.vm.define "idm", primary: true do |idm|
     idm.vm.provision :shell, :path => "idm_bootstrap.sh"
     idm.vm.network "private_network", ip: "192.168.50.3"

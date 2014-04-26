@@ -3,6 +3,7 @@
 sudo su -c 'echo "192.168.50.4 OPENIDM_REPO_HOST" >> /etc/hosts'
 sudo su -c 'echo "192.168.50.4 SQLFIDDLE_HOST" >> /etc/hosts'
 sudo su -c 'echo "192.168.50.4 POSTGRESQL93_HOST" >> /etc/hosts'
+sudo su -c 'echo "192.168.50.5 MYSQL56_HOST" >> /etc/hosts'
 
 sudo apt-get update
 sudo apt-get --yes --force-yes install python-software-properties
