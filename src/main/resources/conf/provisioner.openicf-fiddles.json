@@ -51,6 +51,54 @@
         "postRetryAction" : "logged-ignore"
     },
     "objectTypes" : {
+        "db_types" : {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "db_types",
+            "type" : "object",
+            "nativeType" : "db_types",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "__UID__",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]                    
+                },
+                "context" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "context",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "simple_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "simple_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "full_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                }       
+            }
+        },
         "schema_defs" : {
             "$schema" : "http://json-schema.org/draft-03/schema",
             "id" : "schema_defs",

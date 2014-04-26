@@ -57,6 +57,10 @@ import groovy.sql.DataSet;
 
 //Need to handle the __UID__ and __NAME__ in queries
 def fieldMap = [
+    "db_types": [
+        "__NAME__": "d.full_name",
+        "__UID__": "d.id"
+    ],
     "schema_defs": [
         "__NAME__": "s.id",
         "__UID__": "(s.db_type_id || '_' || s.short_code)",
@@ -196,8 +200,26 @@ switch ( objectClass ) {
     }
     break
 
-    default:
-    result;
+    case "db_types":
+    sql.eachRow("""
+        SELECT
+            d.id,
+            d.context,
+            d.full_name,
+            d.simple_name
+        FROM
+            db_types d
+    """ + where, whereParams) {
+
+        result.add([
+            __NAME__:it.full_name, 
+            __UID__: it.id.toInteger(),
+            context:it.context,
+            simple_name:it.simple_name
+        ])
+
+    }
+    break
 }
 
 return result;
