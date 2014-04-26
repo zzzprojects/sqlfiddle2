@@ -12,7 +12,7 @@ module.exports = function(grunt) {
                 files: [{
                     cwd     : '..',
                     src     : ['**/*'], 
-                    dest    : '../../../../../target/sqlfiddle',
+                    dest    : '../../../../target/sqlfiddle',
                     flatten : false,
                     expand  : true
                 }]
