@@ -69,7 +69,14 @@ define([
                 $(".helpTip").css("display", "none");
                 $("body").block({ message: "Loading..."});
                         
-                $.getJSON("/openidm/endpoint/loadContent/" + frag.replace(/\//g, '_'), function (resp) {
+                $.ajax({
+                    url: "/openidm/endpoint/loadContent/" + frag.replace(/\//g, '_').replace(/^!/, ''),
+                    headers: {
+                        "X-OpenIDM-Username" : "openidm-admin",
+                        "X-OpenIDM-Password" : "openidm-admin",
+                        "X-OpenIDM-NoSession" : "true"
+                    },
+                    success: function (resp) {
                     schemaDef.set("loading", false);
     
                     if (resp["short_code"])
@@ -273,7 +280,8 @@ define([
                     {
                         $("body").unblock();
                     }
-                });
+                }
+            });
                 
                         
             }
