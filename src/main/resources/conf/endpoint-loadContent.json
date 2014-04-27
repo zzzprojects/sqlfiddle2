@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/loadContent/*",
+    "type" : "groovy",
+    "file" : "script/loadContent.groovy"
+}

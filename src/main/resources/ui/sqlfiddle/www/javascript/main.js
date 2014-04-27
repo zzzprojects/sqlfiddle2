@@ -60,17 +60,16 @@ requirejs.config({
 require([
 		'jQuery',
 		'Underscore',
-		'dbTypes_cached', 
 		'fiddle_backbone/app',
 		'DDLBuilder/ddl_builder',
 		'libs/idselector'
 	], 
-	function($, _, dbTypesData, App, ddl_builder) {
+	function($, _, App, ddl_builder) {
 	
 	$.blockUI.defaults.overlayCSS.cursor = 'auto';
 	$.blockUI.defaults.css.cursor = 'auto';
 		
-	fiddleBackbone = App.initialize(dbTypesData);
+	fiddleBackbone = App.initialize();
 
 	// Now follows miscellaneous UI event bindings
 	

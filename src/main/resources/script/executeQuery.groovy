@@ -79,8 +79,9 @@ hostConnection.withTransaction {
     (Pattern.compile("(.*?)(?=(" + separator + "\\s*\\n)|\$)").matcher(content.sql)).each { statement ->
         if (statement[1].size()) {
 
-            sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ] ])
+            sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: false ])
             int currentSet = sets.size()-1
+            long startTime = (new Date()).toTimestamp().getTime();
 
             try {
                 hostConnection.eachRow(statement[1], { row ->
@@ -88,6 +89,10 @@ hostConnection.withTransaction {
                     int columnCount = meta.getColumnCount()
                     int i = 0
                     def data = []
+
+                    sets[currentSet].SUCCEEDED = true
+                    sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime);
+
 
                     if (sets[currentSet].RESULTS.COLUMNS.size() == 0) {
                         for (i = 1; i <= columnCount; i++) {
@@ -123,6 +128,9 @@ hostConnection.withTransaction {
         }
 
     }
+
+
+
     hostConnection.rollback();
 }
 

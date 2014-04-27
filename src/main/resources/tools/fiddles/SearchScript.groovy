@@ -69,7 +69,7 @@ def fieldMap = [
     ],
     "queries": [
         "__NAME__": "q.md5",
-        "__UID__": "(s.id || '_' || s.short_code || '_' || q.id)"
+        "__UID__": "(s.db_type_id || '_' || s.short_code || '_' || q.id)"
     ]
 ]
 
@@ -209,7 +209,10 @@ switch ( objectClass ) {
             d.simple_name
         FROM
             db_types d
-    """ + where, whereParams) {
+        ${where}
+        ORDER BY
+            d.full_name
+    """, whereParams) {
 
         result.add([
             __NAME__:it.full_name, 

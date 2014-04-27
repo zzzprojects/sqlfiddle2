@@ -23,15 +23,20 @@ define(["jQuery", "Backbone"], function ($, Backbone) {
 			{ return false; }
 						
 			$.ajax({
-				
 				type: "POST",
-				url: "index.cfm/fiddles/runQuery",
-				data: {
+				url: "/openidm/endpoint/executeQuery?_action=query",
+				data: JSON.stringify({
 					db_type_id: this.get("schemaDef").get("dbType").id,
 					schema_short_code: this.get("schemaDef").get("short_code"),
 					statement_separator: this.get("statement_separator"),
 					sql: this.get("sql")
-				},
+				}),
+                headers: {
+                    "X-OpenIDM-Username" : "openidm-admin",
+                    "X-OpenIDM-Password" : "openidm-admin",
+                    "X-OpenIDM-NoSession" : "true",
+                    "Content-Type": "application/json"
+                },
 				dataType: "json",
 				success: function (resp, textStatus, jqXHR) {
 					if (thisModel.get("schemaDef").get("dbType").get("context") == "browser")
