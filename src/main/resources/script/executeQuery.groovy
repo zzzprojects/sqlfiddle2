@@ -123,7 +123,7 @@ hostConnection.withTransaction {
 
                 })
             } catch (e) {
-                println e
+                sets[currentSet].ERRORMESSAGE = e.toString()
             }
         }
 
