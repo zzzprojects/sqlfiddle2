@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/createSchema",
+    "type" : "groovy",
+    "file" : "script/createSchema.groovy"
+}
