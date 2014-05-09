@@ -85,6 +85,20 @@ switch ( objectClass ) {
         }
 
         if (existing_schema) {
+            sql.execute("""
+                UPDATE
+                    schema_defs
+                SET
+                    last_used = current_timestamp
+                WHERE
+                    db_type_id = ? AND
+                        md5 = ?
+                """,
+                [
+                    db_type_id,
+                    md5hash
+                ]);
+
             return existing_schema
         } else {
 
