@@ -4,7 +4,7 @@ import groovy.sql.DataSet;
 import java.security.MessageDigest;
 import java.util.regex.Pattern;
 
-def content = request.getContent().asMap();
+def content = request.getContent().asMap()
 
 assert content.sql
 assert content.db_type_id
