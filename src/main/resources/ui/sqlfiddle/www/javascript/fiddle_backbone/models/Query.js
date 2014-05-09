@@ -32,8 +32,8 @@ define(["jQuery", "Backbone"], function ($, Backbone) {
 					sql: this.get("sql")
 				}),
                 headers: {
-                    "X-OpenIDM-Username" : "openidm-admin",
-                    "X-OpenIDM-Password" : "openidm-admin",
+                    "X-OpenIDM-Username" : "anonymous",
+                    "X-OpenIDM-Password" : "anonymous",
                     "X-OpenIDM-NoSession" : "true",
                     "Content-Type": "application/json"
                 },

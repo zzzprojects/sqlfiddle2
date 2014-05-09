@@ -7,8 +7,8 @@ define(["jQuery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Bac
             return $.ajax({
                 url: '/openidm/system/fiddles/db_types?_queryFilter=full_name gt ""',
                 headers: {
-                    "X-OpenIDM-Username" : "openidm-admin",
-                    "X-OpenIDM-Password" : "openidm-admin",
+                    "X-OpenIDM-Username" : "anonymous",
+                    "X-OpenIDM-Password" : "anonymous",
                     "X-OpenIDM-NoSession" : "true"
                 }
             }).then(function (qry) {

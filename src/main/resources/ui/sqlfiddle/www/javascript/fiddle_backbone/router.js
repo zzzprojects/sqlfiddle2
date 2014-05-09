@@ -72,8 +72,8 @@ define([
                 $.ajax({
                     url: "/openidm/endpoint/loadContent/" + frag.replace(/\//g, '_').replace(/^!/, ''),
                     headers: {
-                        "X-OpenIDM-Username" : "openidm-admin",
-                        "X-OpenIDM-Password" : "openidm-admin",
+                        "X-OpenIDM-Username" : "anonymous",
+                        "X-OpenIDM-Password" : "anonymous",
                         "X-OpenIDM-NoSession" : "true"
                     },
                     success: function (resp) {
