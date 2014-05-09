@@ -27,6 +27,8 @@
 import groovy.sql.Sql;
 import groovy.sql.DataSet;
 import java.util.regex.Pattern;
+
+import org.identityconnectors.framework.common.exceptions.ConnectorException;
 // Parameters:
 // The connector sends us the following:
 // connection : SQL connection
@@ -82,6 +84,7 @@ switch ( objectClass ) {
         sql.eachRow("""\
             SELECT 
                 d.setup_script_template, 
+                d.drop_script_template, 
                 d.batch_separator,
                 d.jdbc_class_name,
                 h.jdbc_url_template,
@@ -97,25 +100,24 @@ switch ( objectClass ) {
             """, [host_id]) {
 
             def setup_script = it.setup_script_template
+            def drop_script = it.drop_script_template
             def batch_separator = it.batch_separator
             def populatedUrl = it.jdbc_url_template.replace("#databaseName#", it.default_database)
 
-            def hostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
+            def adminHostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
 
             // the setup scripts expect "databaseName" placeholders in the form of 2_abcde, 
             // but the id is the form db_2_abcde (the scripts will add the "db_" prefix as needed)
             // This could probably be made neater...
             setup_script = setup_script.replaceAll('#databaseName#', id.replaceFirst("db_", ""))
+            drop_script = drop_script.replaceAll('#databaseName#', id.replaceFirst("db_", ""))
 
             if (batch_separator && batch_separator.size()) {
                 setup_script = setup_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
+                drop_script = drop_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
             }
 
-            def queryList = setup_script.tokenize(delimiter);
-
-            queryList.each { hostConnection.execute(it) }
-
-            hostConnection.close()
+            setup_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
 
             populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
             hostConnection = Sql.newInstance(populatedUrl, attributes.username.get(0), attributes.pw.get(0), it.jdbc_class_name)
@@ -136,9 +138,18 @@ switch ( objectClass ) {
 
             ddl = ddl.replaceAll(Pattern.compile(statement_separator.replaceAll(/([^A-Za-z0-9])/, "\\1") + "\\s*" + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
 
-            ddl.tokenize(delimiter).each { hostConnection.execute(it) }
+            try {
+                ddl.tokenize(delimiter).each { hostConnection.execute(it) }
+            } catch (e) {
+                hostConnection.close()
+                drop_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
+                throw new ConnectorException(e.getMessage(), e)
+            } finally {
+                hostConnection.close()
+                adminHostConnection.close()
+            }
 
-            hostConnection.close()
+
 
         }
 
