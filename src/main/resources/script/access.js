@@ -68,7 +68,7 @@ var httpAccessConfig =
            "pattern"    : "endpoint/executeQuery",
            "roles"      : "*",
            "methods"    : "action",
-           "actions"    : "execute"
+           "actions"    : "query"
         },
         // openidm-admin can request nearly anything (some exceptions being a few system endpoints)
         {
