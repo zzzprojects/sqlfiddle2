@@ -42,7 +42,7 @@ assert uid != null
 
 switch ( objectClass ) {
     case "schema_defs":
-    sql.execute("DELETE FROM schema_defs where (s.db_type_id || '_' || s.short_code) = ?",[uid])
+    sql.execute("DELETE FROM schema_defs s where (s.db_type_id || '_' || s.short_code) = ?",[uid])
     break
 
     default:
