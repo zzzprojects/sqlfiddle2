@@ -76,60 +76,72 @@ hostConnection.withTransaction {
 
     def separator = content.statement_separator ? content.statement_separator : ";"
 
-    (Pattern.compile("(.*?)(?=(" + separator + "\\s*\\n)|\$)").matcher(content.sql)).each { statement ->
-        if (statement[1].size()) {
+    try {
 
-            sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: false ])
-            int currentSet = sets.size()-1
-            long startTime = (new Date()).toTimestamp().getTime();
+        (Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)").matcher(content.sql)).each { statement ->
+            
+            if (statement[1].size()) {
 
-            try {
-                hostConnection.eachRow(statement[1], { row ->
-                    def meta = row.getMetaData()
-                    int columnCount = meta.getColumnCount()
-                    int i = 0
-                    def data = []
+                sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true ])
+                int currentSet = sets.size()-1
+                long startTime = (new Date()).toTimestamp().getTime()
 
-                    sets[currentSet].SUCCEEDED = true
-                    sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime);
+                try {
+                    hostConnection.eachRow(statement[1], { row ->
+                        def meta = row.getMetaData()
+                        int columnCount = meta.getColumnCount()
+                        int i = 0
+                        def data = []
+
+                        sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
 
 
-                    if (sets[currentSet].RESULTS.COLUMNS.size() == 0) {
-                        for (i = 1; i <= columnCount; i++) {
-                            sets[currentSet].RESULTS.COLUMNS.add(meta.getColumnName(i));
+                        if (sets[currentSet].RESULTS.COLUMNS.size() == 0) {
+                            for (i = 1; i <= columnCount; i++) {
+                                sets[currentSet].RESULTS.COLUMNS.add(meta.getColumnName(i))
+                            }
                         }
-                    }
 
-                    for (i = 0; i < columnCount; i++) {
-                        switch ( meta.getColumnType((i+1)) ) {
-                            case java.sql.Types.TIMESTAMP: 
-                                data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                            break;
+                        for (i = 0; i < columnCount; i++) {
+                            switch ( meta.getColumnType((i+1)) ) {
+                                case java.sql.Types.TIMESTAMP: 
+                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                break;
 
-                            case java.sql.Types.TIME: 
-                                data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                            break;
+                                case java.sql.Types.TIME: 
+                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                break;
 
-                            case java.sql.Types.DATE: 
-                                data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                            break;
+                                case java.sql.Types.DATE: 
+                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                break;
 
-                            default: 
-                                data.add(row.getAt(i))
+                                default: 
+                                    data.add(row.getAt(i))
+                            }
                         }
+
+                        sets[currentSet].RESULTS.DATA.add(data)
+
+                    })
+                } catch (e) {
+                    def errorMessage = e.toString()
+                    if ( ((Boolean) errorMessage =~ /No results were returned by the query/) ) {
+                        sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
+                    } else {
+                        sets[currentSet].ERRORMESSAGE = errorMessage
+                        sets[currentSet].SUCCEEDED = false
+                        throw "Ending query execution"
                     }
-
-                    sets[currentSet].RESULTS.DATA.add(data)
-
-                })
-            } catch (e) {
-                sets[currentSet].ERRORMESSAGE = e.toString()
+                }
             }
+
         }
 
+    } catch (e) {
+        println e
+        // most likely the result of the inner throw "Ending query execution"
     }
-
-
 
     hostConnection.rollback();
 }
