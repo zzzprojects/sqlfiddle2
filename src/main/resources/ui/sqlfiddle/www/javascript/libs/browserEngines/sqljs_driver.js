@@ -30,7 +30,7 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 				//  If the sql.js code isn't yet loaded, do it now.
 				if (window.SQL === undefined)
 				{
-					$.getScript("javascripts_static/sql.js", function (script, textStatus, jqXHR) {
+					$.getScript("javascript/sql.js", function (script, textStatus, jqXHR) {
 						jsBuildSchema();
 					}).fail(function(jqxhr, settings, exception){
 						args["error"]("Your browser does not work with SQL.js.  Try using a different browser (Chrome, Safari, Firefox, IE 10, etc...), or a newer version of your current one.");
