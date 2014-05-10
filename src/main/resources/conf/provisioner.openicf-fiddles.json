@@ -77,6 +77,16 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
+                "className" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "className",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
                 "simple_name" : {
                     "type" : "string",
                     "required" : false,

@@ -15,7 +15,6 @@ assert content.sql.size() <= 8000
 def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
 
 assert schema_def != null
-assert schema_def.context == "host"
 
 // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
 schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
@@ -31,124 +30,128 @@ def m = openidm.create("system/fiddles/queries",
         "schema_def_id": schema_def.id
     ]
 )._id =~ /^\d+_\w+_(\d+)*$/
+
 int queryId = m[0][1].toInteger()
 
+def response = [ID: queryId]
 
+if (schema_def.context == "host") {
 
-// Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
-def hostLink = openidm.query("repo/link", [
-        "_queryId": "links-for-firstId",
-        "linkType": "fiddles_hosts",
-        "firstId" : schema_def._id
-    ]).result[0]
+    // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
+    def hostLink = openidm.query("repo/link", [
+            "_queryId": "links-for-firstId",
+            "linkType": "fiddles_hosts",
+            "firstId" : schema_def._id
+        ]).result[0]
 
-if (hostLink == null) {
-    openidm.action("recon", 
-        "reconById", 
-        [
-            "mapping" : "fiddles_hosts",
-            "ids" : schema_def._id,
-            "waitForCompletion" : "true"
-        ]
-    )
+    if (hostLink == null) {
+        openidm.action("recon", 
+            "reconById", 
+            [
+                "mapping" : "fiddles_hosts",
+                "ids" : schema_def._id,
+                "waitForCompletion" : "true"
+            ]
+        )
 
-    hostLink = openidm.query("repo/link", [
-        "_queryId": "links-for-firstId",
-        "linkType": "fiddles_hosts",
-        "firstId" : schema_def._id
-    ]).result[0]
-}
-
-// At this point we should have a link between schema definition and running db; otherwise provisioning 
-// went wrong and we won't be able to connect to this db to perform our query
-assert hostLink != null
-
-// We get the details about how to connect to the running DB by doing a read on it
-def hostDatabase = openidm.read("system/hosts/databases/" + hostLink.secondId)
-def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
-
-
-
-
-def sets = []
-
-hostConnection.withTransaction {
-
-    def separator = content.statement_separator ? content.statement_separator : ";"
-
-    try {
-
-        (Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)").matcher(content.sql)).each { statement ->
-            
-            if (statement[1].size()) {
-
-                sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true ])
-                int currentSet = sets.size()-1
-                long startTime = (new Date()).toTimestamp().getTime()
-
-                try {
-                    hostConnection.eachRow(statement[1], { row ->
-                        def meta = row.getMetaData()
-                        int columnCount = meta.getColumnCount()
-                        int i = 0
-                        def data = []
-
-                        sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
-
-
-                        if (sets[currentSet].RESULTS.COLUMNS.size() == 0) {
-                            for (i = 1; i <= columnCount; i++) {
-                                sets[currentSet].RESULTS.COLUMNS.add(meta.getColumnName(i))
-                            }
-                        }
-
-                        for (i = 0; i < columnCount; i++) {
-                            switch ( meta.getColumnType((i+1)) ) {
-                                case java.sql.Types.TIMESTAMP: 
-                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                                break;
-
-                                case java.sql.Types.TIME: 
-                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                                break;
-
-                                case java.sql.Types.DATE: 
-                                    data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
-                                break;
-
-                                default: 
-                                    data.add(row.getAt(i))
-                            }
-                        }
-
-                        sets[currentSet].RESULTS.DATA.add(data)
-
-                    })
-                } catch (e) {
-                    def errorMessage = e.toString()
-                    if ( ((Boolean) errorMessage =~ /No results were returned by the query/) ) {
-                        sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
-                    } else {
-                        sets[currentSet].ERRORMESSAGE = errorMessage
-                        sets[currentSet].SUCCEEDED = false
-                        throw "Ending query execution"
-                    }
-                }
-            }
-
-        }
-
-    } catch (e) {
-        println e
-        // most likely the result of the inner throw "Ending query execution"
+        hostLink = openidm.query("repo/link", [
+            "_queryId": "links-for-firstId",
+            "linkType": "fiddles_hosts",
+            "firstId" : schema_def._id
+        ]).result[0]
     }
 
-    hostConnection.rollback();
+    // At this point we should have a link between schema definition and running db; otherwise provisioning 
+    // went wrong and we won't be able to connect to this db to perform our query
+    assert hostLink != null
+
+    // We get the details about how to connect to the running DB by doing a read on it
+    def hostDatabase = openidm.read("system/hosts/databases/" + hostLink.secondId)
+    def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
+
+
+
+
+    def sets = []
+
+    hostConnection.withTransaction {
+
+        def separator = content.statement_separator ? content.statement_separator : ";"
+
+        try {
+
+            (Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)").matcher(content.sql)).each { statement ->
+
+                if (statement[1].size()) {
+
+                    sets.add([ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true ])
+                    int currentSet = sets.size()-1
+                    long startTime = (new Date()).toTimestamp().getTime()
+
+                    try {
+                        hostConnection.eachRow(statement[1], { row ->
+                            def meta = row.getMetaData()
+                            int columnCount = meta.getColumnCount()
+                            int i = 0
+                            def data = []
+
+                            sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
+
+
+                            if (sets[currentSet].RESULTS.COLUMNS.size() == 0) {
+                                for (i = 1; i <= columnCount; i++) {
+                                    sets[currentSet].RESULTS.COLUMNS.add(meta.getColumnName(i))
+                                }
+                            }
+
+                            for (i = 0; i < columnCount; i++) {
+                                switch ( meta.getColumnType((i+1)) ) {
+                                    case java.sql.Types.TIMESTAMP: 
+                                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                    break;
+
+                                    case java.sql.Types.TIME: 
+                                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                    break;
+
+                                    case java.sql.Types.DATE: 
+                                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                                    break;
+
+                                    default: 
+                                        data.add(row.getAt(i))
+                                }
+                            }
+
+                            sets[currentSet].RESULTS.DATA.add(data)
+
+                        })
+                    } catch (e) {
+                        def errorMessage = e.toString()
+                        if ( ((Boolean) errorMessage =~ /No results were returned by the query/) ) {
+                            sets[currentSet].EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
+                        } else {
+                            sets[currentSet].ERRORMESSAGE = errorMessage
+                            sets[currentSet].SUCCEEDED = false
+                            throw "Ending query execution"
+                        }
+                    }
+                }
+
+            }
+
+        } catch (e) {
+            println e
+            // most likely the result of the inner throw "Ending query execution"
+        }
+
+        hostConnection.rollback();
+    }
+
+    hostConnection.close()
+
+    response.sets = sets
+
 }
 
-hostConnection.close()
-
-[
-    ID: queryId,
-    sets: sets
-]
+response

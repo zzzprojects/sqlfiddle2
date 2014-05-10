@@ -18,39 +18,46 @@ def fragment_parts = schema_def._id.split("_")
 
 assert fragment_parts.size() == 2
 
-// Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
-def hostLink = openidm.query("repo/link", [
-        "_queryId": "links-for-firstId",
-        "linkType": "fiddles_hosts",
-        "firstId" : schema_def._id
-    ]).result[0]
+if (schema_def.context == "host") {
 
-def auditDetails
+    // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
+    def hostLink = openidm.query("repo/link", [
+            "_queryId": "links-for-firstId",
+            "linkType": "fiddles_hosts",
+            "firstId" : schema_def._id
+        ]).result[0]
 
-if (hostLink == null) {
-    def recon = openidm.action("recon", 
-        "reconById", 
-        [
-            "mapping" : "fiddles_hosts",
-            "ids" : schema_def._id,
-            "waitForCompletion" : "true"
-        ]
-    )
+    def auditDetails
 
-    auditDetails = openidm.query("audit/recon", [
-        "_queryId": "audit-by-recon-id-type",
-        "reconId": recon._id, 
-        "entryType": ""
-    ])
+    if (hostLink == null) {
+        def recon = openidm.action("recon", 
+            "reconById", 
+            [
+                "mapping" : "fiddles_hosts",
+                "ids" : schema_def._id,
+                "waitForCompletion" : "true"
+            ]
+        )
 
-}
+        auditDetails = openidm.query("audit/recon", [
+            "_queryId": "audit-by-recon-id-type",
+            "reconId": recon._id, 
+            "entryType": ""
+        ])
 
-if (auditDetails.result[0].status == "SUCCESS") {
+    }
+
+    if (auditDetails.result[0].status == "SUCCESS") {
+        response._id = schema_def._id
+        response.short_code = fragment_parts[1]
+    } else {
+        response.error = auditDetails.result[0].messageDetail.message
+        openidm.delete("system/fiddles/schema_defs/" + schema_def._id, null)
+    }
+
+} else {
     response._id = schema_def._id
     response.short_code = fragment_parts[1]
-} else {
-    response.error = auditDetails.result[0].messageDetail.message
-    openidm.delete("system/fiddles/schema_defs/" + schema_def._id, null)
 }
 
 response

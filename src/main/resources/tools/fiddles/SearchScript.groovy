@@ -206,7 +206,8 @@ switch ( objectClass ) {
             d.id,
             d.context,
             d.full_name,
-            d.simple_name
+            d.simple_name,
+            d.jdbc_class_name
         FROM
             db_types d
         ${where}
@@ -218,7 +219,8 @@ switch ( objectClass ) {
             __NAME__:it.full_name, 
             __UID__: it.id.toInteger(),
             context:it.context,
-            simple_name:it.simple_name
+            simple_name:it.simple_name,
+            className:it.jdbc_class_name
         ])
 
     }

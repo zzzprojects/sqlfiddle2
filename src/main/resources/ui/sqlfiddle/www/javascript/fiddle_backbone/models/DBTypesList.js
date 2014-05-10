@@ -13,12 +13,7 @@ define(["jQuery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Bac
                 }
             }).then(function (qry) {
                 _this.reset(_.map(qry.result, function (r) {
-                    return new DBType({
-                        "id": r.id,
-                        "simple_name": r.simple_name,
-                        "full_name": r.full_name,
-                        "context": r.context
-                    });
+                    return new DBType(r);
                 }));
                 return _this;
             });
