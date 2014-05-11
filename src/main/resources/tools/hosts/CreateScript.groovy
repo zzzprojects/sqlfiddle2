@@ -63,7 +63,7 @@ def findAvailableHost = { db_type_id ->
                     h2.db_type_id = h.db_type_id AND
                     coalesce((SELECT count(s.id) FROM schema_defs s WHERE s.current_host_id = h2.id), 0) < 
                     coalesce((SELECT count(s.id) FROM schema_defs s WHERE s.current_host_id = h.id), 0)
-            )    
+            )
     """;
 
     def row = sql.firstRow(query, [db_type_id])
@@ -117,7 +117,9 @@ switch ( objectClass ) {
                 drop_script = drop_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
             }
 
-            setup_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
+            setup_script.tokenize(delimiter).each {
+                adminHostConnection.execute(it)
+            }
 
             populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
             hostConnection = Sql.newInstance(populatedUrl, attributes.username.get(0), attributes.pw.get(0), it.jdbc_class_name)
@@ -133,13 +135,15 @@ switch ( objectClass ) {
             }
 
             if (batch_separator && batch_separator.size()) {
-                ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
+                ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), statement_separator)
             }
 
-            ddl = ddl.replaceAll(Pattern.compile(statement_separator.replaceAll(/([^A-Za-z0-9])/, "\\1") + "\\s*" + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
-
             try {
-                ddl.tokenize(delimiter).each { hostConnection.execute(it) }
+                (Pattern.compile("([\\s\\S]*?)(?=(" + statement_separator + "\\s*)|\$)").matcher(ddl)).each {
+                    if (it[1].size() && ((Boolean) it[1] =~ /\S/) ) {
+                        hostConnection.execute(it[1])
+                    }
+                }
             } catch (e) {
                 hostConnection.close()
                 drop_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
