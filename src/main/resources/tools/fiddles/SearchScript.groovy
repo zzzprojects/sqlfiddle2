@@ -136,6 +136,7 @@ switch ( objectClass ) {
     sql.eachRow("""
         SELECT 
             s.id,
+            s.md5,
             s.db_type_id,
             s.short_code,
             to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS') as last_used,
@@ -152,7 +153,7 @@ switch ( objectClass ) {
         """ + where, whereParams) {
 
         result.add([
-            __NAME__:it.id.toInteger(), 
+            __NAME__:it.md5,
             __UID__: it.db_type_id + '_' + it.short_code,
             id:it.id.toInteger(),
             db_type_id:it.db_type_id.toInteger(), 
@@ -207,7 +208,8 @@ switch ( objectClass ) {
             d.context,
             d.full_name,
             d.simple_name,
-            d.jdbc_class_name
+            d.jdbc_class_name,
+            d.sample_fragment
         FROM
             db_types d
         ${where}
@@ -220,7 +222,8 @@ switch ( objectClass ) {
             __UID__: it.id.toInteger(),
             context:it.context,
             simple_name:it.simple_name,
-            className:it.jdbc_class_name
+            className:it.jdbc_class_name,
+            sample_fragment: it.sample_fragment
         ])
 
     }
