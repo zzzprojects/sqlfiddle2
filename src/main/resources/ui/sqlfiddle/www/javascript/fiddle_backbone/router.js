@@ -93,7 +93,7 @@ define([
                             {
                                 if (confirm("Fiddle originally built with SQL.js, but you have WebSQL available - would you like to use that instead (it'll be faster to load)?"))
                                 {
-                                    dbTypes.setSelectedType($("#db_type_id a:contains('WebSQL')").closest('li').attr('db_type_id'));
+                                    dbTypes.setSelectedType(parseInt($("#db_type_id a:contains('WebSQL')").closest('li').attr('db_type_id')));
                                     selectedDBType = dbTypes.getSelectedType();
                                     schemaDef.set({
                                         "ddl": resp["ddl"],
