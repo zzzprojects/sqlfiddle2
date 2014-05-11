@@ -18,6 +18,8 @@ def fragment_parts = schema_def._id.split("_")
 
 assert fragment_parts.size() == 2
 
+schema_def = openidm.read("system/fiddles/schema_defs/" + schema_def._id)
+
 if (schema_def.context == "host") {
 
     // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
