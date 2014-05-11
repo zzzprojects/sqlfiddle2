@@ -77,6 +77,16 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
+                "sample_fragment" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "sample_fragment",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
                 "className" : {
                     "type" : "string",
                     "required" : false,

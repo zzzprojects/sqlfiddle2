@@ -24,10 +24,10 @@ SET search_path = public, pg_catalog;
 --1 PostgreSQL 9.1.9    PostgreSQL  \n\nCREATE USER user_#databaseName# PASSWORD '#databaseName#';\nCREATE DATABASE db_#databaseName# OWNER user_#databaseName# ENCODING 'UTF8' TEMPLATE db_template;\ncommit;\nALTER USER user_#databaseName# SET statement_timeout = 30000;\nSELECT dblink_connect('#databaseName#', 'dbname=db_#databaseName# hostaddr=127.0.0.1 user=postgres');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE deferred_check (id INT PRIMARY KEY)');\nSELECT dblink_exec('#databaseName#', 'INSERT INTO deferred_check VALUES (1)');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE db_#databaseName#.public.deferred_#databaseName# (fk INT NOT NULL)');\nSELECT dblink_exec('#databaseName#', 'ALTER TABLE ONLY deferred_#databaseName# ADD CONSTRAINT deferred_#databaseName#_ref FOREIGN KEY (fk) REFERENCES deferred_check(id) DEFERRABLE INITIALLY DEFERRED');\nSELECT dblink_exec('#databaseName#', 'GRANT INSERT ON deferred_#databaseName# TO user_#databaseName#');\nSELECT dblink_disconnect('#databaseName#');\n\n  org.postgresql.Driver   SELECT pg_terminate_backend(pg_stat_activity.procpid)                                     FROM pg_stat_activity                                                                                                                             WHERE upper(pg_stat_activity.datname) = 'DB_#databaseName#';                                                                                            DROP DATABASE db_#databaseName#;DROP USER user_#databaseName#;  \N  \N  Separate multiple statements in PostgreSQL by terminating each one with a semicolon.    1/6ccc5/2   explain     \N  \N  host    \N  0   select schema_name from (select datname as schema_name from pg_database) t
 
 COPY db_types (id, full_name, simple_name, setup_script_template, jdbc_class_name, drop_script_template, custom_jdbc_attributes, batch_separator, notes, sample_fragment, execution_plan_prefix, execution_plan_suffix, execution_plan_xslt, context, execution_plan_check, is_latest_stable, list_database_script) FROM stdin;
-7	SQLite (WebSQL)	SQLite	\N	websql	\N	\N	\N	\N	7/04eca/1	\N	\N	\N	browser	\N	1	\N
-5	SQLite (SQL.js)	SQLite	\nCREATE USER user_#databaseName# PASSWORD '#databaseName#'	sqljs	\N	\N	\N	\N	5/781d4/2	\N	\N	\N	browser	\N	1	\N
-9	MySQL 5.6	MySQL	\nCREATE database db_#databaseName#  default CHARACTER SET = utf8 default COLLATE = utf8_general_ci;\nGRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,CREATE TEMPORARY TABLES,CREATE VIEW,SHOW VIEW,ALTER ROUTINE,CREATE ROUTINE,TRIGGER,EXECUTE\n ON db_#databaseName#.* TO user_#databaseName#@'%' IDENTIFIED BY '#databaseName#';\nGRANT SELECT ON performance_schema.* TO user_#databaseName#@'%';\n	org.gjt.mm.mysql.Driver	\n DROP DATABASE db_#databaseName#; drop user user_#databaseName#@'%';\n	\N	\N	\N	9/a2581/1	explain extended 	\N	\N	host	\N	0	show databases
-15	PostgreSQL 9.3	PostgreSQL	\n\nCREATE USER user_#databaseName# PASSWORD '#databaseName#';\nCREATE DATABASE db_#databaseName# OWNER user_#databaseName# ENCODING 'UTF8' TEMPLATE db_template;\ncommit;\nALTER USER user_#databaseName# SET statement_timeout = 30000;\nSELECT dblink_connect('#databaseName#', 'dbname=db_#databaseName# hostaddr=127.0.0.1 user=postgres');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE deferred_check (id INT PRIMARY KEY)');\nSELECT dblink_exec('#databaseName#', 'INSERT INTO deferred_check VALUES (1)');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE db_#databaseName#.public.deferred_#databaseName# (fk INT NOT NULL)');\nSELECT dblink_exec('#databaseName#', 'ALTER TABLE ONLY deferred_#databaseName# ADD CONSTRAINT deferred_#databaseName#_ref FOREIGN KEY (fk) REFERENCES deferred_check(id) DEFERRABLE INITIALLY DEFERRED');\nSELECT dblink_exec('#databaseName#', 'GRANT INSERT ON deferred_#databaseName# TO user_#databaseName#');\nSELECT dblink_disconnect('#databaseName#');\n\n	org.postgresql.Driver	SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE upper(pg_stat_activity.datname) = upper('DB_#databaseName#'); DROP DATABASE db_#databaseName#;DROP USER user_#databaseName#;	\N	\N	\N	15/c2f73/12	explain 	\N	\N	host	\N	1	select schema_name from (select datname as schema_name from pg_database) t
+7	SQLite (WebSQL)	SQLite	\N	websql	\N	\N	\N	\N	7/44b90/1	\N	\N	\N	browser	\N	1	\N
+5	SQLite (SQL.js)	SQLite	\nCREATE USER user_#databaseName# PASSWORD '#databaseName#'	sqljs	\N	\N	\N	\N	5/b5362/1	\N	\N	\N	browser	\N	1	\N
+9	MySQL 5.6	MySQL	\nCREATE database db_#databaseName#  default CHARACTER SET = utf8 default COLLATE = utf8_general_ci;\nGRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,CREATE TEMPORARY TABLES,CREATE VIEW,SHOW VIEW,ALTER ROUTINE,CREATE ROUTINE,TRIGGER,EXECUTE\n ON db_#databaseName#.* TO user_#databaseName#@'%' IDENTIFIED BY '#databaseName#';\nGRANT SELECT ON performance_schema.* TO user_#databaseName#@'%';\n	org.gjt.mm.mysql.Driver	\n DROP DATABASE db_#databaseName#; drop user user_#databaseName#@'%';\n	\N	\N	\N	9/dcb16/1	explain extended 	\N	\N	host	\N	0	show databases
+15	PostgreSQL 9.3	PostgreSQL	\n\nCREATE USER user_#databaseName# PASSWORD '#databaseName#';\nCREATE DATABASE db_#databaseName# OWNER user_#databaseName# ENCODING 'UTF8' TEMPLATE db_template;\ncommit;\nALTER USER user_#databaseName# SET statement_timeout = 30000;\nSELECT dblink_connect('#databaseName#', 'dbname=db_#databaseName# hostaddr=127.0.0.1 user=postgres');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE deferred_check (id INT PRIMARY KEY)');\nSELECT dblink_exec('#databaseName#', 'INSERT INTO deferred_check VALUES (1)');\nSELECT dblink_exec('#databaseName#', 'CREATE TABLE db_#databaseName#.public.deferred_#databaseName# (fk INT NOT NULL)');\nSELECT dblink_exec('#databaseName#', 'ALTER TABLE ONLY deferred_#databaseName# ADD CONSTRAINT deferred_#databaseName#_ref FOREIGN KEY (fk) REFERENCES deferred_check(id) DEFERRABLE INITIALLY DEFERRED');\nSELECT dblink_exec('#databaseName#', 'GRANT INSERT ON deferred_#databaseName# TO user_#databaseName#');\nSELECT dblink_disconnect('#databaseName#');\n\n	org.postgresql.Driver	SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE upper(pg_stat_activity.datname) = upper('DB_#databaseName#'); DROP DATABASE db_#databaseName#;DROP USER user_#databaseName#;	\N	\N	\N	15/35773/1	explain 	\N	\N	host	\N	1	select schema_name from (select datname as schema_name from pg_database) t
 \.
 
 
@@ -61,13 +61,33 @@ COPY hosts (id, db_type_id, jdbc_url_template, default_database, admin_username,
 
 SELECT pg_catalog.setval('hosts_id_seq', 3, true);
 
+--
+-- Data for Name: schema_defs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY schema_defs (id, db_type_id, short_code, last_used, ddl, current_host_id, md5, statement_separator, owner_id, structure_json) FROM stdin;
+589300	9	dcb16	2014-05-11 05:15:24.462	\n\nCREATE TABLE ForgeRock\n\t(`id` int, `productName` varchar(7), `description` varchar(55))\n;\n\t\nINSERT INTO ForgeRock\n\t(`id`, `productName`, `description`)\nVALUES\n\t(1, 'OpenIDM', 'Platform for building enterprise provisioning solutions'),\n\t(2, 'OpenAM', 'Full-featured access management'),\n\t(3, 'OpenDJ', 'Robust LDAP server for Java')\n;\n	\N	dcb16f2d44703cf35623e5c8650f070e	;	\N	\N
+589301	15	35773	2014-05-11 05:24:44.982	create table jsonData (\n    id serial primary key,\n    data json\n);\n\ninsert into jsonData (data) values (\n'{\n  "a": 1,\n  "b": 2,\n  "c": ["dog","cat","mouse"],\n  "d": {\n    "x": true\n  }\n }\n'::json),\n(\n'{\n  "a": 20,\n  "b": 40,\n  "c": ["fish","cat","rat","hamster"],\n  "d": {\n    "x": false\n  }\n }\n'::json);	\N	357738cadc59cd69eeb683e8e0f8fd8d	;	\N	\N
+589302	7	44b90	2014-05-11 05:28:27.178	-- this version is using your browser's built-in SQLite\nCREATE TABLE supportContacts\n\t(\n     id integer primary key, \n     type varchar(20), \n     details varchar(30)\n    );\n\nINSERT INTO supportContacts\n(id, type, details)\nVALUES\n(1, 'Email', 'admin@sqlfiddle.com');\n\nINSERT INTO supportContacts\n(id, type, details)\nVALUES\n(2, 'Twitter', '@sqlfiddle');	\N	44b900020923ae6d1b517286d9440347	;	\N	\N
+589303	5	b5362	2014-05-11 05:30:43.667	CREATE TABLE supportContacts \n\t(\n     id integer primary key, \n     type varchar(20), \n     details varchar(30)\n    );\n\nINSERT INTO supportContacts\n(id, type, details)\nVALUES\n(1, 'Email', 'admin@sqlfiddle.com');\n\nINSERT INTO supportContacts\n(id, type, details)\nVALUES\n(2, 'Twitter', '@sqlfiddle');	\N	b5362d09c5119808a6c7409fd00a64b7	;	\N	\N
+\.
 
 --
 -- Name: schema_defs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('schema_defs_id_seq', 589268, true);
+SELECT pg_catalog.setval('schema_defs_id_seq', 589303, true);
 
+--
+-- Data for Name: queries; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY queries (schema_def_id, sql, md5, id, statement_separator, author_id) FROM stdin;
+589300	-- visit ForgeRock.com for details on the Open Identity Stack\n-- sqlfiddle.com is built with OpenIDM\n\nSELECT\n  productName,\n  description\nFROM\n  ForgeRock	486c85215008690438a43ad3fab9b0f7	1	;	\N
+589301	SELECT\n  json_extract_path_text(data, 'b') as b,\n  json_array_length(data->'c') as numAnimals\nFROM \n  jsonData\nWHERE\n  json_extract_path_text(data->'d', 'x') = 'true'\n	afe7d9b310445307acdfadba54e5c4dd	1	;	\N
+589302	select * from supportContacts\norder by id desc	7f9a9b537f2a77076a5be8b98c5d1ae3	1	;	\N
+589303	select * from supportContacts\norder by id desc	7f9a9b537f2a77076a5be8b98c5d1ae3	1	;	\N
+\.
 
 --
 -- Name: user_fiddles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
