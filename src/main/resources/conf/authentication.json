@@ -8,6 +8,7 @@
     },
     "defaultUserRoles" : [ ],
     "serverAuthContext" : {
+
         "sessionModule" : {
             "name" : "JWT_SESSION",
             "properties" : {
@@ -25,13 +26,16 @@
             {
                 "name" : "INTERNAL_USER",
                 "properties" : {
+                    "queryId" : "credential-internaluser-query",
+                    "queryOnResource" : "repo/internal/user",
                     "propertyMapping" : {
-                        "authenticationId" : "_id",
+                        "authenticationId" : "username",
                         "userCredential" : "password",
                         "userRoles" : "roles"
                     },
                     "defaultUserRoles" : [ ]
-                }
+                },
+                "enabled" : true
             }
         ]
     }

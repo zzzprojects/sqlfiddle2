@@ -33,7 +33,7 @@ if (schema_def.context == "host") {
 
     if (hostLink == null) {
         def recon = openidm.action("recon", 
-            "reconById", 
+            "reconById", [:],
             [
                 "mapping" : "fiddles_hosts",
                 "ids" : schema_def._id,

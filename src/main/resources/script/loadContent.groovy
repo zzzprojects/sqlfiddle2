@@ -21,7 +21,7 @@ if (fragment_parts.size() > 2) {
     response["sql"] = query.sql
     response["id"] = query.id
 
-    response["sets"] = openidm.action("endpoint/executeQuery", "query", [:], [
+    response["sets"] = openidm.action("endpoint/executeQuery", "query", [
             "db_type_id": fragment_parts[0],
             "schema_short_code": fragment_parts[1],
             "sql": query.sql,

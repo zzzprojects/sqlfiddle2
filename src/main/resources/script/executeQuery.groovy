@@ -45,8 +45,8 @@ if (schema_def.context == "host") {
         ]).result[0]
 
     if (hostLink == null) {
-        openidm.action("recon", 
-            "reconById", 
+        openidm.action("recon",
+            "reconById", [:],
             [
                 "mapping" : "fiddles_hosts",
                 "ids" : schema_def._id,
