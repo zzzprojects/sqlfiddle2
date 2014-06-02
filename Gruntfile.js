@@ -3,16 +3,16 @@ module.exports = function(grunt) {
     grunt.initConfig({
         watch: {
             copy: {
-                files: ['../ui/**/*.js','../script/*.js','../**/*.groovy', '../ui/**/*.html', '../conf/*.json', '../ui/**/*.less', '../ui/**/*.css'],
+                files: ['src/main/resources/ui/**/*.js','src/main/resources/script/*.js','src/main/resources/**/*.groovy', 'src/main/resources/ui/**/*.html', 'src/main/resources/conf/*.json', 'src/main/resources/ui/**/*.less', 'src/main/resources/ui/**/*.css'],
                 tasks: [ 'sync' ]
             }
         },
         sync: {
             custom: {
                 files: [{
-                    cwd     : '..',
+                    cwd     : 'src/main/resources',
                     src     : ['**/*'], 
-                    dest    : '../../../../target/sqlfiddle',
+                    dest    : 'target/sqlfiddle',
                     flatten : false,
                     expand  : true
                 }]

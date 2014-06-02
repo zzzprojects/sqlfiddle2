@@ -11,9 +11,6 @@
             <directory>${basedir}/src/main/resources</directory>
             <outputDirectory>/</outputDirectory>
             <fileMode>0640</fileMode>
-            <excludes>
-                <exclude>dev/*</exclude>
-            </excludes>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/idm-staging/openidm</directory>

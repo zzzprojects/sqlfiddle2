@@ -1,5 +1,6 @@
 .project
 .vagrant
 .DS_Store
+node_modules
 target
 src/main/resources/dev/node_modules
