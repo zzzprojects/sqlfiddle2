@@ -29,9 +29,8 @@ if (schema_def.context == "host") {
             "firstId" : schema_def._id
         ]).result[0]
 
-    def auditDetails
-
     if (hostLink == null) {
+
         def recon = openidm.action("recon", 
             "reconById", [:],
             [
@@ -41,21 +40,25 @@ if (schema_def.context == "host") {
             ]
         )
 
-        auditDetails = openidm.query("audit/recon", [
+        def auditDetails = openidm.query("audit/recon", [
             "_queryId": "audit-by-recon-id-type",
             "reconId": recon._id, 
             "entryType": ""
         ])
 
-    }
+        if (auditDetails.result[0].status == "SUCCESS") {
+            response._id = schema_def._id
+            response.short_code = fragment_parts[1]
+        } else {
+            response.error = auditDetails.result[0].messageDetail.get('cause').get('message')
+            openidm.delete("system/fiddles/schema_defs/" + schema_def._id, null)
+        }
 
-    if (auditDetails.result[0].status == "SUCCESS") {
+    } else {
         response._id = schema_def._id
         response.short_code = fragment_parts[1]
-    } else {
-        response.error = auditDetails.result[0].messageDetail.message
-        openidm.delete("system/fiddles/schema_defs/" + schema_def._id, null)
     }
+
 
 } else {
     response._id = schema_def._id
