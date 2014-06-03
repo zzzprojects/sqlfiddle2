@@ -1,0 +1,17 @@
+{
+    "filters" : [
+        {
+            "onRequest" : {
+                "type" : "text/javascript",
+                "file" : "router-authz.js"
+            }
+        },
+        {
+            "pattern" : "system/hosts/databases",
+            "onFailure" : {
+                "type" : "text/javascript",
+                "source" : ""
+            }
+        }
+    ]
+}
