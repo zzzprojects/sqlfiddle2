@@ -27,7 +27,7 @@ def m = openidm.create("system/fiddles/queries",
         "md5": "n/a",
         "sql": content.sql,
         "statement_separator": content.statement_separator,
-        "schema_def_id": schema_def.id
+        "schema_def_id": schema_def.schema_def_id
     ]
 )._id =~ /^\d+_\w+_(\d+)*$/
 

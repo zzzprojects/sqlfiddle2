@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.forgerock.openicf.connectors</groupId>
             <artifactId>scriptedsql-connector</artifactId>
-            <version>1.1.0.1</version>
+            <version>1.1.1.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

@@ -7,7 +7,7 @@
             "sourceQuery" : {
                 "queryFilter" : "context eq \"host\" and minutes_since_last_used lt 30"
             },
-            "allowEmptySourceSet": true,
+            "allowEmptySourceSet" : true,
             "validSource" : {
                 "type" : "text/javascript",
                 "source" : "source.minutes_since_last_used < 30"

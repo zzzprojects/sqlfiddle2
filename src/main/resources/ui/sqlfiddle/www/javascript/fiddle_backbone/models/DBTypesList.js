@@ -13,6 +13,7 @@ define(["jQuery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Bac
                 }
             }).then(function (qry) {
                 _this.reset(_.map(qry.result, function (r) {
+                    r.id = r.db_type_id;
                     return new DBType(r);
                 }));
                 return _this;

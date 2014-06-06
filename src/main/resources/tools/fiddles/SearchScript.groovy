@@ -64,11 +64,13 @@ def fieldMap = [
     "schema_defs": [
         "__NAME__": "s.id",
         "__UID__": "(s.db_type_id || '_' || s.short_code)",
+        "schema_def_id": "s.id",
         "last_used": "to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS')",
         "minutes_since_last_used": "floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60)"
     ],
     "queries": [
         "__NAME__": "q.md5",
+        "query_id": "q.id",
         "__UID__": "(s.db_type_id || '_' || s.short_code || '_' || q.id)"
     ]
 ]
@@ -99,7 +101,9 @@ queryParser = { queryObj ->
             whereParams.push("%" + queryObj.get("right"))
         } else if (queryObj.get("operation") == "STARTSWITH") {
             whereParams.push(queryObj.get("right") + "%")
-        } else if (queryObj.get("left") == "minutes_since_last_used" || queryObj.get("left") == "schema_def_id") {
+        } else if (queryObj.get("left") == "minutes_since_last_used" || 
+                   queryObj.get("left") == "schema_def_id" ||
+                   (objectClass == "db_types" && queryObj.get("left") == "__UID__")) {
             whereParams.push(queryObj.get("right").toInteger())
         } else {
             whereParams.push(queryObj.get("right"))
@@ -155,7 +159,7 @@ switch ( objectClass ) {
         result.add([
             __NAME__:it.md5,
             __UID__: it.db_type_id + '_' + it.short_code,
-            id:it.id.toInteger(),
+            schema_def_id:it.id.toInteger(),
             db_type_id:it.db_type_id.toInteger(), 
             context: it.context,
             fragment: it.db_type_id + '_' + it.short_code,
@@ -192,7 +196,7 @@ switch ( objectClass ) {
             __UID__: it.db_type_id + '_' + it.short_code + '_' + it.id,
             fragment: it.db_type_id + '_' + it.short_code + '_' + it.id,
             md5: it.md5,
-            id:it.id.toInteger(),
+            query_id:it.id.toInteger(),
             schema_def_id:it.schema_def_id.toInteger(), 
             sql: it.sql,
             statement_separator:it.statement_separator

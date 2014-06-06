@@ -147,7 +147,7 @@ switch ( objectClass ) {
             } catch (e) {
                 hostConnection.close()
                 drop_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
-                throw new ConnectorException(e.getMessage(), e)
+                throw new ConnectorException(e.getMessage())
             } finally {
                 hostConnection.close()
                 adminHostConnection.close()

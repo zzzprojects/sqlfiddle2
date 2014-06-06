@@ -2,7 +2,7 @@
     "name" : "fiddles",
     "connectorRef" : {
         "bundleName" : "org.forgerock.openicf.connectors.scriptedsql-connector",
-        "bundleVersion" : "1.1.0.1",
+        "bundleVersion" : "1.1.1.0-RC1",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
@@ -57,7 +57,7 @@
             "type" : "object",
             "nativeType" : "db_types",
             "properties" : {
-                "id" : {
+                "db_type_id" : {
                     "type" : "integer",
                     "required" : false,
                     "nativeName" : "__UID__",
@@ -125,10 +125,10 @@
             "type" : "object",
             "nativeType" : "schema_defs",
             "properties" : {
-                "id" : {
+                "schema_def_id" : {
                     "type" : "integer",
                     "required" : false,
-                    "nativeName" : "id",
+                    "nativeName" : "schema_def_id",
                     "nativeType" : "integer"
                 },
                 "db_type_id" : {
@@ -255,10 +255,10 @@
                     "nativeName" : "schema_def_id",
                     "nativeType" : "integer"
                 },
-                "id" : {
+                "query_id" : {
                     "type" : "integer",
                     "required" : false,
-                    "nativeName" : "id",
+                    "nativeName" : "query_id",
                     "nativeType" : "integer"
                 }
             }
