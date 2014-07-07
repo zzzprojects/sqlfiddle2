@@ -2,7 +2,7 @@
     "name" : "hosts",
     "connectorRef" : {
         "bundleName" : "org.forgerock.openicf.connectors.scriptedsql-connector",
-        "bundleVersion" : "1.1.1.0-RC1",
+        "bundleVersion" : "1.1.1.0",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
