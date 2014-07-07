@@ -1,14 +1,6 @@
 {
-    "eventTypes" : {
-        "activity" : { },
-        "recon" : { }
-    },
-    "logTo" : [
-        {
-            "logType" : "repository",
-            "useForQueries" : true
-        }
-    ],
+    "eventTypes" : { },
+    "logTo" : [ ],
     "exceptionFormatter" : {
         "type" : "text/javascript",
         "file" : "bin/defaults/script/audit/stacktraceFormatter.js"

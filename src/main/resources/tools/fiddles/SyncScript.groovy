@@ -56,32 +56,67 @@ import groovy.sql.DataSet;
 log.info("Entering "+action+" Script");
 def sql = new Sql(connection);
 
-if (action.equalsIgnoreCase("GET_LATEST_SYNC_TOKEN")) {
-    row = sql.firstRow("select timestamp from Users order by timestamp desc")
-    log.ok("Get Latest Sync Token script: last token is: "+row["timestamp"])
-    // We don't wanna return the java.sql.Timestamp, it is not a supported data type
-    // Get the 'long' version
-    return row["timestamp"].getTime();
-}
+switch ( objectClass ) {
+    case "schema_defs":
 
-else if (action.equalsIgnoreCase("SYNC")) {
-    def result = []
-    def tstamp = null
-    if (token != null){
-        tstamp = new java.sql.Timestamp(token)
-    }
-    else{
-        def today= new Date()
-        tstamp = new java.sql.Timestamp(today.time)
-    }
+        if (action.equalsIgnoreCase("GET_LATEST_SYNC_TOKEN")) {
 
-    sql.eachRow("select * from Users where timestamp > ${tstamp}",
-        {result.add([operation:"CREATE_OR_UPDATE", uid:it.uid, token:it.timestamp.getTime(), attributes:[firstname:it.firstname, lastname:it.lastname, email:it.email]])}
-    )
-    log.ok("Sync script: found "+result.size()+" events to sync")
-    return result;
-    }
-else { // action not implemented
-    log.error("Sync script: action '"+action+"' is not implemented in this script")
-    return null;
+            row = sql.firstRow("""
+                SELECT 
+                    to_char(max(last_used), 'YYYY-MM-DD HH24:MI:SS.MS') as latest_used 
+                FROM 
+                    schema_defs
+            """)
+            println ("Sync token found: " + row["latest_used"])
+            return row["latest_used"]
+
+        } else if (action.equalsIgnoreCase("SYNC")) {
+            def result = []
+
+            sql.eachRow("""
+                SELECT
+                    s.id,
+                    s.db_type_id,
+                    s.short_code,
+                    to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS') as last_used,
+                    floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60) as minutes_since_last_used,
+                    s.ddl,
+                    s.statement_separator
+                FROM 
+                    schema_defs s
+                WHERE 
+                    last_used > ?
+                """, [Date.parse("yyyy-MM-dd HH:mm:ss.S", token).toTimestamp()]) {
+
+                println ("Found record: " + it.db_type_id + '_' + it.short_code)
+
+                result.add([
+                    operation: "CREATE_OR_UPDATE", 
+                    uid: it.db_type_id + '_' + it.short_code, 
+                    token: it.last_used, 
+                    attributes: [
+                        schema_def_id:it.id.toInteger(),
+                        db_type_id:it.db_type_id.toInteger(), 
+                        fragment: it.db_type_id + '_' + it.short_code,
+                        ddl: it.ddl,
+                        last_used:it.last_used,
+                        minutes_since_last_used:it.minutes_since_last_used != null ? it.minutes_since_last_used.toInteger(): null, 
+                        short_code:it.short_code,
+                        statement_separator:it.statement_separator
+                    ]
+                ])
+            }
+            println result
+            return result
+
+        } else { // action not implemented
+            log.error("Sync script: action '"+action+"' is not implemented in this script")
+            return null;
+        }
+
+    break
+
+    default: 
+        return null
+
 }

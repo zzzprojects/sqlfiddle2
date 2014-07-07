@@ -26,7 +26,9 @@
 
 import groovy.sql.Sql;
 import groovy.sql.DataSet;
-import java.security.MessageDigest;
+import java.security.MessageDigest
+
+def digest = MessageDigest.getInstance("MD5")
 
 // Parameters:
 // The connector sends us the following:
@@ -41,116 +43,40 @@ import java.security.MessageDigest;
 // options: a handler to the OperationOptions Map
 
 def sql = new Sql(connection);
-def digest = MessageDigest.getInstance("MD5");
 
 //Create must return UID. 
 
 switch ( objectClass ) {
 
-    // both schema_defs and queries will return an existing ID if provided
-    // with a duplicate ddl / sql (respectively)
     case "schema_defs":
 
-        def db_type_id = attributes.get("db_type_id").get(0).toInteger()
-        def ddl = attributes.get("ddl").get(0)
-        def statement_separator = attributes.get("statement_separator").get(0)
-        def existing_schema = false
-        def md5hash
-        
-        if (statement_separator != ";") {
-            md5hash = new BigInteger(
-                                1, digest.digest( ddl.getBytes() )
-                            ).toString(16).padLeft(32,"0")
-        } else {
-            md5hash = new BigInteger(
-                                1, digest.digest( (statement_separator + ddl).getBytes() )
-                            ).toString(16).padLeft(32,"0")
-        }
-
-        sql.eachRow("""
-            SELECT 
-                id,
-                short_code 
-            FROM 
+        sql.executeInsert("""
+            INSERT INTO 
                 schema_defs 
-            WHERE 
-                db_type_id = ? AND 
-                md5 = ?
-            """, 
+            (
+                db_type_id,
+                short_code,
+                ddl,
+                md5,
+                statement_separator,
+                last_used
+            ) 
+            VALUES (?,?,?,?,?,current_timestamp)
+            """,
             [
-                db_type_id, 
-                md5hash
-            ]) {
-            existing_schema = db_type_id + "_" + it.short_code
-        }
+                attributes.get("db_type_id").get(0).toInteger(),
+                attributes.get("short_code").get(0),
+                attributes.get("ddl").get(0),
+                id,
+                attributes.get("statement_separator").get(0)
+            ])
 
-        if (existing_schema) {
-            sql.execute("""
-                UPDATE
-                    schema_defs
-                SET
-                    last_used = current_timestamp
-                WHERE
-                    db_type_id = ? AND
-                        md5 = ?
-                """,
-                [
-                    db_type_id,
-                    md5hash
-                ]);
+        return attributes.get("db_type_id").get(0).toInteger() + "_" + attributes.get("short_code").get(0)
 
-            return existing_schema
-        } else {
-
-            def short_code = md5hash.substring(0,5)
-            def checkedUniqueCode = false
-
-            while (!checkedUniqueCode) {
-                checkedUniqueCode = true
-                sql.eachRow("""
-                    SELECT 
-                        id 
-                    FROM 
-                        schema_defs 
-                    WHERE 
-                        short_code = ? AND 
-                        db_type_id = ?
-                    """, 
-                    [ 
-                        short_code, 
-                        db_type_id 
-                    ]) {
-                    short_code = md5hash.substring(0,short_code.size()+1)
-                    checkedUniqueCode = false
-                }
-            }
-            sql.executeInsert("""
-                INSERT INTO 
-                    schema_defs 
-                (
-                    db_type_id,
-                    short_code,
-                    ddl,
-                    md5,
-                    statement_separator,
-                    last_used
-                ) 
-                VALUES (?,?,?,?,?,current_timestamp)
-                """,
-                [
-                    db_type_id,
-                    short_code,
-                    ddl,
-                    md5hash,
-                    ';'
-                ])
-
-            return db_type_id + "_" + short_code
-
-        }
 
     break
 
+    // queries will return an existing ID if provided with duplicate sql
     case "queries":
 
         def statement_separator = attributes.get("statement_separator").get(0)

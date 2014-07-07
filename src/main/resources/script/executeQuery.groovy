@@ -36,7 +36,6 @@ int queryId = m[0][1].toInteger()
 def response = [ID: queryId]
 
 if (schema_def.context == "host") {
-
     // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
     def hostLink = openidm.query("repo/link", [
             "_queryId": "links-for-firstId",
@@ -68,8 +67,6 @@ if (schema_def.context == "host") {
     // We get the details about how to connect to the running DB by doing a read on it
     def hostDatabase = openidm.read("system/hosts/databases/" + hostLink.secondId)
     def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
-
-
 
 
     def sets = []

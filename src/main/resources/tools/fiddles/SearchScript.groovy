@@ -62,7 +62,7 @@ def fieldMap = [
         "__UID__": "d.id"
     ],
     "schema_defs": [
-        "__NAME__": "s.id",
+        "__NAME__": "s.md5",
         "__UID__": "(s.db_type_id || '_' || s.short_code)",
         "schema_def_id": "s.id",
         "last_used": "to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS')",
@@ -103,6 +103,7 @@ queryParser = { queryObj ->
             whereParams.push(queryObj.get("right") + "%")
         } else if (queryObj.get("left") == "minutes_since_last_used" || 
                    queryObj.get("left") == "schema_def_id" ||
+                   queryObj.get("left") == "db_type_id" ||
                    (objectClass == "db_types" && queryObj.get("left") == "__UID__")) {
             whereParams.push(queryObj.get("right").toInteger())
         } else {
