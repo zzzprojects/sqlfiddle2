@@ -7,6 +7,17 @@
             }
         },
         {
+            "pattern" : "repo/internal/user.*",
+            "onRequest" : {
+                "type" : "text/javascript",
+                "source" : "request.content.password = require('crypto').encrypt(request.content.password);"
+            },
+            "methods" : [
+                "create",
+                "update"
+            ]
+        },
+        {
             "pattern" : "system/hosts/databases",
             "onFailure" : {
                 "type" : "text/javascript",
