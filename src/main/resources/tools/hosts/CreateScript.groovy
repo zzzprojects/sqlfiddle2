@@ -124,6 +124,8 @@ switch ( objectClass ) {
             populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
             hostConnection = Sql.newInstance(populatedUrl, attributes.username.get(0), attributes.pw.get(0), it.jdbc_class_name)
 
+            hostConnection.withStatement { it.queryTimeout = 10 }
+
             def ddl = ""
             if (attributes.ddl) {
                 ddl = attributes.ddl.get(0)

@@ -69,6 +69,8 @@ if (schema_def.context == "host") {
     def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
 
 
+    hostConnection.withStatement { it.queryTimeout = 10 }
+
     def sets = []
 
     hostConnection.withTransaction {
