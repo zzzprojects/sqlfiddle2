@@ -1,17 +1,22 @@
 #!/bin/bash
 
+echo mysql-community-server mysql-community-server/root-pass password password | sudo debconf-set-selections
+echo mysql-community-server mysql-community-server/re-root-pass password password | sudo debconf-set-selections
+echo mysql-community-server mysql-community-server/remove-data-dir select false | sudo debconf-set-selections
+echo mysql-community-server mysql-community-server/remove-test-db select false | sudo debconf-set-selections
+echo mysql-community-server mysql-community-server/data-dir select "" | sudo debconf-set-selections
+
 apt-get -y update
-wget -q http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.17-debian6.0-i686.deb
-dpkg -i  mysql-*.deb
-cp /opt/mysql/server-5.6/support-files/mysql.server /etc/init.d/mysql.server && update-rc.d mysql.server defaults
+
 apt-get -y install libaio1
-groupadd mysql
-useradd mysql -g mysql
-chown -R mysql /opt/mysql/server-5.6/
-chgrp -R mysql /opt/mysql/server-5.6/
-/opt/mysql/server-5.6/scripts/mysql_install_db --user=mysql --datadir=/var/lib/mysql
-cp /vagrant/src/main/resources/db/mysql/my.cnf /etc
-rm /opt/mysql/server-5.6/my.cnf
-service mysql.server start
-echo 'export PATH=/opt/mysql/server-5.6/bin:$PATH' > ~vagrant/.bash_profile
-echo "grant all privileges on *.* to root@'%' identified by 'password' with grant option;" | /opt/mysql/server-5.6/bin/mysql -u root
+
+wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-community-client_5.6.20-1ubuntu12.04_i386.deb
+wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-community-server_5.6.20-1ubuntu12.04_i386.deb
+wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-common_5.6.20-1ubuntu12.04_i386.deb
+
+mkdir -p /etc/mysql/conf.d
+cp /vagrant/src/main/resources/db/mysql/my.cnf /etc/mysql/conf.d
+
+dpkg -i  mysql-*.deb
+
+echo "grant all privileges on *.* to root@'%' identified by 'password' with grant option;" | /usr/bin/mysql -u root -ppassword
