@@ -29,7 +29,7 @@ import groovy.sql.DataSet;
                 d.list_database_script, 
                 d.jdbc_class_name, 
                 h.id as host_id, 
-                h.jdbc_url_template, 
+                h.jdbc_url_template,
                 h.default_database, 
                 h.admin_username, 
                 h.admin_password 

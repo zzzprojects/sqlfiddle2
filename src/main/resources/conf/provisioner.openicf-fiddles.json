@@ -65,7 +65,7 @@
                     "flags" : [
                         "NOT_CREATABLE",
                         "NOT_UPDATEABLE"
-                    ]                    
+                    ]
                 },
                 "context" : {
                     "type" : "string",
@@ -116,7 +116,13 @@
                         "NOT_CREATABLE",
                         "NOT_UPDATEABLE"
                     ]
-                }       
+                },
+                "batch_separator" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "batch_separator",
+                    "nativeType" : "string"
+                }
             }
         },
         "schema_defs" : {
@@ -141,6 +147,36 @@
                     "type" : "string",
                     "required" : false,
                     "nativeName" : "context",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "execution_plan_prefix" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "execution_plan_prefix",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "execution_plan_suffix" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "execution_plan_suffix",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "execution_plan_xslt" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "execution_plan_xslt",
                     "nativeType" : "string",
                     "flags" : [
                         "NOT_CREATABLE",
@@ -218,6 +254,12 @@
                     "required" : false,
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
+                },
+                "batch_separator" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "batch_separator",
+                    "nativeType" : "string"
                 }
             }
         },
@@ -247,7 +289,7 @@
                     "required" : false,
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
-                },                
+                },
                 "schema_def_id" : {
                     "type" : "integer",
                     "required" : false,

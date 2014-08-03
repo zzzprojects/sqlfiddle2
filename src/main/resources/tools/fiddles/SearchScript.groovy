@@ -150,7 +150,11 @@ switch ( objectClass ) {
             s.statement_separator,
             d.simple_name,
             d.full_name,
-            d.context 
+            d.context,
+            d.execution_plan_prefix,
+            d.execution_plan_suffix,
+            d.execution_plan_xslt,
+            d.batch_separator
         FROM 
             schema_defs s 
                 INNER JOIN db_types d ON 
@@ -170,7 +174,11 @@ switch ( objectClass ) {
             short_code:it.short_code,
             statement_separator:it.statement_separator,
             simple_name:it.simple_name,
-            full_name:it.full_name
+            full_name:it.full_name,
+            execution_plan_prefix:it.execution_plan_prefix,
+            execution_plan_suffix:it.execution_plan_suffix,
+            execution_plan_xslt:it.execution_plan_xslt,
+            batch_separator:it.batch_separator
         ])
 
     }
@@ -214,7 +222,8 @@ switch ( objectClass ) {
             d.full_name,
             d.simple_name,
             d.jdbc_class_name,
-            d.sample_fragment
+            d.sample_fragment,
+            d.batch_separator
         FROM
             db_types d
         ${where}
@@ -228,7 +237,8 @@ switch ( objectClass ) {
             context:it.context,
             simple_name:it.simple_name,
             className:it.jdbc_class_name,
-            sample_fragment: it.sample_fragment
+            sample_fragment: it.sample_fragment,
+            batch_separator:it.batch_separator
         ])
 
     }
