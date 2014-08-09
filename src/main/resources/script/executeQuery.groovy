@@ -1,8 +1,12 @@
 
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
-import java.security.MessageDigest;
-import java.util.regex.Pattern;
+import groovy.transform.InheritConstructors
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import java.security.MessageDigest
+import java.util.regex.Pattern
+
+@InheritConstructors
+class PostgreSQLException extends Exception {}
 
 def content = request.getContent().asMap()
 
@@ -13,7 +17,8 @@ assert content.schema_short_code
 assert content.sql.size() <= 8000
 
 
-def execQueryStatement(connection, statement) {
+def execQueryStatement(connection, statement, rethrow) {
+
     def set = [ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true, STATEMENT: statement ]
     long startTime = (new Date()).toTimestamp().getTime()
 
@@ -61,6 +66,11 @@ def execQueryStatement(connection, statement) {
         // terrible, but if you have a better idea please post it here: http://stackoverflow.com/q/22592508/808921
         if ( ((Boolean) errorMessage =~ /No results were returned by the query/)) {
             set.EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
+        } else if ( ((Boolean) errorMessage =~ /current transaction is aborted, commands ignored until end of transaction block$/) && rethrow) {
+            throw new PostgreSQLException(statement)
+        } else if ( ((Boolean) errorMessage =~ /insert or update on table "deferred_.*" violates foreign key constraint "deferred_.*_ref"/)) {
+            set.ERRORMESSAGE = "Explicit commits are not allowed within the query panel."
+            set.SUCCEEDED = false
         } else if ( ((Boolean) errorMessage =~ /Cannot execute statement in a READ ONLY transaction./)) {
             set.ERRORMESSAGE = "DDL and DML statements are not allowed in the query panel for MySQL; only SELECT statements are allowed. Put DDL and DML in the schema panel."
             set.SUCCEEDED = false
@@ -138,64 +148,84 @@ if (schema_def.context == "host") {
     }
 
     def sets = []
+    def deferred_table = "DEFERRED_" + content.db_type_id + "_" + content.schema_short_code
 
-    hostConnection.withTransaction {
+    try {
 
-        def separator = content.statement_separator ? content.statement_separator : ";"
-        char newline = 10
-        char carrageReturn = 13
-        def statementGroups = Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)")
+        hostConnection.withTransaction {
 
-        if (schema_def.batch_separator && schema_def.batch_separator.size()) {
-            content.sql = content.sql.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
-        }
+            def separator = content.statement_separator ? content.statement_separator : ";"
+            char newline = 10
+            char carrageReturn = 13
+            def statementGroups = Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)")
 
-        try {
+            if (schema_def.batch_separator && schema_def.batch_separator.size()) {
+                content.sql = content.sql.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+            }
+            if (schema_def.simple_name == "Oracle") {
+                hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
+            } else if (schema_def.simple_name == "PostgreSQL" ) {
+                hostConnection.execute("INSERT INTO " + deferred_table + " VALUES (2)")
+            }
 
-            (statementGroups.matcher(content.sql)).each { statement ->
-                if (statement[1]?.size()) {
+            try {
 
-                    def executionPlan = null
+                (statementGroups.matcher(content.sql)).each { statement ->
+                    if (statement[1]?.size() && !((Boolean) statement[1] =~ /^\s*$/)) {
 
-                    if (schema_def.execution_plan_prefix || schema_def.execution_plan_suffix) {
-                        def executionPlanSQL = (schema_def.execution_plan_prefix?:"") + statement[1] + (schema_def.execution_plan_suffix?:"")
+                        def executionPlan = null
 
-                        executionPlanSQL = executionPlanSQL.replaceAll("#schema_short_code#", schema_def.short_code)
-                        executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", queryId.toString())
+                        if (schema_def.execution_plan_prefix || schema_def.execution_plan_suffix) {
+                            def executionPlanSQL = (schema_def.execution_plan_prefix?:"") + statement[1] + (schema_def.execution_plan_suffix?:"")
+                            executionPlanSQL = executionPlanSQL.replaceAll("#schema_short_code#", schema_def.short_code)
+                            executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", queryId.toString())
 
-                        if (schema_def.batch_separator && schema_def.batch_separator.size()) {
-                            executionPlanSQL = executionPlanSQL.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
-                        }
+                            if (schema_def.batch_separator && schema_def.batch_separator.size()) {
+                                executionPlanSQL = executionPlanSQL.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+                            }
 
-                        (statementGroups.matcher(executionPlanSQL)).each { executionPlanStatement ->
+                            // the savepoint for postgres allows us to fail safely if users provide DDL in their queries;
+                            // normally, this would result in an exception that breaks the rest of the transaction. Save points
+                            // preserve the transaction.
+                            if (schema_def.simple_name == "PostgreSQL") {
+                                hostConnection.execute("SAVEPOINT sp;")
+                            }
 
-                            if (executionPlanStatement[1]?.size()) {
-                                executionPlan = execQueryStatement(hostConnection,executionPlanStatement[1])
+                            (statementGroups.matcher(executionPlanSQL)).each { executionPlanStatement ->
+                                if (executionPlanStatement[1]?.size()) {
+                                    executionPlan = execQueryStatement(hostConnection,executionPlanStatement[1], false)
+                                }
+                            }
+                            
+                            if (schema_def.simple_name == "PostgreSQL") {
+                                hostConnection.execute("ROLLBACK TO sp;")
                             }
 
                         }
 
-                    }
+                        sets.add(execQueryStatement(hostConnection, statement[1], true))
 
+                        if (!sets[sets.size()-1]?.SUCCEEDED) {
+                            throw new Exception("Ending query execution")
+                        } else if (executionPlan?.SUCCEEDED) {
+                            sets[sets.size()-1].EXECUTIONPLAN = executionPlan.RESULTS
+                            sets[sets.size()-1].EXECUTIONPLANRAW = executionPlan.RESULTS
+                        }
 
-                    sets.add(execQueryStatement(hostConnection, statement[1]))
-
-                    if (!sets[sets.size()-1]?.SUCCEEDED) {
-                        throw new Exception("Ending query execution")
-                    } else if (executionPlan?.SUCCEEDED) {
-                        sets[sets.size()-1].EXECUTIONPLAN = executionPlan.RESULTS
-                        sets[sets.size()-1].EXECUTIONPLANRAW = executionPlan.RESULTS
                     }
 
                 }
-
+            } catch (PostgreSQLException e) {
+                throw e
+            } catch (e) {
+                // most likely the result of the inner throw "Ending query execution"
             }
 
-        } catch (e) {
-            // most likely the result of the inner throw "Ending query execution"
+            hostConnection.rollback();
         }
 
-        hostConnection.rollback();
+    } catch (PostgreSQLException e) {
+        sets.add(execQueryStatement(hostConnection, e.getMessage(), false))
     }
 
     hostConnection.close()
