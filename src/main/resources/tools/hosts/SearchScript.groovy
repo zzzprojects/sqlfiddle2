@@ -1,5 +1,7 @@
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import org.identityconnectors.framework.common.objects.filter.Filter
+import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
 
     def findDatabase = { schema_name, connection ->
@@ -67,50 +69,51 @@ import groovy.sql.DataSet;
             }
 
             def hostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
-            hostConnection.eachRow(it.list_database_script + schemaNameWhere, schemaNameWhereParams) {
-                def name = it.getAt(0)
+            hostConnection.eachRow(it.list_database_script + schemaNameWhere, schemaNameWhereParams) { row ->
+
+                def name = row.getAt(0)
                 def short_code_matcher = name =~ /^db_\d+_(.*)$/
                 def short_code = short_code_matcher[0][1]
                 populatedUrl = jdbc_url_template.replace("#databaseName#", name)
 
-                result.add([
-                    __UID__:name,
-                    __NAME__:name,
-                    db_type_id: db_type_id,
-                    jdbc_class_name: jdbc_class_name,
-                    simple_name: simple_name,
-                    full_name: full_name,
-                    jdbc_url: populatedUrl,
-                    username: "user_" + db_type_id + "_" + short_code,
-                    pw: db_type_id + "_" + short_code
-                ])
+                handler {
+                    uid name as String
+                    id name
+                    attribute 'db_type_id', db_type_id
+                    attribute 'jdbc_class_name', jdbc_class_name
+                    attribute 'simple_name', simple_name
+                    attribute 'full_name', full_name
+                    attribute 'jdbc_url', populatedUrl
+                    attribute 'username', "user_" + db_type_id + "_" + short_code
+                    attribute 'pw', db_type_id + "_" + short_code
+                }
             }
             hostConnection.close()
         }
 
         sql.close()
 
-        return result
-
     }
 
 
-
-
-def result = []
 def schema_name = null
 
-// The only query we support is on the schema_name
-if (query != null && (query.get("left") instanceof String) && (query.get("left") == "__UID__" || query.get("left") == "__NAME__")) {
-    schema_name = query.get("right")
-}
+def filter = filter as Filter
 
-switch ( objectClass ) {
+if (filter != null) {
+
+    def query = filter.accept(MapFilterVisitor.INSTANCE, null)
+
+    // The only query we support is on the schema_name
+    if (query != null && (query.get("left") instanceof String) && (query.get("left") == "__UID__" || query.get("left") == "__NAME__")) {
+        schema_name = query.get("right")
+    }
+    
+}
+switch ( objectClass.objectClassValue ) {
     case "databases":
-        result = findDatabase(schema_name, connection)
+        findDatabase(schema_name, connection)
     break
-
-    default:
-    result
 }
-return result
+
+return new SearchResult()

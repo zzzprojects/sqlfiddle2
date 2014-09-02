@@ -23,37 +23,10 @@
  *
  * $Id$
  */
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
-
-// Parameters:
-// The connector sends the following:
-// connection: handler to the SQL connection
-// objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
-// action: a string describing the action ("SEARCH" here)
-// log: a handler to the Log facility
-// options: a handler to the OperationOptions Map
-// query: a handler to the Query Map
-//
-// The Query map describes the filter used.
-//
-// query = [ operation: "CONTAINS", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "ENDSWITH", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "STARTSWITH", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "EQUALS", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "GREATERTHAN", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "GREATERTHANOREQUAL", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "LESSTHAN", left: attribute, right: "value", not: true/false ]
-// query = [ operation: "LESSTHANOREQUAL", left: attribute, right: "value", not: true/false ]
-// query = null : then we assume we fetch everything
-//
-// AND and OR filter just embed a left/right couple of queries.
-// query = [ operation: "AND", left: query1, right: query2 ]
-// query = [ operation: "OR", left: query1, right: query2 ]
-//
-// Returns: A list of Maps. Each map describing one row.
-// !!!! Each Map must contain a '__UID__' and '__NAME__' attribute.
-// This is required to build a ConnectorObject.
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import org.identityconnectors.framework.common.objects.filter.Filter
+import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
 //Need to handle the __UID__ and __NAME__ in queries
 def fieldMap = [
@@ -63,7 +36,7 @@ def fieldMap = [
     ],
     "schema_defs": [
         "__NAME__": "s.md5",
-        "__UID__": "(s.db_type_id || '_' || s.short_code)",
+        "__UID__": "s.db_type_id = ? AND s.short_code = ?",
         "schema_def_id": "s.id",
         "last_used": "to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS')",
         "minutes_since_last_used": "floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60)"
@@ -71,7 +44,7 @@ def fieldMap = [
     "queries": [
         "__NAME__": "q.md5",
         "query_id": "q.id",
-        "__UID__": "(s.db_type_id || '_' || s.short_code || '_' || q.id)"
+        "__UID__": "s.db_type_id = ? AND s.short_code = ? AND q.id = ?"
     ]
 ]
 
@@ -95,47 +68,78 @@ queryParser = { queryObj ->
         return "(" + queryParser(queryObj.right) + " " + queryObj.operation + " " + queryParser(queryObj.left) + ")"
     } else {
 
-        if (queryObj.get("operation") == "CONTAINS") {
-            whereParams.push("%" + queryObj.get("right") + "%")
-        } else if (queryObj.get("operation") == "ENDSWITH") {
-            whereParams.push("%" + queryObj.get("right"))
-        } else if (queryObj.get("operation") == "STARTSWITH") {
-            whereParams.push(queryObj.get("right") + "%")
-        } else if (queryObj.get("left") == "minutes_since_last_used" || 
-                   queryObj.get("left") == "schema_def_id" ||
-                   queryObj.get("left") == "db_type_id" ||
-                   (objectClass == "db_types" && queryObj.get("left") == "__UID__")) {
-            whereParams.push(queryObj.get("right").toInteger())
+
+        // special cases for concatenated-keys
+        if (objectClass.objectClassValue == "schema_defs" && queryObj.get("left") == "__UID__") {
+            def fragment_parts = queryObj.get("right").split("_")
+            assert fragment_parts.size() == 2
+
+            whereParams.push(fragment_parts[0].toInteger())
+            whereParams.push(fragment_parts[1])
+
+            return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
+
+        } else if (objectClass.objectClassValue == "queries" && queryObj.get("left") == "__UID__") {
+            def fragment_parts = queryObj.get("right").split("_")
+            assert fragment_parts.size() == 3
+
+            whereParams.push(fragment_parts[0].toInteger())
+            whereParams.push(fragment_parts[1])
+            whereParams.push(fragment_parts[2].toInteger())
+
+            return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
         } else {
-            whereParams.push(queryObj.get("right"))
+
+            if (queryObj.get("operation") == "CONTAINS") {
+                whereParams.push("%" + queryObj.get("right") + "%")
+            } else if (queryObj.get("operation") == "ENDSWITH") {
+                whereParams.push("%" + queryObj.get("right"))
+            } else if (queryObj.get("operation") == "STARTSWITH") {
+                whereParams.push(queryObj.get("right") + "%")
+
+            // integer parameters
+            } else if (queryObj.get("left") == "minutes_since_last_used" || 
+                       queryObj.get("left") == "schema_def_id" ||
+                       queryObj.get("left") == "db_type_id" ||
+                       (objectClass.objectClassValue == "db_types" && queryObj.get("left") == "__UID__")) {
+                whereParams.push(queryObj.get("right").toInteger())
+
+            } else {
+                whereParams.push(queryObj.get("right"))
+            }
+
+            if (fieldMap[objectClass.objectClassValue] && fieldMap[objectClass.objectClassValue][queryObj.get("left")]) {
+                queryObj.put("left",fieldMap[objectClass.objectClassValue][queryObj.get("left")])
+            }
+
+            def engine = new groovy.text.SimpleTemplateEngine()
+            def wt = whereTemplates.get(queryObj.get("operation"))
+            def binding = [left:queryObj.get("left"),not:queryObj.get("not")]
+            def template = engine.createTemplate(wt).make(binding)
+
+            return template.toString()
+
         }
-
-        if (fieldMap[objectClass] && fieldMap[objectClass][queryObj.get("left")]) {
-            queryObj.put("left",fieldMap[objectClass][queryObj.get("left")])
-        }
-
-        def engine = new groovy.text.SimpleTemplateEngine()
-        def wt = whereTemplates.get(queryObj.get("operation"))
-        def binding = [left:queryObj.get("left"),not:queryObj.get("not")]
-        def template = engine.createTemplate(wt).make(binding)
-
-        return template.toString()
     }
 }
 
-log.info("Entering "+action+" Script")
-
 def sql = new Sql(connection)
-def result = []
+def filter = filter as Filter
+
 def where = ""
 
-if (query != null) {
-    // We can use Groovy template engine to generate our custom SQL queries
-    where = "WHERE " + queryParser(query)
-    //println("Search WHERE clause is: ${where} + ${whereParams}")
+if (filter != null) {
+
+    def query = filter.accept(MapFilterVisitor.INSTANCE, null)
+
+    if (query != null) {
+        // We can use Groovy template engine to generate our custom SQL queries
+        where = "WHERE " + queryParser(query)
+        //println("Search WHERE clause is: ${where} + ${whereParams}")
+    }
 }
 
-switch ( objectClass ) {
+switch ( objectClass.objectClassValue ) {
     case "schema_defs":
 
     sql.eachRow("""
@@ -159,27 +163,27 @@ switch ( objectClass ) {
             schema_defs s 
                 INNER JOIN db_types d ON 
                     s.db_type_id = d.id
-        """ + where, whereParams) {
+        """ + where, whereParams) { row ->
 
-        result.add([
-            __NAME__:it.md5,
-            __UID__: it.db_type_id + '_' + it.short_code,
-            schema_def_id:it.id.toInteger(),
-            db_type_id:it.db_type_id.toInteger(), 
-            context: it.context,
-            fragment: it.db_type_id + '_' + it.short_code,
-            ddl: it.ddl,
-            last_used:it.last_used, 
-            minutes_since_last_used:it.minutes_since_last_used != null ? it.minutes_since_last_used.toInteger(): null, 
-            short_code:it.short_code,
-            statement_separator:it.statement_separator,
-            simple_name:it.simple_name,
-            full_name:it.full_name,
-            execution_plan_prefix:it.execution_plan_prefix,
-            execution_plan_suffix:it.execution_plan_suffix,
-            execution_plan_xslt:it.execution_plan_xslt,
-            batch_separator:it.batch_separator
-        ])
+        handler {
+            id row.md5
+            uid row.db_type_id + '_' + row.short_code as String
+            attribute 'schema_def_id', row.id.toInteger()
+            attribute 'db_type_id', row.db_type_id.toInteger()
+            attribute 'context', row.context
+            attribute 'fragment', row.db_type_id + '_' + row.short_code
+            attribute 'ddl', row.ddl
+            attribute 'last_used', row.last_used
+            attribute 'minutes_since_last_used', (row.minutes_since_last_used != null ? row.minutes_since_last_used.toInteger(): null)
+            attribute 'short_code', row.short_code
+            attribute 'statement_separator', row.statement_separator
+            attribute 'simple_name', row.simple_name
+            attribute 'full_name', row.full_name
+            attribute 'execution_plan_prefix', row.execution_plan_prefix
+            attribute 'execution_plan_suffix', row.execution_plan_suffix
+            attribute 'execution_plan_xslt', row.execution_plan_xslt
+            attribute 'batch_separator', row.batch_separator
+        }
 
     }
     break
@@ -198,18 +202,17 @@ switch ( objectClass ) {
             schema_defs s 
                 INNER JOIN queries q ON
                     q.schema_def_id = s.id
-        """ + where, whereParams) {
-
-        result.add([
-            __NAME__:it.md5, 
-            __UID__: it.db_type_id + '_' + it.short_code + '_' + it.id,
-            fragment: it.db_type_id + '_' + it.short_code + '_' + it.id,
-            md5: it.md5,
-            query_id:it.id.toInteger(),
-            schema_def_id:it.schema_def_id.toInteger(), 
-            sql: it.sql,
-            statement_separator:it.statement_separator
-        ])
+        """ + where, whereParams) { row ->
+        handler {
+            id row.md5
+            uid (row.db_type_id + '_' + row.short_code + '_' + row.id) as String
+            attribute 'fragment', row.db_type_id + '_' + row.short_code + '_' + row.id
+            attribute 'md5', row.md5
+            attribute 'query_id', row.id.toInteger()
+            attribute 'schema_def_id', row.schema_def_id.toInteger()
+            attribute 'sql', row.sql
+            attribute 'statement_separator', row.statement_separator
+        }
 
     }
     break
@@ -229,20 +232,19 @@ switch ( objectClass ) {
         ${where}
         ORDER BY
             d.full_name
-    """, whereParams) {
-
-        result.add([
-            __NAME__:it.full_name, 
-            __UID__: it.id.toInteger(),
-            context:it.context,
-            simple_name:it.simple_name,
-            className:it.jdbc_class_name,
-            sample_fragment: it.sample_fragment,
-            batch_separator:it.batch_separator
-        ])
+    """, whereParams) { row ->
+        handler {
+            id row.full_name
+            uid row.id as String
+            attribute 'context', row.context
+            attribute 'simple_name', row.simple_name
+            attribute 'className', row.jdbc_class_name
+            attribute 'sample_fragment', row.sample_fragment
+            attribute 'batch_separator', row.batch_separator
+        }
 
     }
     break
 }
 
-return result;
+return new SearchResult()

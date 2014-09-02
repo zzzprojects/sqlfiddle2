@@ -23,28 +23,26 @@
  *
  * $Id$
  */
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
 
 // Parameters:
 // The connector sends the following:
 // connection: handler to the SQL connection
-// action: a string describing the action ("DELETE" here)
 // log: a handler to the Log facility
 // objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
 // options: a handler to the OperationOptions Map
 // uid: String for the unique id that specifies the object to delete
 
-log.info("Entering "+action+" Script");
-def sql = new Sql(connection);
+def sql = new Sql(connection)
 
 assert uid != null
 
-switch ( objectClass ) {
+switch ( objectClass.objectClassValue ) {
     case "schema_defs":
-    sql.execute("DELETE FROM schema_defs s where (s.db_type_id || '_' || s.short_code) = ?",[uid])
+    sql.execute("DELETE FROM schema_defs s where (s.db_type_id || '_' || s.short_code) = ?",[uid.uidValue])
     break
 
     default:
-    uid;
+    uid
 }

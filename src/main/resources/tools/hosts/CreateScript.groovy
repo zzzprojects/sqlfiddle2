@@ -24,24 +24,15 @@
  * $Id$
  */
  
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
-import java.util.regex.Pattern;
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import java.util.regex.Pattern
+import org.identityconnectors.framework.common.objects.AttributesAccessor
+import org.identityconnectors.framework.common.exceptions.ConnectorException
+import org.identityconnectors.framework.common.objects.Uid
 
-import org.identityconnectors.framework.common.exceptions.ConnectorException;
-// Parameters:
-// The connector sends us the following:
-// connection : SQL connection
-// action: String correponding to the action ("CREATE" here)
-// log: a handler to the Log facility
-// objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
-// id: The entry identifier (OpenICF "Name" atribute. (most often matches the uid)
-// attributes: an Attribute Map, containg the <String> attribute name as a key
-// and the <List> attribute value(s) as value.
-// password: password string, clear text
-// options: a handler to the OperationOptions Map
 
-log.info("Entering "+action+" Script");
+def createAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
 def sql = new Sql(connection)
 
@@ -71,15 +62,13 @@ def findAvailableHost = { db_type_id ->
     return row.id
 }
 
-//Create must return UID. Let's return the name for now.
-
-switch ( objectClass ) {
+switch ( objectClass.objectClassValue ) {
     case "databases":
         String delimiter = (char) 7;
         char newline = 10;
         char carrageReturn = 13;
 
-        def host_id = findAvailableHost(attributes.db_type_id.get(0))
+        def host_id = findAvailableHost(createAttributes.findInteger("db_type_id"))
 
         sql.eachRow("""\
             SELECT 
@@ -122,18 +111,18 @@ switch ( objectClass ) {
             }
 
             populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
-            hostConnection = Sql.newInstance(populatedUrl, attributes.username.get(0), attributes.pw.get(0), it.jdbc_class_name)
+            hostConnection = Sql.newInstance(populatedUrl, createAttributes.findString("username"), createAttributes.findString("pw"), it.jdbc_class_name)
 
             hostConnection.withStatement { it.queryTimeout = 10 }
 
             def ddl = ""
-            if (attributes.ddl) {
-                ddl = attributes.ddl.get(0)
+            if (createAttributes.findString("ddl")) {
+                ddl = createAttributes.findString("ddl")
             }
 
             def statement_separator = ";"
-            if (attributes.statement_separator) {
-                statement_separator = attributes.statement_separator.get(0)
+            if (createAttributes.findString("statement_separator")) {
+                statement_separator = createAttributes.findString("statement_separator")
             }
 
             if (batch_separator && batch_separator.size()) {
@@ -163,4 +152,4 @@ switch ( objectClass ) {
     break
 }
 
-return id;
+return new Uid(id as String)

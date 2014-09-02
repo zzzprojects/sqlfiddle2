@@ -24,29 +24,20 @@
  * $Id$
  */
 
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
 import java.security.MessageDigest
+import org.identityconnectors.framework.common.objects.AttributesAccessor
+import org.identityconnectors.framework.common.objects.Uid
+
+def createAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
 def digest = MessageDigest.getInstance("MD5")
-
-// Parameters:
-// The connector sends us the following:
-// connection : SQL connection
-// action: String correponding to the action ("CREATE" here)
-// log: a handler to the Log facility
-// objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
-// id: The entry identifier (OpenICF "Name" atribute. (most often matches the uid)
-// attributes: an Attribute Map, containg the <String> attribute name as a key
-// and the <List> attribute value(s) as value.
-// password: password string, clear text
-// options: a handler to the OperationOptions Map
-
-def sql = new Sql(connection);
+def sql = new Sql(connection)
 
 //Create must return UID. 
 
-switch ( objectClass ) {
+switch ( objectClass.objectClassValue ) {
 
     case "schema_defs":
 
@@ -64,14 +55,14 @@ switch ( objectClass ) {
             VALUES (?,?,?,?,?,current_timestamp)
             """,
             [
-                attributes.get("db_type_id").get(0).toInteger(),
-                attributes.get("short_code").get(0),
-                attributes.get("ddl").get(0),
+                createAttributes.findInteger("db_type_id"),
+                createAttributes.findString("short_code"),
+                createAttributes.findString("ddl"),
                 id,
-                attributes.get("statement_separator").get(0)
+                createAttributes.findString("statement_separator")
             ])
 
-        return attributes.get("db_type_id").get(0).toInteger() + "_" + attributes.get("short_code").get(0)
+        return new Uid(createAttributes.findInteger("db_type_id").toString() + "_" + createAttributes.findString("short_code") as String)
 
 
     break
@@ -79,9 +70,9 @@ switch ( objectClass ) {
     // queries will return an existing ID if provided with duplicate sql
     case "queries":
 
-        def statement_separator = attributes.get("statement_separator").get(0)
-        def sql_query = attributes.get("sql").get(0)
-        def schema_def_id = attributes.get("schema_def_id").get(0).toInteger()
+        def statement_separator = createAttributes.findString("statement_separator")
+        def sql_query = createAttributes.findString("sql")
+        def schema_def_id = createAttributes.findInteger("schema_def_id")
 
         def md5hash
 
@@ -97,19 +88,14 @@ switch ( objectClass ) {
 
         def existing_query = sql.firstRow("""
             SELECT 
-                (
-                    SELECT 
-                        q.id
-                    FROM 
-                        queries q
-                    WHERE 
-                        q.schema_def_id = s.id AND
-                        q.md5 = ?
-                ) as queryId,
+                q.id as queryId,
                 s.db_type_id,
                 s.short_code
             FROM
                 schema_defs s
+                    LEFT OUTER JOIN queries q ON
+                       s.id = q.schema_def_id AND
+                       q.md5 = ?
             WHERE
                 s.id = ?
             """, [md5hash, schema_def_id])
@@ -158,15 +144,13 @@ switch ( objectClass ) {
                     ]
                 )
             }
-            return existing_query.db_type_id + "_" + existing_query.short_code + "_" + new_query.queryId
+            return new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + new_query.queryId) as String)
         } else {
-            return existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId
+            return new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId) as String)
         }
 
     break
-
-    default:
-    id;
 }
 
-return id;
+throw new UnsupportedOperationException(operation.name() + " operation of type:" +
+                objectClass.objectClassValue + " is not supported.")

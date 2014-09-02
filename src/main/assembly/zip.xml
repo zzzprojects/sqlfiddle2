@@ -56,8 +56,9 @@
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <!--<useTransitiveFiltering>true</useTransitiveFiltering>-->
             <excludes>
-                <exclude>org.forgerock.openidm:openidm-zip</exclude>
                 <exclude>org.forgerock.openicf.connectors*</exclude>
+                <exclude>org.apache.tomcat:tomcat-jdbc</exclude>
+                <exclude>org.apache.geronimo.ext.tomcat:juli</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -67,6 +68,17 @@
             <!--<useTransitiveFiltering>true</useTransitiveFiltering>-->
             <includes>
                 <include>org.forgerock.openicf.connectors*</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tomcat:tomcat-jdbc</include>
+                <include>org.apache.geronimo.ext.tomcat:juli</include>
+                <include>mysql:mysql-connector-java</include>
+                <include>org.postgresql:postgresql-fr-osgi</include>
             </includes>
         </dependencySet>
     </dependencySets>

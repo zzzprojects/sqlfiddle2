@@ -23,40 +23,22 @@
  *
  * $Id$
  */
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import org.forgerock.openicf.misc.scriptedcommon.OperationType
+import org.identityconnectors.framework.common.exceptions.ConnectorException
+import org.identityconnectors.framework.common.objects.AttributesAccessor
 
-// Parameters:
-// The connector sends us the following:
-// connection : SQL connection
-//
-// action: String correponding to the action (UPDATE/ADD_ATTRIBUTE_VALUES/REMOVE_ATTRIBUTE_VALUES)
-//   - UPDATE : For each input attribute, replace all of the current values of that attribute
-//     in the target object with the values of that attribute.
-//   - ADD_ATTRIBUTE_VALUES: For each attribute that the input set contains, add to the current values
-//     of that attribute in the target object all of the values of that attribute in the input set.
-//   - REMOVE_ATTRIBUTE_VALUES: For each attribute that the input set contains, remove from the current values
-//     of that attribute in the target object any value that matches one of the values of the attribute from the input set.
+def operation = operation as OperationType
+def sql = new Sql(connection)
+def fragment_parts = uid.uidValue.split("_")
+def updateAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
-// log: a handler to the Log facility
-//
-// objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
-//
-// uid: a String representing the entry uid
-//
-// attributes: an Attribute Map, containg the <String> attribute name as a key
-// and the <List> attribute value(s) as value.
-//
-// password: password string, clear text (only for UPDATE)
-//
-// options: a handler to the OperationOptions Map
+assert fragment_parts.size() == 2
 
-log.info("Entering "+action+" Script");
-def sql = new Sql(connection);
-
-switch ( action ) {
-    case "UPDATE":
-    switch ( objectClass ) {
+switch ( operation ) {
+    case OperationType.UPDATE:
+    switch ( objectClass.objectClassValue ) {
 
         case "schema_defs":
         sql.executeUpdate("""
@@ -65,22 +47,27 @@ switch ( action ) {
             SET 
                 last_used = ? 
             WHERE 
-                (s.db_type_id || '_' || s.short_code) = ?
+                s.db_type_id  = ? AND
+                s.short_code = ?
             """, 
             [
-                Date.parse("yyyy-MM-dd HH:mm:ss.S", attributes.last_used[0]).toTimestamp(), 
-                uid
+                Date.parse("yyyy-MM-dd HH:mm:ss.S", updateAttributes.findString("last_used")).toTimestamp(), 
+                fragment_parts[0].toInteger(),
+                fragment_parts[1]
             ]
         );
         break
-
-        default:
-        uid;
     }
     break
 
+    case OperationType.ADD_ATTRIBUTE_VALUES:
+        throw new UnsupportedOperationException(operation.name() + " operation of type:" +
+                objectClass.objectClassValue + " is not supported.")
+    case OperationType.REMOVE_ATTRIBUTE_VALUES:
+        throw new UnsupportedOperationException(operation.name() + " operation of type:" +
+                objectClass.objectClassValue + " is not supported.")
     default:
-    uid
+        throw new ConnectorException("UpdateScript can not handle operation:" + operation.name())
 }
 
-return uid;
+return uid

@@ -29,10 +29,8 @@ import groovy.sql.DataSet;
 // Parameters:
 // The connector sends the following:
 // connection: handler to the SQL connection
-// action: a string describing the action ("TEST" here)
 // log: a handler to the Log facility
 
-log.info("Entering "+action+" Script");
 def sql = new Sql(connection);
 
 sql.eachRow("select count(id) as numTypes from db_types", { println it.numTypes} );

@@ -1,8 +1,8 @@
 {
     "name" : "fiddles",
     "connectorRef" : {
-        "bundleName" : "org.forgerock.openicf.connectors.scriptedsql-connector",
-        "bundleVersion" : "1.1.1.0",
+        "bundleName" : "org.forgerock.openicf.connectors.groovy-connector",
+        "bundleVersion" : "1.4.0.0",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
@@ -29,22 +29,19 @@
         "SCHEMA" : -1
     },
     "configurationProperties" : {
-        "host" : "SQLFIDDLE_HOST",
-        "port" : "5432",
-        "user" : "postgres",
+        "username" : "postgres",
         "password" : "password",
-        "database" : "sqlfiddle",
+        "driverClassName" : "org.postgresql.Driver",
+        "url" : "jdbc:postgresql://SQLFIDDLE_HOST:5432/sqlfiddle",
         "autoCommit" : true,
         "reloadScriptOnExecution" : true,
-        "jdbcDriver" : "org.postgresql.Driver",
-        "jdbcConnectionUrl" : "jdbc:postgresql://SQLFIDDLE_HOST:5432/sqlfiddle",
-        "jdbcUrlTemplate" : "jdbc:postgresql://%h:%p/%d",
-        "createScriptFileName" : "&{launcher.project.location}/tools/fiddles/CreateScript.groovy",
-        "testScriptFileName" : "&{launcher.project.location}/tools/fiddles/TestScript.groovy",
-        "searchScriptFileName" : "&{launcher.project.location}/tools/fiddles/SearchScript.groovy",
-        "deleteScriptFileName" : "&{launcher.project.location}/tools/fiddles/DeleteScript.groovy",
-        "updateScriptFileName" : "&{launcher.project.location}/tools/fiddles/UpdateScript.groovy",
-        "syncScriptFileName" : "&{launcher.project.location}/tools/fiddles/SyncScript.groovy"
+        "createScriptFileName" : "CreateScript.groovy",
+        "testScriptFileName" : "TestScript.groovy",
+        "searchScriptFileName" : "SearchScript.groovy",
+        "updateScriptFileName" : "UpdateScript.groovy",
+        "classpath" : [
+            "&{launcher.project.location}/tools/fiddles"
+        ]
     },
     "syncFailureHandler" : {
         "maxRetries" : 5,
@@ -301,6 +298,69 @@
                     "required" : false,
                     "nativeName" : "query_id",
                     "nativeType" : "integer"
+                }
+            }
+        },
+        "query_sets": {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "query_sets",
+            "type" : "object",
+            "nativeType" : "query_sets",
+            "properties" : {
+                "_id" : {
+                    "type" : "integer",
+                    "nativeName" : "__UID__",
+                    "nativeType" : "integer"
+                },
+                "query_set_id" : {
+                    "type" : "integer",
+                    "nativeName" : "id",
+                    "nativeType" : "integer"
+                },
+                "query_id" : {
+                    "type" : "integer",
+                    "nativeName" : "query_id",
+                    "nativeType" : "integer"
+                },
+                "schema_def_id" : {
+                    "type" : "integer",
+                    "nativeName" : "schema_def_id",
+                    "nativeType" : "integer"
+                },
+                "row_count" : {
+                    "type" : "integer",
+                    "nativeName" : "row_count",
+                    "nativeType" : "integer"
+                },
+                "execution_time" : {
+                    "type" : "string",
+                    "nativeName" : "execution_time",
+                    "nativeType" : "string"
+                },
+                "execution_plan" : {
+                    "type" : "string",
+                    "nativeName" : "execution_plan",
+                    "nativeType" : "string"
+                },
+                "succeeded" : {
+                    "type" : "string",
+                    "nativeName" : "succeeded",
+                    "nativeType" : "string"
+                },
+                "error_message" : {
+                    "type" : "string",
+                    "nativeName" : "error_message",
+                    "nativeType" : "string"
+                },
+                "sql" : {
+                    "type" : "string",
+                    "nativeName" : "sql",
+                    "nativeType" : "string"
+                },
+                "columns_list" : {
+                    "type" : "string",
+                    "nativeName" : "columns_list",
+                    "nativeType" : "string"
                 }
             }
         }

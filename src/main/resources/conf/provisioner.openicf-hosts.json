@@ -1,8 +1,8 @@
 {
     "name" : "hosts",
     "connectorRef" : {
-        "bundleName" : "org.forgerock.openicf.connectors.scriptedsql-connector",
-        "bundleVersion" : "1.1.1.0",
+        "bundleName" : "org.forgerock.openicf.connectors.groovy-connector",
+        "bundleVersion" : "1.4.0.0",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
@@ -29,22 +29,19 @@
         "SCHEMA" : -1
     },
     "configurationProperties" : {
-        "host" : "SQLFIDDLE_HOST",
-        "port" : "5432",
-        "user" : "postgres",
+        "username" : "postgres",
         "password" : "password",
-        "database" : "sqlfiddle",
+        "driverClassName" : "org.postgresql.Driver",
+        "url" : "jdbc:postgresql://SQLFIDDLE_HOST:5432/sqlfiddle",
         "autoCommit" : true,
         "reloadScriptOnExecution" : true,
-        "jdbcDriver" : "org.postgresql.Driver",
-        "jdbcConnectionUrl" : "jdbc:postgresql://SQLFIDDLE_HOST:5432/sqlfiddle",
-        "jdbcUrlTemplate" : "jdbc:postgresql://%h:%p/%d",
-        "createScriptFileName" : "&{launcher.project.location}/tools/hosts/CreateScript.groovy",
-        "testScriptFileName" : "&{launcher.project.location}/tools/hosts/TestScript.groovy",
-        "searchScriptFileName" : "&{launcher.project.location}/tools/hosts/SearchScript.groovy",
-        "deleteScriptFileName" : "&{launcher.project.location}/tools/hosts/DeleteScript.groovy",
-        "updateScriptFileName" : "&{launcher.project.location}/tools/hosts/UpdateScript.groovy",
-        "syncScriptFileName" : "&{launcher.project.location}/tools/hosts/SyncScript.groovy"
+        "createScriptFileName" : "CreateScript.groovy",
+        "testScriptFileName" : "TestScript.groovy",
+        "searchScriptFileName" : "SearchScript.groovy",
+        "deleteScriptFileName" : "DeleteScript.groovy",
+        "classpath" : [
+            "&{launcher.project.location}/tools/hosts"
+        ]
     },
     "syncFailureHandler" : {
         "maxRetries" : 5,

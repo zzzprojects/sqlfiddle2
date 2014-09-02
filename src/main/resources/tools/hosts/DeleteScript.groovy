@@ -31,7 +31,6 @@ import groovy.sql.DataSet;
 // Parameters:
 // The connector sends the following:
 // connection: handler to the SQL connection
-// action: a string describing the action ("DELETE" here)
 // log: a handler to the Log facility
 // objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
 // options: a handler to the OperationOptions Map
@@ -41,13 +40,13 @@ def sql = new Sql(connection)
 def result = []
 
 assert uid != null
-switch ( objectClass ) {
+switch ( objectClass.objectClassValue ) {
     case "databases":
         String delimiter = (char) 7;
         char newline = 10;
         char carrageReturn = 13;
         
-        def dbTypeMatcher = uid =~ /^db_(\d+)_.*$/;
+        def dbTypeMatcher = uid.uidValue =~ /^db_(\d+)_.*$/;
         def db_type_id = dbTypeMatcher[0][1].toInteger();
 
         sql.eachRow("""\
@@ -73,7 +72,7 @@ switch ( objectClass ) {
             def host_id = it.host_id
 
             def hostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name);
-            def drop_script = it.drop_script_template.replaceAll('#databaseName#', uid.replaceFirst("db_", ""))
+            def drop_script = it.drop_script_template.replaceAll('#databaseName#', uid.uidValue.replaceFirst("db_", ""))
 
             if (it.batch_separator && it.batch_separator.size()) {
                 drop_script = drop_script.replaceAll(Pattern.compile(newline + it.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)

@@ -16,7 +16,6 @@ assert content.schema_short_code
 
 assert content.sql.size() <= 8000
 
-
 def execQueryStatement(connection, statement, rethrow) {
 
     def set = [ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true, STATEMENT: statement ]
@@ -71,7 +70,10 @@ def execQueryStatement(connection, statement, rethrow) {
         } else if ( ((Boolean) errorMessage =~ /insert or update on table "deferred_.*" violates foreign key constraint "deferred_.*_ref"/)) {
             set.ERRORMESSAGE = "Explicit commits are not allowed within the query panel."
             set.SUCCEEDED = false
-        } else if ( ((Boolean) errorMessage =~ /Cannot execute statement in a READ ONLY transaction./)) {
+        } else if ( 
+                ((Boolean) errorMessage =~ /Cannot execute statement in a READ ONLY transaction./) ||
+                ((Boolean) errorMessage =~ /Can not issue data manipulation statements with executeQuery/) 
+            ) {
             set.ERRORMESSAGE = "DDL and DML statements are not allowed in the query panel for MySQL; only SELECT statements are allowed. Put DDL and DML in the schema panel."
             set.SUCCEEDED = false
         } else {
@@ -102,11 +104,14 @@ def m = openidm.create("system/fiddles/queries",
     ]
 )._id =~ /^\d+_\w+_(\d+)*$/
 
+
+
 int queryId = m[0][1].toInteger()
 
 def response = [ID: queryId]
 
 if (schema_def.context == "host") {
+
     // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
     def hostLink = openidm.query("repo/link", [
             "_queryId": "links-for-firstId",

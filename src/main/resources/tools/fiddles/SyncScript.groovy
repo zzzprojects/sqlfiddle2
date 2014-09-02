@@ -23,24 +23,24 @@
  *
  * $Id$
  */
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import org.forgerock.openicf.misc.scriptedcommon.OperationType
 
 // Parameters:
 // The connector sends the following:
 // connection: handler to the SQL connection
 // objectClass: a String describing the Object class (__ACCOUNT__ / __GROUP__ / other)
-// action: a string describing the action ("SYNC" or "GET_LATEST_SYNC_TOKEN" here)
 // log: a handler to the Log facility
-// options: a handler to the OperationOptions Map (null if action = "GET_LATEST_SYNC_TOKEN")
-// token: a handler to an Object representing the sync token (null if action = "GET_LATEST_SYNC_TOKEN")
+// options: a handler to the OperationOptions Map (null if operation = "GET_LATEST_SYNC_TOKEN")
+// token: a handler to an Object representing the sync token (null if operation = "GET_LATEST_SYNC_TOKEN")
 //
 //
 // Returns:
-// if action = "GET_LATEST_SYNC_TOKEN", it must return an object representing the last known
+// if operation = "GET_LATEST_SYNC_TOKEN", it must return an object representing the last known
 // sync token for the corresponding ObjectClass
 // 
-// if action = "SYNC":
+// if operation = "SYNC":
 // A list of Maps . Each map describing one update:
 // Map should look like the following:
 //
@@ -53,13 +53,13 @@ import groovy.sql.DataSet;
 // "attributes":Map<String,List> of attributes name/values
 // ]
 
-log.info("Entering "+action+" Script");
-def sql = new Sql(connection);
+def sql = new Sql(connection)
+def operation = operation as OperationType
 
 switch ( objectClass ) {
     case "schema_defs":
 
-        if (action.equalsIgnoreCase("GET_LATEST_SYNC_TOKEN")) {
+        if (operation.equalsIgnoreCase(OperationType.GET_LATEST_SYNC_TOKEN)) {
 
             row = sql.firstRow("""
                 SELECT 
@@ -67,10 +67,10 @@ switch ( objectClass ) {
                 FROM 
                     schema_defs
             """)
-            println ("Sync token found: " + row["latest_used"])
+            //println ("Sync token found: " + row["latest_used"])
             return row["latest_used"]
 
-        } else if (action.equalsIgnoreCase("SYNC")) {
+        } else if (operation.equalsIgnoreCase(OperationType.SYNC)) {
             def result = []
 
             sql.eachRow("""
@@ -88,7 +88,7 @@ switch ( objectClass ) {
                     last_used > ?
                 """, [Date.parse("yyyy-MM-dd HH:mm:ss.S", token).toTimestamp()]) {
 
-                println ("Found record: " + it.db_type_id + '_' + it.short_code)
+                //println ("Found record: " + it.db_type_id + '_' + it.short_code)
 
                 result.add([
                     operation: "CREATE_OR_UPDATE", 
@@ -109,8 +109,8 @@ switch ( objectClass ) {
             println result
             return result
 
-        } else { // action not implemented
-            log.error("Sync script: action '"+action+"' is not implemented in this script")
+        } else { // operation not implemented
+            log.error("Sync script: operation '"+operation+"' is not implemented in this script")
             return null;
         }
 

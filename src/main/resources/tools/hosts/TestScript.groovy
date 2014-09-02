@@ -23,23 +23,30 @@
  *
  * $Id$
  */
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
 
 // Parameters:
 // The connector sends the following:
 // connection: handler to the SQL connection
-// action: a string describing the action ("TEST" here)
 // log: a handler to the Log facility
 
-log.info("Entering "+action+" Script");
-def sql = new Sql(connection);
+def sql = new Sql(connection)
 
-sql.eachRow("select hosts.jdbc_url_template from db_types inner join hosts on db_types.id = hosts.db_type_id WHERE db_types.full_name = 'PostgreSQL 9.1.4'") { 
-
-	def testUrl = it.jdbc_url_template.replaceAll("#databaseName#", "postgres");
-	Sql.newInstance(testUrl, "postgres", "password", "org.postgresql.Driver")
-
+sql.eachRow("""
+    SELECT 
+        hosts.jdbc_url_template,
+        hosts.default_database,
+        hosts.admin_username,
+        hosts.admin_password,
+        db_types.jdbc_class_name
+    FROM 
+        db_types 
+            INNER JOIN hosts ON
+                db_types.id = hosts.db_type_id
+""") {
+	def testUrl = it.jdbc_url_template.replaceAll("#databaseName#", it.default_database)
+    def testConnection = Sql.newInstance(testUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
 }
 
 
