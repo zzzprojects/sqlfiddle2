@@ -177,18 +177,48 @@ switch ( objectClass.objectClassValue ) {
             attribute 'minutes_since_last_used', (row.minutes_since_last_used != null ? row.minutes_since_last_used.toInteger(): null)
             attribute 'short_code', row.short_code
             attribute 'statement_separator', row.statement_separator
-            attribute 'simple_name', row.simple_name
-            attribute 'full_name', row.full_name
-            attribute 'execution_plan_prefix', row.execution_plan_prefix
-            attribute 'execution_plan_suffix', row.execution_plan_suffix
-            attribute 'execution_plan_xslt', row.execution_plan_xslt
-            attribute 'batch_separator', row.batch_separator
+            attribute 'relationships', [
+                'db_type' : [
+                    id : row.db_type_id.toInteger(),
+                    context : row.context,
+                    simple_name : row.simple_name,
+                    full_name : row.full_name,
+                    execution_plan_prefix : row.execution_plan_prefix,
+                    execution_plan_suffix : row.execution_plan_suffix,
+                    execution_plan_xslt : row.execution_plan_xslt,
+                    batch_separator : row.batch_separator
+                ]
+            ]
         }
 
     }
     break
 
     case "queries":
+
+    def dataCollector = [ uid: "" ]
+
+    def handleCollectedData = {
+        if (dataCollector.uid != "") {
+            // we must be done with the previous set, so handle it
+
+            handler {
+                id dataCollector.id
+                uid dataCollector.uid
+                attribute 'fragment', dataCollector.uid
+                attribute 'md5', dataCollector.id
+                attribute 'query_id', dataCollector.query_id
+                attribute 'schema_def_id', dataCollector.schema_def_id
+                attribute 'sql', dataCollector.sql
+                attribute 'statement_separator', dataCollector.statement_separator
+                attribute 'relationships', [
+                    'query_sets' : dataCollector.relationships.query_sets
+                ]
+            }
+
+        }
+    }
+
     sql.eachRow("""
         SELECT 
             q.schema_def_id,
@@ -197,24 +227,62 @@ switch ( objectClass.objectClassValue ) {
             s.short_code,
             q.sql,
             q.statement_separator,
-            q.md5
+            q.md5,
+            qs.id as query_set_id,
+            qs.row_count,
+            qs.execution_time,
+            qs.execution_plan,
+            qs.succeeded,
+            qs.error_message,
+            qs.sql as query_set_sql,
+            qs.columns_list
         FROM 
-            schema_defs s 
+            schema_defs s
                 INNER JOIN queries q ON
                     q.schema_def_id = s.id
-        """ + where, whereParams) { row ->
-        handler {
-            id row.md5
-            uid (row.db_type_id + '_' + row.short_code + '_' + row.id) as String
-            attribute 'fragment', row.db_type_id + '_' + row.short_code + '_' + row.id
-            attribute 'md5', row.md5
-            attribute 'query_id', row.id.toInteger()
-            attribute 'schema_def_id', row.schema_def_id.toInteger()
-            attribute 'sql', row.sql
-            attribute 'statement_separator', row.statement_separator
+                LEFT OUTER JOIN query_sets qs ON
+                    q.id = qs.query_id AND
+                    q.schema_def_id = qs.schema_def_id
+        ${where}
+        ORDER BY
+            q.schema_def_id,
+            q.id,
+            qs.id
+        """, whereParams) { row ->
+
+        if (dataCollector.uid != row.db_type_id + '_' + row.short_code + '_' + row.id) {
+
+            handleCollectedData();
+
+            dataCollector = [
+                id : row.md5,
+                uid : (row.db_type_id + '_' + row.short_code + '_' + row.id) as String,
+                query_id : row.id.toInteger(),
+                schema_def_id : row.schema_def_id.toInteger(),
+                sql : row.sql,
+                statement_separator : row.statement_separator,
+                relationships : [
+                    query_sets : [ ]
+                ]
+            ]
         }
 
+        if (row.query_set_id) {
+            dataCollector.relationships.query_sets.add([
+                id : row.query_set_id.toInteger(),
+                row_count : row.row_count,
+                execution_time : row.execution_time,
+                execution_plan : row.execution_plan,
+                succeeded : row.succeeded,
+                error_message : row.error_message,
+                sql : row.query_set_sql,
+                columns_list : row.columns_list
+            ])
+        }
     }
+
+    handleCollectedData();
+
     break
 
     case "db_types":

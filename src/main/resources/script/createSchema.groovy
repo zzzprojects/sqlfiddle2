@@ -10,6 +10,7 @@ try {
     assert content.db_type_id && content.db_type_id instanceof Integer
     assert content.ddl.size() <= 8000
 
+    def db_type = openidm.read("system/fiddles/db_types/" + content.db_type_id)
     def existing_schema = []
     def schema_def
     def md5hash
@@ -54,18 +55,22 @@ try {
                 }
         }
 
-        // if there is an error thrown from here, it will be caught below;
-        // It is necessary to build the real db at this stage so that we can fail early if there
-        // is a problem (and get a handle on the real error involved in the creation)
-        openidm.create("system/hosts/databases", null, [
-            "db_type_id": content.db_type_id,
-            "schema_name": "db_" + content.db_type_id + "_" + short_code,
-            "username": "user_" + content.db_type_id + "_" + short_code,
-            "pw": content.db_type_id + "_" + short_code,
-            "ddl": content.ddl,
-            "statement_separator": content.statement_separator
-        ])
+        // we only need to attempt to create a DB if the context for it is "host"
+        if (db_type.context == "host") {
 
+            // if there is an error thrown from here, it will be caught below;
+            // It is necessary to build the real db at this stage so that we can fail early if there
+            // is a problem (and get a handle on the real error involved in the creation)
+            openidm.create("system/hosts/databases", null, [
+                "db_type_id": content.db_type_id,
+                "schema_name": "db_" + content.db_type_id + "_" + short_code,
+                "username": "user_" + content.db_type_id + "_" + short_code,
+                "pw": content.db_type_id + "_" + short_code,
+                "ddl": content.ddl,
+                "statement_separator": content.statement_separator
+            ])
+
+        }
         // this schema_def will be linked to the above running db below as part of reconById
         schema_def = openidm.create("system/fiddles/schema_defs", null, [
             "db_type_id": content.db_type_id,
@@ -83,9 +88,10 @@ try {
 
     assert fragment_parts.size() == 2
 
-    if (schema_def.context == "host") {
+    if (db_type.context == "host") {
 
         // this ensures that there is a live running db up for the schema_def
+        // if this schema was just created for the first time, then it will link to the newly-created DB from above
         response.reconId = openidm.action("recon", "reconById", [:],
             [
                 "mapping" : "fiddles_hosts",

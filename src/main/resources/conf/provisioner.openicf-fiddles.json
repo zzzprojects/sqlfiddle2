@@ -150,36 +150,6 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
-                "execution_plan_prefix" : {
-                    "type" : "string",
-                    "required" : false,
-                    "nativeName" : "execution_plan_prefix",
-                    "nativeType" : "string",
-                    "flags" : [
-                        "NOT_CREATABLE",
-                        "NOT_UPDATEABLE"
-                    ]
-                },
-                "execution_plan_suffix" : {
-                    "type" : "string",
-                    "required" : false,
-                    "nativeName" : "execution_plan_suffix",
-                    "nativeType" : "string",
-                    "flags" : [
-                        "NOT_CREATABLE",
-                        "NOT_UPDATEABLE"
-                    ]
-                },
-                "execution_plan_xslt" : {
-                    "type" : "string",
-                    "required" : false,
-                    "nativeName" : "execution_plan_xslt",
-                    "nativeType" : "string",
-                    "flags" : [
-                        "NOT_CREATABLE",
-                        "NOT_UPDATEABLE"
-                    ]
-                },
                 "md5" : {
                     "type" : "string",
                     "required" : false,
@@ -190,26 +160,6 @@
                         "NOT_UPDATEABLE"
                     ]
                 },                
-                "simple_name" : {
-                    "type" : "string",
-                    "required" : false,
-                    "nativeName" : "simple_name",
-                    "nativeType" : "string",
-                    "flags" : [
-                        "NOT_CREATABLE",
-                        "NOT_UPDATEABLE"
-                    ]
-                },
-                "full_name" : {
-                    "type" : "string",
-                    "required" : false,
-                    "nativeName" : "full_name",
-                    "nativeType" : "string",
-                    "flags" : [
-                        "NOT_CREATABLE",
-                        "NOT_UPDATEABLE"
-                    ]
-                },
                 "short_code" : {
                     "type" : "string",
                     "required" : true,
@@ -252,11 +202,40 @@
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
                 },
-                "batch_separator" : {
-                    "type" : "string",
+                "relationships" : {
+                    "type" : "object",
                     "required" : false,
-                    "nativeName" : "batch_separator",
-                    "nativeType" : "string"
+                    "properties" : {
+                        "db_type" : {
+                            "type" : "object",
+                            "properties" : {
+                                "id" : {
+                                    "type" : "integer"
+                                },
+                                "context" : {
+                                    "type" : "string" 
+                                },
+                                "execution_plan_prefix" : {
+                                    "type" : "string"
+                                },
+                                "execution_plan_suffix" : {
+                                    "type" : "string"
+                                },
+                                "execution_plan_xslt" : {
+                                    "type" : "string"
+                                },
+                                "simple_name" : {
+                                    "type" : "string"
+                                },
+                                "full_name" : {
+                                    "type" : "string"
+                                },
+                                "batch_separator" : {
+                                    "type" : "string"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -298,69 +277,44 @@
                     "required" : false,
                     "nativeName" : "query_id",
                     "nativeType" : "integer"
-                }
-            }
-        },
-        "query_sets": {
-            "$schema" : "http://json-schema.org/draft-03/schema",
-            "id" : "query_sets",
-            "type" : "object",
-            "nativeType" : "query_sets",
-            "properties" : {
-                "_id" : {
-                    "type" : "integer",
-                    "nativeName" : "__UID__",
-                    "nativeType" : "integer"
                 },
-                "query_set_id" : {
-                    "type" : "integer",
-                    "nativeName" : "id",
-                    "nativeType" : "integer"
-                },
-                "query_id" : {
-                    "type" : "integer",
-                    "nativeName" : "query_id",
-                    "nativeType" : "integer"
-                },
-                "schema_def_id" : {
-                    "type" : "integer",
-                    "nativeName" : "schema_def_id",
-                    "nativeType" : "integer"
-                },
-                "row_count" : {
-                    "type" : "integer",
-                    "nativeName" : "row_count",
-                    "nativeType" : "integer"
-                },
-                "execution_time" : {
-                    "type" : "string",
-                    "nativeName" : "execution_time",
-                    "nativeType" : "string"
-                },
-                "execution_plan" : {
-                    "type" : "string",
-                    "nativeName" : "execution_plan",
-                    "nativeType" : "string"
-                },
-                "succeeded" : {
-                    "type" : "string",
-                    "nativeName" : "succeeded",
-                    "nativeType" : "string"
-                },
-                "error_message" : {
-                    "type" : "string",
-                    "nativeName" : "error_message",
-                    "nativeType" : "string"
-                },
-                "sql" : {
-                    "type" : "string",
-                    "nativeName" : "sql",
-                    "nativeType" : "string"
-                },
-                "columns_list" : {
-                    "type" : "string",
-                    "nativeName" : "columns_list",
-                    "nativeType" : "string"
+                "relationships" : {
+                    "type" : "object",
+                    "required" : false,
+                    "properties" : {
+                        "query_sets" : {
+                            "type": "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "id" : {
+                                        "type" : "integer"
+                                    },
+                                    "row_count" : {
+                                        "type" : "integer"
+                                    },
+                                    "execution_time" : {
+                                        "type" : "string"
+                                    },
+                                    "execution_plan" : {
+                                        "type" : "string"
+                                    },
+                                    "succeeded" : {
+                                        "type" : "string"
+                                    },
+                                    "error_message" : {
+                                        "type" : "string"
+                                    },
+                                    "sql" : {
+                                        "type" : "string"
+                                    },
+                                    "columns_list" : {
+                                        "type" : "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

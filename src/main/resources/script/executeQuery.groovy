@@ -89,12 +89,14 @@ def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id
 
 assert schema_def != null
 
+def db_type = schema_def.relationships.db_type
+
 // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
 schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
 openidm.update("system/fiddles/schema_defs/" + schema_def._id, null, schema_def)
 
-// Save a copy of this query (or retrieve the id of one that already exists)
-def m = openidm.create("system/fiddles/queries", 
+// Save a copy of this query (or retrieve the details of one that already exists)
+def query = openidm.create("system/fiddles/queries", 
     null, 
     [
         "md5": "n/a",
@@ -102,15 +104,11 @@ def m = openidm.create("system/fiddles/queries",
         "statement_separator": content.statement_separator,
         "schema_def_id": schema_def.schema_def_id
     ]
-)._id =~ /^\d+_\w+_(\d+)*$/
+)
 
+def response = [ID: query.query_id]
 
-
-int queryId = m[0][1].toInteger()
-
-def response = [ID: queryId]
-
-if (schema_def.context == "host") {
+if (db_type.context == "host") {
 
     // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
     def hostLink = openidm.query("repo/link", [
@@ -148,7 +146,7 @@ if (schema_def.context == "host") {
     hostConnection.withStatement { it.queryTimeout = 10 }
 
     // mysql handles transactions poorly; better to just make the whole thing readonly
-    if (schema_def.simple_name == "MySQL") {
+    if (db_type.simple_name == "MySQL") {
         hostConnection.getConnection().setReadOnly(true)
     }
 
@@ -164,12 +162,12 @@ if (schema_def.context == "host") {
             char carrageReturn = 13
             def statementGroups = Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)")
 
-            if (schema_def.batch_separator && schema_def.batch_separator.size()) {
-                content.sql = content.sql.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+            if (db_type.batch_separator && db_type.batch_separator.size()) {
+                content.sql = content.sql.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
             }
-            if (schema_def.simple_name == "Oracle") {
+            if (db_type.simple_name == "Oracle") {
                 hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
-            } else if (schema_def.simple_name == "PostgreSQL" ) {
+            } else if (db_type.simple_name == "PostgreSQL" ) {
                 hostConnection.execute("INSERT INTO " + deferred_table + " VALUES (2)")
             }
 
@@ -180,19 +178,19 @@ if (schema_def.context == "host") {
 
                         def executionPlan = null
 
-                        if (schema_def.execution_plan_prefix || schema_def.execution_plan_suffix) {
-                            def executionPlanSQL = (schema_def.execution_plan_prefix?:"") + statement[1] + (schema_def.execution_plan_suffix?:"")
+                        if (db_type.execution_plan_prefix || db_type.execution_plan_suffix) {
+                            def executionPlanSQL = (db_type.execution_plan_prefix?:"") + statement[1] + (db_type.execution_plan_suffix?:"")
                             executionPlanSQL = executionPlanSQL.replaceAll("#schema_short_code#", schema_def.short_code)
-                            executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", queryId.toString())
+                            executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", query.query_id.toString())
 
-                            if (schema_def.batch_separator && schema_def.batch_separator.size()) {
-                                executionPlanSQL = executionPlanSQL.replaceAll(Pattern.compile(newline + schema_def.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+                            if (db_type.batch_separator && db_type.batch_separator.size()) {
+                                executionPlanSQL = executionPlanSQL.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
                             }
 
                             // the savepoint for postgres allows us to fail safely if users provide DDL in their queries;
                             // normally, this would result in an exception that breaks the rest of the transaction. Save points
                             // preserve the transaction.
-                            if (schema_def.simple_name == "PostgreSQL") {
+                            if (db_type.simple_name == "PostgreSQL") {
                                 hostConnection.execute("SAVEPOINT sp;")
                             }
 
@@ -202,7 +200,7 @@ if (schema_def.context == "host") {
                                 }
                             }
                             
-                            if (schema_def.simple_name == "PostgreSQL") {
+                            if (db_type.simple_name == "PostgreSQL") {
                                 hostConnection.execute("ROLLBACK TO sp;")
                             }
 
