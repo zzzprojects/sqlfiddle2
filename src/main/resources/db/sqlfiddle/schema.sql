@@ -413,6 +413,11 @@ CREATE UNIQUE INDEX schema_md5s ON schema_defs USING btree (md5, db_type_id);
 
 CREATE INDEX schema_owner ON schema_defs USING btree (owner_id);
 
+--
+-- Name: schema_last_used; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX schema_last_used ON schema_defs USING btree (last_used);
 
 --
 -- Name: schema_short_codes; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 

@@ -38,8 +38,7 @@ def fieldMap = [
         "__NAME__": "s.md5",
         "__UID__": "s.db_type_id = ? AND s.short_code = ?",
         "schema_def_id": "s.id",
-        "last_used": "to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS')",
-        "minutes_since_last_used": "floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60)"
+        "minutes_since_last_used": "last_used"
     ],
     "queries": [
         "__NAME__": "q.md5",
@@ -88,25 +87,38 @@ queryParser = { queryObj ->
             whereParams.push(fragment_parts[2].toInteger())
 
             return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
+
+        } else if (queryObj.get("left") == "minutes_since_last_used") {
+
+            int rightSide = queryObj.get("right").toInteger()
+            return fieldMap[objectClass.objectClassValue][queryObj.get("left")] + " >= (current_timestamp - interval '${rightSide} minutes')"
+
         } else {
 
             if (queryObj.get("operation") == "CONTAINS") {
+
                 whereParams.push("%" + queryObj.get("right") + "%")
+
             } else if (queryObj.get("operation") == "ENDSWITH") {
+
                 whereParams.push("%" + queryObj.get("right"))
+
             } else if (queryObj.get("operation") == "STARTSWITH") {
+
                 whereParams.push(queryObj.get("right") + "%")
 
             // integer parameters
-            } else if (queryObj.get("left") == "minutes_since_last_used" || 
-                       queryObj.get("left") == "schema_def_id" ||
+            } else if (queryObj.get("left") == "schema_def_id" ||
                        queryObj.get("left") == "db_type_id" ||
                        (objectClass.objectClassValue == "db_types" && queryObj.get("left") == "__UID__")) {
+
                 whereParams.push(queryObj.get("right").toInteger())
 
             } else {
                 whereParams.push(queryObj.get("right"))
             }
+
+            
 
             if (fieldMap[objectClass.objectClassValue] && fieldMap[objectClass.objectClassValue][queryObj.get("left")]) {
                 queryObj.put("left",fieldMap[objectClass.objectClassValue][queryObj.get("left")])
