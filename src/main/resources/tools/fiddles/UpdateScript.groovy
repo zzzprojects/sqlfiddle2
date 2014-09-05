@@ -34,13 +34,12 @@ def sql = new Sql(connection)
 def fragment_parts = uid.uidValue.split("_")
 def updateAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
-assert fragment_parts.size() == 2
-
 switch ( operation ) {
     case OperationType.UPDATE:
     switch ( objectClass.objectClassValue ) {
 
         case "schema_defs":
+        assert fragment_parts.size() == 2
         sql.executeUpdate("""
             UPDATE 
                 schema_defs s 
@@ -55,7 +54,67 @@ switch ( operation ) {
                 fragment_parts[0].toInteger(),
                 fragment_parts[1]
             ]
-        );
+        )
+        break
+
+        case "queries":
+
+        assert fragment_parts.size() == 3        
+
+        // the only thing a query can update is its "sets", so delete any that already exist (shouldn't happen) and 
+        // insert all the new ones that come in
+        sql.withTransaction {
+
+            sql.execute("""
+                DELETE FROM
+                    query_sets
+                WHERE
+                    query_id = ? AND
+                    schema_def_id = ?
+            """,[
+                updateAttributes.findInteger("query_id"),
+                updateAttributes.findInteger("schema_def_id")
+            ]);
+
+
+            int i = 0;
+
+            updateAttributes.findMap("relationships").query_sets.each {
+                i++;
+                sql.execute("""
+                    INSERT INTO
+                        query_sets
+                    (
+                        id,
+                        query_id,
+                        schema_def_id,
+                        row_count,
+                        execution_time,
+                        succeeded,
+                        sql,
+                        execution_plan,
+                        error_message,
+                        columns_list
+                    )
+                    VALUES (
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    )
+                """, [
+                    i,
+                    updateAttributes.findInteger("query_id"),
+                    updateAttributes.findInteger("schema_def_id"),
+                    it.row_count,
+                    it.execution_time,
+                    it.succeeded,
+                    it.sql,
+                    it.execution_plan,
+                    it.error_message,
+                    it.columns_list
+                ]);
+            }
+
+        }
+
         break
     }
     break

@@ -1,4 +1,5 @@
 
+import groovy.json.JsonBuilder
 import groovy.transform.InheritConstructors
 import groovy.sql.Sql
 import groovy.sql.DataSet
@@ -232,6 +233,32 @@ if (db_type.context == "host") {
     }
 
     hostConnection.close()
+
+    if (query.relationships.query_sets.size() != sets.size()) {
+        int i = 0
+        query.relationships.query_sets = []
+
+        sets.each {
+            String columns_list = it.RESULTS?.COLUMNS?.join(",")
+            if (columns_list && columns_list.size() > 500) {
+                columns_list = columns_list.substring(0,500)
+            }
+
+            i++
+            query.relationships.query_sets.add([
+                id : i,
+                row_count : it.RESULTS?.DATA?.size() ?: 0,
+                execution_time : it.EXECUTIONTIME ?: 0,
+                execution_plan : it.EXECUTIONPLANRAW != null ? (new JsonBuilder(it.EXECUTIONPLANRAW).toString()) : "",
+                succeeded : it.SUCCEEDED ? 1 : 0,
+                error_message : it.ERRORMESSAGE ?: "",
+                sql : it.STATEMENT ?: "",
+                columns_list : columns_list ?: ""
+            ])
+        }
+
+        openidm.update("system/fiddles/queries/" + query._id, null, query)
+    }
 
     response.sets = sets
 
