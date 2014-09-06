@@ -11,12 +11,13 @@ sudo add-apt-repository --yes ppa:webupd8team/java
 sudo apt-get update
 echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-sudo apt-get --yes --force-yes install oracle-java7-installer maven postgresql-client subversion
+sudo apt-get --yes --force-yes install oracle-java7-installer maven postgresql-client subversion sysv-rc-conf
 cd /tmp
 svn checkout https://svn.forgerock.org/openidm/tags/3.0.0 openidm
 cd openidm
 mvn clean install
 cd /vagrant
 mvn clean install
-cd target/sqlfiddle
-sudo -u vagrant nohup ./startup.sh &
+cd target/sqlfiddle/bin
+./create-openidm-rc.sh
+cp openidm /etc/init.d

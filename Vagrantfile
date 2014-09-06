@@ -21,7 +21,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "idm", primary: true do |idm|
-    idm.vm.provision :shell, :path => "idm_bootstrap.sh"
+
+    idm.vm.provision "shell", path: "idm_bootstrap.sh"
+    idm.vm.provision "shell", inline: "service openidm start", run: "always"
+
     idm.vm.network "private_network", ip: "192.168.50.3"
     idm.vm.network "forwarded_port", guest: 8080, host: 8080
     idm.vm.network "forwarded_port", guest: 8443, host: 8443
