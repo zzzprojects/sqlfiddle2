@@ -26,6 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.provision "shell", path: "vagrant_scripts/idm_startup.sh", run: "always"
 
     idm.vm.network "private_network", ip: "192.168.50.3"
+    idm.vm.network "forwarded_port", guest: 6081, host: 6081
     idm.vm.network "forwarded_port", guest: 8080, host: 8080
     idm.vm.network "forwarded_port", guest: 8443, host: 8443
     idm.vm.box = "hashicorp/precise32"
