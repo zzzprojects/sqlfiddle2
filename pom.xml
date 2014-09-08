@@ -107,6 +107,27 @@
             </plugin>
 
             <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <executions>
+                    <execution>
+                        <id>install-bootstrap</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>http://getbootstrap.com/2.3.2/assets/bootstrap.zip</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.build.directory}/bootstrap-2.3.2</outputDirectory>
+                            <md5>2b2df1b111dfb560e7b0a1f1b8e0743a</md5>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>

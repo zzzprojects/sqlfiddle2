@@ -4,7 +4,7 @@ requirejs.config({
 		jQuery: 'libs/jquery/jquery',
 		Underscore: 'libs/underscore',
 		Backbone: 'libs/backbone',
-		Bootstrap: 'libs/bootstrap',
+		Bootstrap: 'libs/bootstrap.min',
 		Handlebars: 'libs/handlebars-1.0.0.beta.6',
 		HandlebarsHelpers: 'libs/handlebarsHelpers',
 		DateFormat: 'libs/date.format',
@@ -18,7 +18,7 @@ requirejs.config({
 	
     shim: {
         Backbone: {
-			deps: ['Underscore', 'jQuery', 'libs/json2'],
+			deps: ['Underscore', 'jQuery'],
 			exports: 'Backbone'
 		},
         jQuery: {
@@ -47,12 +47,7 @@ requirejs.config({
 		MySQLCodeMirror : ['CodeMirror'],		
 		'libs/jquery/jquery.blockUI': ['jQuery'],
 		'libs/jquery/jquery.cookie': ['jQuery'],
-		'Bootstrap/bootstrap-collapse': ['jQuery'],
-		'Bootstrap/bootstrap-tab': ['jQuery'],
-		'Bootstrap/bootstrap-dropdown': ['jQuery'],
-		'Bootstrap/bootstrap-modal': ['jQuery'],
-		'Bootstrap/bootstrap-tooltip': ['jQuery'],
-		'Bootstrap/bootstrap-popover': ['jQuery','Bootstrap/bootstrap-tooltip']		
+		Bootstrap: ['jQuery']
 	}
 	
 });	
@@ -62,7 +57,7 @@ require([
 		'Underscore',
 		'fiddle_backbone/app',
 		'DDLBuilder/ddl_builder',
-		'libs/idselector'
+		'Bootstrap'
 	], 
 	function($, _, App, ddl_builder) {
 	

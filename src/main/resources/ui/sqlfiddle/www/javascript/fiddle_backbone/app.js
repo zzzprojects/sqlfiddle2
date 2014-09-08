@@ -17,14 +17,7 @@ define([
     'libs/renderTerminator',
     
     'libs/jquery/jquery.blockUI',
-    'libs/jquery/jquery.cookie',
-    'Bootstrap/bootstrap-collapse',
-    'Bootstrap/bootstrap-tab',
-    'Bootstrap/bootstrap-dropdown',
-    'Bootstrap/bootstrap-modal',
-    'Bootstrap/bootstrap-tooltip',
-    'Bootstrap/bootstrap-popover'
-    
+    'libs/jquery/jquery.cookie'
 ], function (
         browserEngines, 
         UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query, 

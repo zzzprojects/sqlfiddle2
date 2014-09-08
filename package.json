@@ -5,6 +5,8 @@
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-less": "~0.11",
+    "grunt-contrib-requirejs": "~0.4.4",
     "grunt-sync": "~0.0.5"
   }
 }

@@ -25,10 +25,29 @@
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/idm-staging/openidm/security</directory>
-            <outputDirectory>//security</outputDirectory>
+            <outputDirectory>/security</outputDirectory>
             <directoryMode>0700</directoryMode>
             <fileMode>0600</fileMode>
         </fileSet>
+
+        <fileSet>
+            <directory>${project.build.directory}/bootstrap-2.3.2/bootstrap/js</directory>
+            <outputDirectory>/ui/sqlfiddle/www/javascript/libs</outputDirectory>
+            <includes>
+                <include>bootstrap.min.js</include>
+            </includes>
+            <fileMode>0640</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/bootstrap-2.3.2/bootstrap</directory>
+            <outputDirectory>/ui/sqlfiddle/www</outputDirectory>
+            <includes>
+                <include>css/*.min.css</include>
+                <include>img/*</include>
+            </includes>
+            <fileMode>0640</fileMode>
+        </fileSet>
+
         <fileSet>
             <directory>${project.build.directory}/idm-staging/openidm</directory>
             <outputDirectory>/</outputDirectory>
@@ -46,6 +65,7 @@
                 <exclude>conf/workflow.json</exclude>
                 <exclude>conf/process-access.json</exclude>
                 <exclude>conf/repo.orientdb.json</exclude>
+                <exclude>varnish/*</exclude>
             </excludes>
         </fileSet>
     </fileSets>
