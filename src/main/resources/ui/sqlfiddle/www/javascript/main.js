@@ -1,7 +1,9 @@
 
 requirejs.config({
 	paths: {
-		jQuery: 'libs/jquery/jquery',
+		jQuery: 'libs/jquery/jquery-1.11.1.min',
+		jqBlockUI: 'libs/jquery/jquery.blockUI',
+		jqCookie: 'libs/jquery/jquery.cookie',
 		Underscore: 'libs/underscore',
 		Backbone: 'libs/backbone',
 		Bootstrap: 'libs/bootstrap.min',
@@ -45,8 +47,8 @@ requirejs.config({
 		},
 		
 		MySQLCodeMirror : ['CodeMirror'],		
-		'libs/jquery/jquery.blockUI': ['jQuery'],
-		'libs/jquery/jquery.cookie': ['jQuery'],
+		jqBlockUI: ['jQuery'],
+		jqCookie: ['jQuery'],
 		Bootstrap: ['jQuery']
 	}
 	
@@ -57,7 +59,10 @@ require([
 		'Underscore',
 		'fiddle_backbone/app',
 		'DDLBuilder/ddl_builder',
-		'Bootstrap'
+		'Bootstrap',
+		'jqBlockUI',
+		'jqCookie'
+
 	], 
 	function($, _, App, ddl_builder) {
 	

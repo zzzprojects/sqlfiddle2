@@ -16,8 +16,8 @@ define([
     'fiddle_backbone/router', 
     'libs/renderTerminator',
     
-    'libs/jquery/jquery.blockUI',
-    'libs/jquery/jquery.cookie'
+    'jqBlockUI',
+    'jqCookie'
 ], function (
         browserEngines, 
         UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query, 

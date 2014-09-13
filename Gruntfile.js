@@ -26,8 +26,8 @@ module.exports = function(grunt) {
                 options: {
                     baseUrl: "target/sqlfiddle/ui/sqlfiddle/www/javascript",
                     mainConfigFile: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main.js",
-                    include: ["main"],
-                    out: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main.js"
+                    include: ["almond", "main"],
+                    out: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main_min.js"
                 }
             },
             minifyMainCSS: {

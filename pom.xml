@@ -111,6 +111,70 @@
                 <artifactId>download-maven-plugin</artifactId>
                 <version>1.2.0</version>
                 <executions>
+
+                    <execution>
+                        <id>install-almond</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/jrburke/almond/0.3.0/almond.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript</outputDirectory>
+                            <md5>b8d87cd160945de0150b9129139357f6</md5>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-textjs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/requirejs/text/2.0.12/text.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript</outputDirectory>
+                            <md5>b061e680dc483cac81ad9eedafeb0171</md5>
+                        </configuration>
+                    </execution>
+
+
+                    <execution>
+                        <id>install-jquery</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>http://code.jquery.com/jquery-1.11.1.min.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/jquery</outputDirectory>
+                            <md5>8101d596b2b8fa35fe3a634ea342d7c3</md5>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jquery.blockUI</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>http://malsup.github.io/jquery.blockUI.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/jquery</outputDirectory>
+                            <md5>4ef4f2476c42316941c34ed1034d44b1</md5>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jquery.cookie</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/carhartl/jquery-cookie/v1.4.1/jquery.cookie.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/jquery</outputDirectory>
+                            <md5>d5528dde0006c78be04817327c2f9b6f</md5>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>install-bootstrap</id>
                         <phase>generate-resources</phase>
