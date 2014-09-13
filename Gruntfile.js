@@ -27,6 +27,9 @@ module.exports = function(grunt) {
                     baseUrl: "target/sqlfiddle/ui/sqlfiddle/www/javascript",
                     mainConfigFile: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main.js",
                     include: ["almond", "main"],
+                    optimize: "uglify2",
+                    generateSourceMaps: true,
+                    preserveLicenseComments: false,
                     out: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main_min.js"
                 }
             },
