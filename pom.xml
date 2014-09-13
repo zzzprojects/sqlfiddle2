@@ -137,6 +137,20 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>install-sqljs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <!-- There aren't releases available for sql.js, so this is just the particular commit that was latest at the time (9/13/2014) -->
+                            <url>https://raw.githubusercontent.com/kripken/sql.js/e16ae3cf8e02ac9cd141b80bd475cd447896d586/js/sql.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript</outputDirectory>
+                            <md5>ca6e3dbe573e34dab08753c58948b050</md5>
+                        </configuration>
+                    </execution>
+
 
                     <execution>
                         <id>install-jquery</id>

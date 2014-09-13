@@ -19,7 +19,7 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 				 */
 				var jsBuildSchema = function () {
 					
-					_this.db = SQL.open();
+					_this.db = new window.SQL.Database();
 					$.each(SQLite_driver.prototype.splitStatement.call(this,args["ddl"],args["statement_separator"]), function (i, statement) {
 						_this.db.exec(statement);
 					});				
@@ -30,7 +30,10 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 				//  If the sql.js code isn't yet loaded, do it now.
 				if (window.SQL === undefined)
 				{
+					window.define_tmp = window.define;
+					window.define = undefined;
 					$.getScript("javascript/sql.js", function (script, textStatus, jqXHR) {
+						window.define = window.define_tmp;
 						jsBuildSchema();
 					}).fail(function(jqxhr, settings, exception){
 						args["error"]("Your browser does not work with SQL.js.  Try using a different browser (Chrome, Safari, Firefox, IE 10, etc...), or a newer version of your current one.");
@@ -68,7 +71,7 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 	
 				_this.db.exec("BEGIN TRANSACTION");
 	
-				$.each(SQLite_driver.prototype.splitStatement.call(this,args["sql"],args["statement_separator"]), function (i, statement) {
+				$.each(this.splitStatement(args["sql"],args["statement_separator"]), function (i, statement) {
 					if ($.trim(statement).length) {
 						var startTime = new Date();
 						
@@ -93,15 +96,9 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 							};
 							
 							if (setArray.length) {
-								$.each(setArray, function(rowNumber, row){
-									var rowVals = [];
-									$.each(row, function(columnNumber, col){
-										if (rowNumber == 0) {
-											thisSet["RESULTS"]["COLUMNS"].push(col.column);
-										}
-										rowVals.push(col.value);
-									});
-									thisSet["RESULTS"]["DATA"].push(rowVals);
+								$.each(setArray, function(){
+									thisSet["RESULTS"]["COLUMNS"] = this.columns;
+									thisSet["RESULTS"]["DATA"] = this.values;
 								});
 							}
 							
@@ -110,15 +107,9 @@ define(["jQuery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
 								exectionPlanArray = _this.db.exec("EXPLAIN QUERY PLAN " + statement);
 								
 								if (exectionPlanArray.length) {
-									$.each(exectionPlanArray, function(rowNumber, row){
-										var rowVals = [];
-										$.each(row, function(columnNumber, col){
-											if (rowNumber == 0) {
-												thisSet["EXECUTIONPLAN"]["COLUMNS"].push(col.column);
-											}
-											rowVals.push(col.value);
-										});
-										thisSet["EXECUTIONPLAN"]["DATA"].push(rowVals);
+									$.each(exectionPlanArray, function(){
+										thisSet["EXECUTIONPLAN"]["COLUMNS"] = this.columns;
+										thisSet["EXECUTIONPLAN"]["DATA"] = this.values;
 									});
 								}
 								
