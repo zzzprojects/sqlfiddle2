@@ -43,10 +43,10 @@
 .btn-navbar.active,
 .btn-navbar.disabled,
 .btn-navbar[disabled] {
-  background-color: #999999;
+  background-color: #999999 !important;
 }
 .btn-navbar:active, .btn-navbar.active {
-  background-color: #808080 \9;
+  background-color: #808080 !important;
 }
 
 .navbar .brand {
@@ -69,25 +69,28 @@
 	 
 }
 .navbar .nav > li > a {
-	color: #333333;
-	text-shadow: none;
+	color: #333333 !important;
+	text-shadow: none !important;
+  background-color: transparent !important;
 }
 
 .navbar .divider-vertical {
-	background-color: #999;
-	border-right: 1px solid white;	
+	background-color: #999 !important;
+	border-right: 1px solid white !important;
+  border-left: none !important;
+  width: 1px;
 }	
-.navbar .nav .active > a, .navbar .nav .active > a:hover {
-  color: #999999;
-  text-decoration: none;
-  background-color: #999999;
-  background-color: rgba(0, 0, 0, 0.5);
+.navbar .nav .active > a {
+  color: #999999 !important;
+  text-decoration: none !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-image: none !important;
 }
 .navbar .nav .active > a {
-  color: #eeeeee;
+  color: #eeeeee !important;
 }
 .navbar .nav .active > a:hover {
-  color: #eeeeee;
+  color: #eeeeee !important;
 }
 
 
@@ -98,6 +101,7 @@
 }
 .navbar .brand {
   color: #000000;
+  text-shadow: none !important;
 }
 
 .dropdown-menu a i {
@@ -113,9 +117,9 @@
 .dropdown-menu.nav li > a:hover,
 .dropdown-menu.nav .active > a,
 .dropdown-menu.nav .active > a:hover {
-  color: #ffffff;
-  text-decoration: none;
-  background-color: #0088cc;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  background-color: #0088cc !important;
 }
 
 .form-horizontal .control-group {
