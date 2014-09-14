@@ -1,6 +1,6 @@
 define([
-    'jQuery',
-    'Underscore',
+    'jquery',
+    'underscore',
     'Backbone',
     "libs/renderTerminator",
     "fiddle_backbone/models/UsedFiddle"

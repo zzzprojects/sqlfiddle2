@@ -1,41 +1,23 @@
 
 requirejs.config({
 	paths: {
-		jQuery: 'libs/jquery/jquery-1.11.1.min',
+		jquery: 'libs/jquery/jquery-1.11.1.min',
 		jqBlockUI: 'libs/jquery/jquery.blockUI',
 		jqCookie: 'libs/jquery/jquery.cookie',
-		Underscore: 'libs/underscore',
-		Backbone: 'libs/backbone',
+		underscore: 'libs/lodash.underscore.min',
+		Backbone: 'libs/backbone-min',
 		Bootstrap: 'libs/bootstrap.min',
-		Handlebars: 'libs/handlebars-1.0.0.beta.6',
+		Handlebars: 'libs/handlebars',
 		HandlebarsHelpers: 'libs/handlebarsHelpers',
 		DateFormat: 'libs/date.format',
 		BrowserEngines: 'libs/browserEngines',
 		FiddleEditor: 'libs/fiddleEditor',
-		CodeMirror: 'libs/codemirror/codemirror',
-		MySQLCodeMirror: 'libs/codemirror/mode/mysql/mysql',
 		XPlans: 'libs/xplans',
 		DDLBuilder: 'libs/ddl_builder'
 	},
 	
     shim: {
-        Backbone: {
-			deps: ['Underscore', 'jQuery'],
-			exports: 'Backbone'
-		},
-        jQuery: {
-			exports: '$'
-		},
-        Underscore: {
-			exports: '_'
-		},
-		CodeMirror: {
-			exports: 'CodeMirror'
-		},
-		Handlebars: {
-			exports: 'Handlebars'
-		},
-		DateFormat: {
+   		DateFormat: {
 			exports: 'dateFormat'
 		},
 		'XPlans/oracle/loadswf': {
@@ -46,17 +28,16 @@ requirejs.config({
 			exports: "QP"
 		},
 		
-		MySQLCodeMirror : ['CodeMirror'],		
-		jqBlockUI: ['jQuery'],
-		jqCookie: ['jQuery'],
-		Bootstrap: ['jQuery']
+		jqBlockUI: ['jquery'],
+		jqCookie: ['jquery'],
+		Bootstrap: ['jquery']
 	}
 	
 });	
 
 require([
-		'jQuery',
-		'Underscore',
+		'jquery',
+		'underscore',
 		'fiddle_backbone/app',
 		'DDLBuilder/ddl_builder',
 		'Bootstrap',

@@ -1,4 +1,4 @@
-define(["jQuery", "Backbone"], function ($, Backbone) {
+define(["jquery", "Backbone"], function ($, Backbone) {
     
     var SchemaDef = Backbone.Model.extend({
     

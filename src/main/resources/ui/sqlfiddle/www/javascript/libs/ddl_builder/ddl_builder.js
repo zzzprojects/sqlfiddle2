@@ -8,7 +8,7 @@
 
 define(
 	[
-	 "jQuery", 
+	 "jquery", 
 	 "Handlebars", 
 	 "DateFormat", 
 	 'text!./templates/generic.sql',

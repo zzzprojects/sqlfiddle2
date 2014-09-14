@@ -190,6 +190,59 @@
                     </execution>
 
                     <execution>
+                        <id>install-backbone</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/jashkenas/backbone/1.1.2/backbone-min.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
+                            <md5>9c3e3189b75efd56066402f80c3e781b</md5>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>install-lodash</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
+                            <md5>0c206fd8e9a6376a3f9ddb6555bb7856</md5>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>install-handlebars</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/components/handlebars.js/v2.0.0/handlebars.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
+                            <md5>664baaa4ba109141918aec5e7faa08a0</md5>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>install-codemirror</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/marijnh/CodeMirror/archive/4.5.0.zip</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <md5>7444e895474959ad70dad627a4b676dd</md5>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>install-bootstrap</id>
                         <phase>generate-resources</phase>
                         <goals>

@@ -15,7 +15,7 @@ define(["Handlebars"], function (Handlebars) {
 				item.last = (k == array.length);
 	
 				// show the inside of the block
-				buffer += fn(item);
+				buffer += fn.fn(item);
 
 				k++;
 			}

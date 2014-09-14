@@ -1,6 +1,6 @@
 define ([
-		"jQuery", 
-		"Underscore",
+		"jquery", 
+		"underscore",
 		"Backbone", 
 		"Handlebars", 
 		"FiddleEditor", 
@@ -23,8 +23,8 @@ define ([
 	
 	var QueryView = Backbone.View.extend({
 	
-		initialize: function () {
-		
+		initialize: function (options) {
+			this.options = options;
 			this.editor = new fiddleEditor(this.id,this.handleQueryChange, this, 
 											_.bind(function () {
 												this.model.execute(); 

@@ -1,4 +1,4 @@
-define(["jQuery","Handlebars"], function ($,Handlebars) {
+define(["jquery","Handlebars"], function ($,Handlebars) {
 
     
 	Handlebars.registerHelper("result_display", function(value) {

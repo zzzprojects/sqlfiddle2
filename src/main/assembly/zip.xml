@@ -47,6 +47,23 @@
             </includes>
             <fileMode>0640</fileMode>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/CodeMirror-4.5.0/lib</directory>
+            <outputDirectory>/ui/sqlfiddle/www/css</outputDirectory>
+            <includes>
+                <include>codemirror.css</include>
+            </includes>
+            <fileMode>0640</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/CodeMirror-4.5.0</directory>
+            <outputDirectory>/ui/sqlfiddle/www/javascript/libs/codemirror</outputDirectory>
+            <includes>
+                <include>lib/codemirror.js</include>
+                <include>mode/sql/*</include>
+            </includes>
+            <fileMode>0640</fileMode>
+        </fileSet>
 
         <fileSet>
             <directory>${project.build.directory}/idm-staging/openidm</directory>

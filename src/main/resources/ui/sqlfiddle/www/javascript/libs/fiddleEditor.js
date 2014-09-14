@@ -1,4 +1,4 @@
-define(["CodeMirror", "MySQLCodeMirror", "jQuery"], function (CodeMirror, myMode, $){ 
+define(["./libs/codemirror/lib/codemirror", "./libs/codemirror/mode/sql/sql", "jquery"], function (CodeMirror, sqlMode, $){ 
 	
 	var fiddleEditor = function (domID, changeHandler, viewRef, runHandler) {
 		this.codeMirrorSupported = !( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) );
@@ -6,7 +6,7 @@ define(["CodeMirror", "MySQLCodeMirror", "jQuery"], function (CodeMirror, myMode
 		if (this.codeMirrorSupported)
 		{
 			this.codeMirror = CodeMirror.fromTextArea(document.getElementById(domID), {
-				mode: "mysql",
+				mode: "text/x-mysql",
 				matchBrackets: true,
 				extraKeys: {Tab: "indentMore"},
 				lineNumbers: true,
