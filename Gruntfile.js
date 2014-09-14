@@ -49,10 +49,19 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            copy: {
-                files: ['src/main/resources/ui/**/*.js','src/main/resources/script/*.js','src/main/resources/**/*.groovy', 'src/main/resources/ui/**/*.html', 'src/main/resources/conf/*.json', 'src/main/resources/ui/**/*.less', 'src/main/resources/ui/**/*.css'],
-                tasks: [ 'sync', 'less', 'requirejs' ]
+            copyUIJS: {
+                files: ['src/main/resources/ui/**/*.js'],
+                tasks: [ 'sync', 'requirejs:minifyJS' ]
+            },
+            copyLESS: {
+                files: ['src/main/resources/ui/**/*.less', 'src/main/resources/ui/**/*.css'],
+                tasks: [ 'sync', 'less', 'requirejs:minifyMainCSS', 'requirejs:minifyPrintCSS' ]
+            },
+            copyIDM: {
+                files: ['src/main/resources/script/*.js','src/main/resources/**/*.groovy', 'src/main/resources/ui/**/*.html', 'src/main/resources/conf/*.json'],
+                tasks: [ 'sync' ]
             }
+
         }
     });
 
