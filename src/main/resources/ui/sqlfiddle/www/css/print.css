@@ -1,5 +1,5 @@
 a.executionPlanLink, .btn-navbar, .action_buttons, #hosting {
-	display: none !important;	
+    display: none !important;
 }
 
       .CodeMirror-scroll, #browser {
@@ -8,7 +8,7 @@ a.executionPlanLink, .btn-navbar, .action_buttons, #hosting {
         overflow-x: auto;
         width: 100%;
       }
-	  
-	  #schema-output {
-	  	height: auto !important;	
-	  }
+
+      #schema-output {
+          height: auto !important;
+      }

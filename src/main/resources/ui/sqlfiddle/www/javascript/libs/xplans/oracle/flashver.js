@@ -26,15 +26,15 @@ function ControlVersion()
     {
       // version will be set for 6.X players only
       axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.6");
-      
+
       // installed player is some revision of 6.0
       // GetVariable("$version") crashes for versions 6.0.22 through 6.0.29,
-      // so we have to be careful. 
-      
+      // so we have to be careful.
+
       // default to the first public version
       version = "WIN 6,0,21,0";
 
-      // throws if AllowScripAccess does not exist (introduced in 6.0r47)    
+      // throws if AllowScripAccess does not exist (introduced in 6.0r47)
       axo.AllowScriptAccess = "always";
 
       // safe to call for 6.0r47 or greater
@@ -83,7 +83,7 @@ function ControlVersion()
       version = -1;
     }
   }
-  
+
   return version;
 }
 
@@ -92,13 +92,13 @@ function GetSwfVer()
 {
   // NS/Opera version >= 3 check for Flash plugin in plugin array
   var flashVer = -1;
-  
+
   if (navigator.plugins != null && navigator.plugins.length > 0)
   {
     if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"])
     {
       var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
-      var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;      
+      var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;
       var descArray = flashDescription.split(" ");
       var tempArrayMajor = descArray[2].split(".");
       var versionMajor = tempArrayMajor[0];
@@ -126,7 +126,7 @@ function GetSwfVer()
   else if ( isIE && isWin && !isOpera )
   {
     flashVer = ControlVersion();
-  }  
+  }
   return flashVer;
 }
 
@@ -175,13 +175,13 @@ function DetectFlashVer(reqMajorVer, reqMinorVer, reqRevision)
 function AC_AddExtension(src, ext)
 {
   if (src.indexOf('?') != -1)
-    return src.replace(/\?/, ext+'?'); 
+    return src.replace(/\?/, ext+'?');
   else
     return src + ext;
 }
 
-function AC_Generateobj(objAttrs, params, embedAttrs) 
-{ 
+function AC_Generateobj(objAttrs, params, embedAttrs)
+{
     var str = '';
     if (isIE && isWin && !isOpera)
     {
@@ -199,12 +199,12 @@ function AC_Generateobj(objAttrs, params, embedAttrs)
     }
 
     //document.write(str); -- original line, commented out by Jake
-	return str; // line added by Jake
+    return str; // line added by Jake
 }
 
 function AC_FL_RunContent()
 {
-  var ret = 
+  var ret =
     AC_GetArgs
     (  arguments, ".swf", "movie", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
      , "application/x-shockwave-flash"
@@ -220,17 +220,17 @@ function AC_GetArgs(args, ext, srcParamName, classid, mimeType)
   ret.objAttrs = new Object();
   for (var i=0; i < args.length; i=i+2)
   {
-    var currArg = args[i].toLowerCase();    
+    var currArg = args[i].toLowerCase();
 
     switch (currArg)
-    {  
+    {
       case "classid":
         break;
       case "pluginspage":
         ret.embedAttrs[args[i]] = args[i+1];
         break;
       case "src":
-      case "movie":  
+      case "movie":
         args[i+1] = AC_AddExtension(args[i+1], ext);
         ret.embedAttrs["src"] = args[i+1];
         ret.params[srcParamName] = args[i+1];
@@ -280,7 +280,7 @@ function AC_GetArgs(args, ext, srcParamName, classid, mimeType)
       case "width":
       case "height":
       case "align":
-      case "vspace": 
+      case "vspace":
       case "hspace":
       case "class":
       case "title":

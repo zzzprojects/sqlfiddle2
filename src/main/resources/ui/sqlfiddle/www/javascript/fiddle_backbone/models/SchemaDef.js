@@ -1,7 +1,7 @@
 define(["jquery", "Backbone"], function ($, Backbone) {
-    
+
     var SchemaDef = Backbone.Model.extend({
-    
+
         defaults: {
             "ddl":"",
             "short_code":"",
@@ -46,7 +46,7 @@ define(["jquery", "Backbone"], function ($, Backbone) {
 
                         if (selectedDBType.get("context") === "browser") {
                             thisModel.get("browserEngines")[selectedDBType.get("className")].buildSchema({
-                                
+
                                 short_code: short_code,
                                 statement_separator: thisModel.get('statement_separator'),
                                 ddl: thisModel.get('ddl'),
@@ -57,7 +57,7 @@ define(["jquery", "Backbone"], function ($, Backbone) {
                                         "valid": true,
                                         "errorMessage": ""
                                     });
-                                    
+
                                     thisModel.get("browserEngines")[selectedDBType.get("className")].getSchemaStructure({
                                             callback: function (schemaStruct) {
                                                 thisModel.set({
@@ -66,7 +66,7 @@ define(["jquery", "Backbone"], function ($, Backbone) {
                                                 thisModel.trigger("built");
                                             }
                                         });
-                                    
+
                                 },
                                 error: function (message) {
                                     thisModel.set({
@@ -78,7 +78,7 @@ define(["jquery", "Backbone"], function ($, Backbone) {
                                     });
                                     thisModel.trigger("failed");
                                 }
-                                
+
                             });
                         } else {
                             thisModel.set({
@@ -88,10 +88,10 @@ define(["jquery", "Backbone"], function ($, Backbone) {
                                 "errorMessage": ""/*,
                                 "schema_structure": data["schema_structure"]*/
                             });
-                            
+
                             thisModel.trigger("built");
                         }
-                        
+
                     }
                     else
                     {
@@ -118,10 +118,10 @@ define(["jquery", "Backbone"], function ($, Backbone) {
 
                 }
             });
-                        
+
         }
     });
-    
+
     return SchemaDef;
-    
+
 });

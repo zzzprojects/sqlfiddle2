@@ -2,51 +2,51 @@
 
 define([
     'BrowserEngines/engines',
-    
-    'fiddle_backbone/models/UsedFiddle', 
-    'fiddle_backbone/models/MyFiddleHistory', 
-    'fiddle_backbone/models/DBTypesList', 
-    'fiddle_backbone/models/SchemaDef', 
+
+    'fiddle_backbone/models/UsedFiddle',
+    'fiddle_backbone/models/MyFiddleHistory',
+    'fiddle_backbone/models/DBTypesList',
+    'fiddle_backbone/models/SchemaDef',
     'fiddle_backbone/models/Query',
-    
+
     'fiddle_backbone/views/DBTypesList',
     'fiddle_backbone/views/SchemaDef',
     'fiddle_backbone/views/Query',
-     
-    'fiddle_backbone/router', 
+
+    'fiddle_backbone/router',
     'libs/renderTerminator',
-    
+
     'jqBlockUI',
     'jqCookie'
 ], function (
-        browserEngines, 
-        UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query, 
+        browserEngines,
+        UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
         DBTypesListView, SchemaDefView, QueryView,
         Router,
         renderTerminator
         ) {
-    
+
   var obj = {
 
     initialize : function() {
 
         var router = {};
-        
+
         var myFiddleHistory = new MyFiddleHistory();
-            
+
         var dbTypes = new DBTypesList();
-        
+
         var schemaDef = new SchemaDef({browserEngines: browserEngines});
-        
+
         var query = new Query({
             "schemaDef": schemaDef
         });
-                
+
         var dbTypesListView = new DBTypesListView({
             el: $("#db_type_id")[0],
             collection:  dbTypes
         });
-        
+
         var schemaDefView = new SchemaDefView({
             id: "schema_ddl",
             model: schemaDef,
@@ -62,7 +62,7 @@ define([
 
         /* UI Changes */
         dbTypes.on("change", function () {
-        // see also the router function defined below that also binds to this event 
+        // see also the router function defined below that also binds to this event
             dbTypesListView.render();
             if (schemaDef.has("dbType")) {
                 schemaDef.set("ready", (schemaDef.get("short_code").length && schemaDef.get("dbType").id === this.getSelectedType().id));
@@ -73,29 +73,29 @@ define([
             if (this.hasChanged("ready")) {
                 schemaDefView.updateDependents();
             }
-            
+
             if (this.hasChanged("errorMessage")) {
                 schemaDefView.renderOutput();
             }
-            
+
             if (this.hasChanged("schema_structure")) {
                 schemaDefView.renderSchemaBrowser();
             }
         });
-        
+
         schemaDef.on("reloaded", function () {
             this.set("dbType", dbTypes.getSelectedType());
             schemaDefView.render();
         });
 
         query.on("reloaded", function () {
-            this.set({"pendingChanges": false}, {silent: true});    
-            
+            this.set({"pendingChanges": false}, {silent: true});
+
             queryView.render();
         });
 
         schemaDef.on("built failed", function () {
-        // see also the router function defined below that also binds to this event 
+        // see also the router function defined below that also binds to this event
             $("#buildSchema label").prop('disabled', false);
             $("#buildSchema label").html($("#buildSchema label").data("originalValue"));
             schemaDefView.renderOutput();
@@ -108,14 +108,14 @@ define([
                 this.set({"pendingChanges": true}, {silent: true});
             }
         });
-        
+
         query.on("executed", function () {
-        // see also the router function defined below that also binds to this event 
+        // see also the router function defined below that also binds to this event
             var $button = $(".runQuery");
             $button.prop('disabled', false);
             $button.html($button.data("originalValue"));
 
-            this.set({"pendingChanges": false}, {silent: true});    
+            this.set({"pendingChanges": false}, {silent: true});
             queryView.renderOutput();
         });
 
@@ -127,40 +127,40 @@ define([
             if ($button.prop('disabled')) {
                 return false;
             }
-            
+
             $button.data("originalValue", $button.html());
             $button.prop('disabled', true).text('Building Schema...');
-            
+
             schemaDef.build();
-        }); 
-        
+        });
+
         var handleRunQuery = function (e) {
             var $button = $(".runQuery");
             e.preventDefault();
-            
+
             if ($button.prop('disabled')) return false;
             $button.data("originalValue", $button.html());
             $button.prop('disabled', true).text('Executing SQL...');
-            
+
             queryView.checkForSelectedText();
             query.execute();
         };
-        
+
         $(".runQuery").click(handleRunQuery);
         $(document).keyup(function (e) {
             if (e.keyCode == 116) // F5
-            {   
+            {
                 e.preventDefault();
                 handleRunQuery(e);
             }
         });
-        
+
         $("#runQueryOptions li a").click(function (e) {
             e.preventDefault();
             queryView.setOutputType(this.id);
             queryView.renderOutput();
         });
-        
+
         $("#queryPrettify").click(function (e) {
             var thisButton = $(this);
             thisButton.attr("disabled", true);
@@ -169,16 +169,16 @@ define([
                 query.set({"sql": resp});
                 query.trigger('reloaded');
                 query.set({"pendingChanges": true});
-                
+
                 thisButton.attr("disabled", false);
             });
         });
-        
+
         $(".terminator .dropdown-menu a").on('click', function (e) {
             e.preventDefault();
-            
+
             renderTerminator($(this).closest(".panel"), $(this).attr('href'));
-            
+
             if ($(this).closest(".panel").hasClass("schema"))
             {
                 schemaDefView.handleSchemaChange();
@@ -188,16 +188,16 @@ define([
                 query.set({
                     "pendingChanges": true,
                     "statement_separator": $(this).attr('href')
-                }, {silent: true});         
+                }, {silent: true});
             }
 
         });
-        
+
         $("#output").on("click", ".depesz", function (e) {
             var fullTextPlan = $(this).closest(".set").find(".executionPlan tr:not(:first)").text();
             $(this).closest("form").find("[name=plan]").val(fullTextPlan);
         });
-        
+
         $(window).bind('beforeunload', function () {
             if (query.get("pendingChanges"))
                 return "Warning! You have made changes to your query which will be lost. Continue?'";
@@ -228,16 +228,16 @@ define([
             }
         });
 
-        
+
         /* Events which will trigger new route navigation */
-                
+
         $("#clear").click(function (e) {
             e.preventDefault();
             schemaDef.reset();
             query.reset();
-            router.navigate("!" + dbTypes.getSelectedType().id, {trigger: true});   
+            router.navigate("!" + dbTypes.getSelectedType().id, {trigger: true});
         });
-        
+
         $("#sample").click(function (e) {
             e.preventDefault();
             router.navigate("!" + dbTypes.getSelectedType().get("sample_fragment"), {trigger: true});
@@ -253,38 +253,38 @@ define([
                 router.navigate("!" + this.getSelectedType().id + "/" + schemaDef.get("short_code") + "/" + query.id);
             else if (
                     schemaDef.get("short_code").length &&
-                    schemaDef.get("dbType").id == this.getSelectedType().id     
+                    schemaDef.get("dbType").id == this.getSelectedType().id
                 )
                 router.navigate("!" + this.getSelectedType().id + "/" + schemaDef.get("short_code"));
             else
-                router.navigate("!" + this.getSelectedType().id);   
+                router.navigate("!" + this.getSelectedType().id);
 
             schemaDef.set("dbType", this.getSelectedType());
 
         });
 
         schemaDef.on("built", function () {
-            
+
             myFiddleHistory.insert(new UsedFiddle({
                 "fragment": "!" + this.get("dbType").id + "/" + this.get("short_code")
             }));
-            
+
             router.navigate("!" + this.get("dbType").id + "/" + this.get("short_code"));
         });
-        
+
         query.on("executed", function () {
             var schemaDef = this.get("schemaDef");
-            
+
             if (this.id) {
                 myFiddleHistory.insert(new UsedFiddle({
                     "fragment": "!" + schemaDef.get("dbType").id + "/" + schemaDef.get("short_code") + "/" + this.id
                 }));
-        
+
                 router.navigate(
-                    "!" + schemaDef.get("dbType").id + "/" + schemaDef.get("short_code") + "/" + this.id 
+                    "!" + schemaDef.get("dbType").id + "/" + schemaDef.get("short_code") + "/" + this.id
                 );
             }
-            
+
         });
 
         dbTypes.fetch();
@@ -299,7 +299,7 @@ define([
         }
 
     };
-  
+
     return obj;
 
 });

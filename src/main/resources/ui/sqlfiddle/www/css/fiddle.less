@@ -9,18 +9,18 @@ body {
 
 /* elements used as part of fullscreen edit mode */
 #db_type_label_collapsed, #exit_fullscreen {
-	display: none;	
+    display: none;
 }
 #db_type_label_collapsed li {
-	display: inline-block;
-}	
+    display: inline-block;
+}
 textarea.fullscreen {
-	z-index: 10000;
-	height: 100%;
-	width: 100%;
-	position: fixed;
-	top: 40px;
-	left: 0;
+    z-index: 10000;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 40px;
+    left: 0;
 }
 
 
@@ -28,101 +28,101 @@ textarea.fullscreen {
 /* Fine tuning various fiddle element styles */
 
 .schema {
-	position: relative;	
+    position: relative;
 }
 .helpTip {
-	position: absolute;
-	display: none;
-	width: 180px;
-	height: 60%;
-	min-height: 50px;
-	overflow-y: auto;
-	right: 0px;
-	z-index: 1001;
-	margin: 10px 20px;
+    position: absolute;
+    display: none;
+    width: 180px;
+    height: 60%;
+    min-height: 50px;
+    overflow-y: auto;
+    right: 0px;
+    z-index: 1001;
+    margin: 10px 20px;
 }
 #browser, .browser_actions {
-	padding-left: 15px;
-	display: none;
-	width: 100%;
+    padding-left: 15px;
+    display: none;
+    width: 100%;
 }
 #browser {
-	overflow: auto;	
-	border: solid thin lightgray;
+    overflow: auto;
+    border: solid thin lightgray;
 }
 
 #sql, #schema_ddl {
-	width: 98%;
-	font-family: monospace;
-	white-space: nowrap;
-	overflow: auto;
-	font-size: 10pt;
-	min-height: 100px;
+    width: 98%;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: auto;
+    font-size: 10pt;
+    min-height: 100px;
 }
 
 .tables, .columns {
-	list-style-type: none;
+    list-style-type: none;
 }
 
 .tables .columns {
-	display: none;	
+    display: none;
 }
 .popover .tables .columns {
-	display: block;	
+    display: block;
 }
-	
+
 .resultSetWrapper, .schemaPreviewWrapper, .queryLog-hidden {
-	display: none;
+    display: none;
 }
 
 .resultSetPreview {
-	list-style-type: none;
-	margin: 0;
+    list-style-type: none;
+    margin: 0;
 }
 
 .resultSetPreview li {
-	white-space: nowrap;		
+    white-space: nowrap;
 }
 
 .resultSetPreview pre {
-	margin-bottom: 2px;
-	overflow-x: hidden;		
-	max-height: 75px;
-	overflow-y: hidden;
-	background-color: white;
+    margin-bottom: 2px;
+    overflow-x: hidden;
+    max-height: 75px;
+    overflow-y: hidden;
+    background-color: white;
 }
 .resultSetPreview>pre, .schemaPreview>pre {
-	margin-bottom: 2px;
-	overflow-x: hidden;		
-	max-height: 200px;
-	overflow-y: hidden;
-	background-color: white;
+    margin-bottom: 2px;
+    overflow-x: hidden;
+    max-height: 200px;
+    overflow-y: hidden;
+    background-color: white;
 }
 
 
 pre.results, .resultSetPreview li pre {
-	font-family:monospace;
-	font-size: 10pt;	
+    font-family:monospace;
+    font-size: 10pt;
 }
 
 
 .database-error {
-	white-space: pre-wrap;
+    white-space: pre-wrap;
 }
 
 
 #runQueryOptions {
-	min-width: 120px;	
+    min-width: 120px;
 }
 #donationSuggestion {
-	font-size: 8pt;
-	text-align: center;
-	display: block;
+    font-size: 8pt;
+    text-align: center;
+    display: block;
 }
 #content .panel form textarea {
   display: block;
-  /*	height: 97%;
-	width: 98%;*/
+  /*    height: 97%;
+    width: 98%;*/
 
   margin: 0;
   resize: none;
@@ -144,7 +144,7 @@ pre.results, .resultSetPreview li pre {
   margin: 0;
   height: 50%;
   padding-bottom: 5px;
-  
+
 }
 #content form {
   margin: 0;
@@ -163,8 +163,8 @@ pre.results, .resultSetPreview li pre {
 }
 #content .panel form label {
   z-index: 250;
-  /*	bottom: 5px;
-	top: auto;*/
+  /*    bottom: 5px;
+    top: auto;*/
 
 }
 #fiddleFormDDL label a i {
@@ -174,47 +174,47 @@ pre.results, .resultSetPreview li pre {
 /* Execution Plans */
 
 .executionPlan {
-	width: 90%;
-	margin-left: 10%;	
-	display: none;
+    width: 90%;
+    margin-left: 10%;
+    display: none;
 }
 
 .executionPlanLink, .setLink {
-	margin-left: 20px;	
+    margin-left: 20px;
 }
 
 .oracle_xplan {
-	margin: 0px; 
-	overflow:hidden;
-	width: 800px;
-	height: 600px;
-	border: solid thin black;
-	display: inline-block;
-}	
+    margin: 0px;
+    overflow:hidden;
+    width: 800px;
+    height: 600px;
+    border: solid thin black;
+    display: inline-block;
+}
 
 
 
 
 /* Used primarily to emphasize a particular result set */
 .highlight {
-	border: solid thin blue;
-	margin: 5px;
+    border: solid thin blue;
+    margin: 5px;
 }
-	
-	
-/* Buttons below the editable panels */	
+
+
+/* Buttons below the editable panels */
 .action_buttons {
   margin: 5px 0;
   padding: 0 10px;
 }
 .action_buttons>a, .action_buttons>div {
-	margin-bottom: 3px;	
-	vertical-align: top;
-	display: inline-block;
-}	
+    margin-bottom: 3px;
+    vertical-align: top;
+    display: inline-block;
+}
 .action_buttons .dropdown-menu {
-	text-align: right;	
-}	
+    text-align: right;
+}
 
 
 /* CodeMirror Customizations */
@@ -227,8 +227,8 @@ pre.results, .resultSetPreview li pre {
 }
 
 .CodeMirror-scroll {
-	height: 200px;
-	
+    height: 200px;
+
     overflow-y: scroll;
     overflow-x: auto;
 }
@@ -246,96 +246,96 @@ pre.results, .resultSetPreview li pre {
     padding: 0;
     border: 0px solid #BBBBBB;
     opacity: 1;
-	background-color: white;
+    background-color: white;
 }
 
 
 
 /* Hosting styles */
 #hosting {
-	display: block;
-	margin: 10px auto 0 auto;
-	text-align: center;
+    display: block;
+    margin: 10px auto 0 auto;
+    text-align: center;
 }
 #hosting h4 {
-	text-align: center;
+    text-align: center;
 }
 #hostingPartners {
-	padding: 0px;
-	display: inline-block;
-	text-align: left;
-	list-style-type: none;
+    padding: 0px;
+    display: inline-block;
+    text-align: left;
+    list-style-type: none;
 }
 
 #hostingPartners li {
-	margin: 20px 0;
-	font-family: sans-serif;
-	font-size: 8pt;
-	height: 50px;
-	display: inline;
+    margin: 20px 0;
+    font-family: sans-serif;
+    font-size: 8pt;
+    height: 50px;
+    display: inline;
 }
 
 #hostingPartners a {
-	display: inline-block;
-	float: left;
+    display: inline-block;
+    float: left;
 }
 #hostingPartners img {
-	height: 90px;
-	margin: 0 auto;
-	text-align: center;
-	display: block;
-	border: none;
+    height: 90px;
+    margin: 0 auto;
+    text-align: center;
+    display: block;
+    border: none;
 }
 
 #hostingPartners span {
-	float: left;
-	display: block;
-	width: 150px;
+    float: left;
+    display: block;
+    width: 150px;
 }
 
 .modal {
-	display: none;
+    display: none;
 }
 
 #myFiddlesModal {
-	width: 800px;
-	margin: -250px 0 0 -420px;	
+    width: 800px;
+    margin: -250px 0 0 -420px;
 }
 
 #myFiddlesModal .modal-body {
-	overflow-y: auto;	
+    overflow-y: auto;
 }
 #myFiddlesTabs {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 /* DDL Builder UI Styles */
-#raw, #parseResults { 
-	width: 90%;
+#raw, #parseResults {
+    width: 90%;
 }
 
 #parseResults {
-	height: 60px;
-	overflow: auto;	
+    height: 60px;
+    overflow: auto;
 }
 
 /* Customizations for third-party UI elements */
 
 #openid_identifier {
-	width: 250px;
-	margin: 0px;
-	padding: 2px;
-	padding-left: 20px;
-	vertical-align: middle;
-	background-image: url('http://www.idselector.com/images/openid.ico');
-	background-repeat: no-repeat;
-	background-position: 3px 2px;
+    width: 250px;
+    margin: 0px;
+    padding: 2px;
+    padding-left: 20px;
+    vertical-align: middle;
+    background-image: url('http://www.idselector.com/images/openid.ico');
+    background-repeat: no-repeat;
+    background-position: 3px 2px;
 }
 
 #gravatar {
-	height: 20px;
-	width: 20px;
-	margin: 0 10px 0 5px;	
+    height: 20px;
+    width: 20px;
+    margin: 0 10px 0 5px;
 }
 
 

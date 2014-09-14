@@ -1,10 +1,10 @@
-define (["jquery", "Backbone", "Handlebars", "text!fiddle_backbone/templates/dbTypes.html"], 
+define (["jquery", "Backbone", "Handlebars", "text!fiddle_backbone/templates/dbTypes.html"],
         function ($,Backbone,Handlebars,dbTypesTemplate) {
 
     var DBTypesListView = Backbone.View.extend({
         initialize: function (options) {
             this.options = options;
-            this.compiledTemplate = Handlebars.compile(dbTypesTemplate); 
+            this.compiledTemplate = Handlebars.compile(dbTypesTemplate);
         },
         events: {
             "click ul.dropdown-menu li": "clickDBType"
@@ -26,13 +26,13 @@ define (["jquery", "Backbone", "Handlebars", "text!fiddle_backbone/templates/dbT
                     selectedFullName: selectedDBType.get("full_name")
                 })
             );
-            
+
             $("#db_type_label_collapsed .navbar-text").text(selectedDBType.get("full_name"));
-            
+
             return this;
         }
-    }); 
-    
+    });
+
     return DBTypesListView;
-    
+
 });

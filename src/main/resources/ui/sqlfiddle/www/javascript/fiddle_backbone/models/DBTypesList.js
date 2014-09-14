@@ -1,5 +1,5 @@
 define(["jquery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Backbone, DBType) {
-    
+
     return Backbone.Collection.extend({
         model: DBType,
         fetch: function () {
@@ -20,7 +20,7 @@ define(["jquery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Bac
             });
         },
         getSelectedType: function () {
-            return this.find(function (dbType) { 
+            return this.find(function (dbType) {
                 return dbType.get("selected");
             });
         },
@@ -32,7 +32,7 @@ define(["jquery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Bac
                 this.trigger("change");
             }
         }
-                
+
     });
-    
+
 });

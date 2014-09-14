@@ -1,20 +1,20 @@
 <!doctype html>
 <head>
-    
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
+
     <title>SQL Fiddle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Application for testing and sharing SQL queries.">
     <meta name="author" content="Jake Feasel">
-    
+
     <meta property="og:title" content="SQL Fiddle | A tool for easy online testing and sharing of database problems and their solutions." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://sqlfiddle.com/" />
     <meta property="og:image" content="http://sqlfiddle.com/images/fiddle_transparent.png" />
     <meta property="og:site_name" content="SQL Fiddle" />
-    
+
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
@@ -57,7 +57,7 @@
                         <li class="">
                             <a id="clear" href="#clear"><i class="icon-refresh"></i>Clear</a>
                         </li>
-                                                
+
                         <li class="dropdown" id="userInfo">
 
                             <a href="#loginModal" data-toggle="modal"><i class="icon-user"></i>Login</a>
@@ -75,7 +75,7 @@
                         <li>
                             <a href="#textToDDLModal" data-toggle="modal"><i class="icon-wrench"></i>Text to DDL</a>
                         </li>
-                        
+
                     </ul>
 
                     <ul class="nav pull-right">
@@ -90,41 +90,41 @@
 
                         </li>
                         <li>
-                            
+
                             <a href="http://flattr.com/thing/679503/SQL-Fiddle" target="_blank">
                             <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
-                            
+
                         </li>
 
                         <li class="optional">
                             <a href="about.html"><i class="icon-info-sign"></i>About</a>
                         </li>
 
- 
+
                     </ul>
 
                 </div>
-                
+
                 <ul class="nav pull-right" id="exit_fullscreen">
                     <li class="">
                     <a href="#"><span>Exit Fullscreen</span> <i class="icon-resize-small"></i></a>
                     </li>
                 </ul>
-                
+
             </div>
         </div>
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
-        
+
             <div class="span12" id="content">
 
                 <div class="span12" id="schema-output">
                     <div class="span6 panel schema pull-left">
-                        
+
                         <div class="helpTip alert alert-info alert-block">
                             <h4 class="alert-heading">Schema Panel</h4>
-                            Use this panel to setup your database problem (CREATE TABLE, INSERT, and whatever other statements you need to prepare a representative sample of your real database). 
+                            Use this panel to setup your database problem (CREATE TABLE, INSERT, and whatever other statements you need to prepare a representative sample of your real database).
                             Use "Text to DDL" to quickly build your schema objects from text.
                         </div>
 
@@ -134,17 +134,17 @@
                                     <div id="browser"></div>
 
                                     <div class="action_buttons ddl_actions">
-                                            
+
                                         <a href="#" id="buildSchema" title="You can also press Ctrl-Enter while editing">
                                         <label for="result-ddl" class="btn btn-primary">
                                             Build Schema <i class="icon-download-alt icon-white"></i>
                                         </label>
                                         </a>
-    
+
                                         <a href="#" id="schemaFullscreen" class="btn btn-info">
                                             Edit Fullscreen <i class="icon-resize-full icon-white"></i>
                                         </a>
-    
+
                                         <a href="#" id="schemaBrowser" class="btn btn-info">
                                             Browser <i class="icon-indent-left icon-white"></i>
                                         </a>
@@ -152,7 +152,7 @@
                                         <a href="#" id="schemaDiagram" class="btn btn-info">
                                             Diagram <i class="icon-qrcode"></i>
                                         </a>
-    -->                                 
+    -->
                                         <div class="btn-group terminator" id="schemaStmtTerminator" data-statement_separator=";">
                                             <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
                                             [ ; ]
@@ -160,7 +160,7 @@
                                             </a>
                                             <ul class="dropdown-menu nav">
                                                 <li class="nav-header">Query Terminator</li>
-                                                <li class="divider"></li>                                       
+                                                <li class="divider"></li>
                                                 <li><a href=";">Semi-colon [ ; ]</a></li>
                                                 <li><a href="|">Pipe [ | ]</a></li>
                                                 <li><a href="/">Slash [ / ]</a></li>
@@ -168,43 +168,43 @@
                                                 <li><a href="GO">Keyword [ GO ]</a></li>
                                             </ul>
                                         </div>
-    
-    
-    
+
+
+
                                     </div>
-                                    
+
                                     <div class="action_buttons browser_actions">
                                         <a href="#" id="ddlEdit" class="btn btn-info">
                                             DDL Editor <i class="icon-pencil icon-white"></i>
                                         </a>
                                     </div>
-    
+
 
 
                                 </form>
 
                     </div><!-- end ddl div -->
-                    
-                    
+
+
                     <div class="span6 panel sql pull-right needsReadySchema">
-                        
-                        
+
+
                         <div class="helpTip alert alert-info alert-block">
                             <h4 class="alert-heading">Query Panel</h4>
-                            Use this panel to try to solve the problem with other SQL statements (SELECTs, etc...). 
-                            Results will be displayed below. Share your queries by copying and pasting the URL that is generated after each run. 
+                            Use this panel to try to solve the problem with other SQL statements (SELECTs, etc...).
+                            Results will be displayed below. Share your queries by copying and pasting the URL that is generated after each run.
                         </div>
-                        
-                        
+
+
                         <form id="fiddleFormSQL" method="post" action="" class="schema_ready">
                             <textarea id="sql"></textarea>
 
                             <div class="action_buttons">
 
                                 <div class="btn-group" id="runQueryOptions">
-                                
+
                                         <a href="#" class="runQuery btn btn-primary" title="You can also press Ctrl-Enter while editing">Run SQL <i class="icon-play icon-white"></i></a>
-                                
+
                                     <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                         <span class="caret"></span>
                                     </button>
@@ -232,7 +232,7 @@
                                     </a>
                                     <ul class="dropdown-menu nav">
                                         <li class="nav-header">Query Terminator</li>
-                                        <li class="divider"></li>                                       
+                                        <li class="divider"></li>
                                         <li><a href=";">Semi-colon [ ; ]</a></li>
                                         <li><a href="|">Pipe [ | ]</a></li>
                                         <li><a href="/">Slash [ / ]</a></li>
@@ -241,20 +241,20 @@
                                     </ul>
                                 </div>
 
-    
+
                             </div>
 
                         </form>
                     </div><!-- end sql div -->
-                    
+
                 </div><!-- end schema-output -->
-                
+
                 <div class="span12 panel needsReadySchema" id="output">
                 </div> <!-- end output -->
-                
+
             </div><!-- end content -->
         </div><!-- end row-fluid -->
-        
+
     </div><!-- end container-fluid -->
 
     <div id="hosting">
@@ -268,14 +268,14 @@
             <a class="close" data-dismiss="modal">x</a>
             <h3>Formatted Text Table to DDL</h3>
         </div>
-    
+
       <div class="modal-body">
             <label for="tableName">Table Name: </label><input type="text" id="tableName" value="Table1"><br>
             <textarea id="raw" cols="40" rows="8" placeholder="Paste formatted text here. CSV, space-separated, pipe-delimited are all valid."></textarea>
             <hr>
-            
+
             <pre id="parseResults"></pre>
-    
+
     </div>
     <div class="modal-footer">
         <div class="pull-left">
@@ -287,7 +287,7 @@
         <a href="#" id="appendDDL" class="btn btn-primary">Append to DDL</a>
         <a href="#" id="parseDDL" class="btn">Test Parse</a>
     </div>
-    
+
     </div>
 
     <div id="loginModal" class="modal">
@@ -303,25 +303,25 @@
                 <div class="controls">
                     <input type="text" id="openid_identifier" name="openid_identity" value="" size="20" />
                 </div>
-            </div>  
-            
-            <div class="control-group">             
+            </div>
+
+            <div class="control-group">
                 <label class="control-label" for="remember">Remember Me: </label>
                 <div class="controls">
                     <input type="checkbox" value="true" name="remember" id="remember">
                 </div>
-            </div>  
+            </div>
         </div>
-      
+
         <div class="modal-footer">
             <input class="btn btn-primary" type="submit" value="Login" />
-        </div>  
-      
+        </div>
+
         </form>
-    </div>  
+    </div>
 
     <div id="myFiddlesModal" class="modal">
-        
+
         <form action="index.cfm/Users/auth" method="post">
         <div class="modal-header">
             <a class="close" data-dismiss="modal">x</a>
@@ -333,9 +333,9 @@
 
         <div class="modal-body tab-content">
         </div>
-      
+
         </form>
-    </div>  
+    </div>
 
     <script type="text/javascript" src="javascript/main_min.js"></script>
 
