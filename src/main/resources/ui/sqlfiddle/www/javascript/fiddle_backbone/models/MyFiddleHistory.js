@@ -1,4 +1,4 @@
-define(["Backbone", "fiddle_backbone/models/UsedFiddle"], function (Backbone, UsedFiddle) {
+define(["Backbone", "./UsedFiddle"], function (Backbone, UsedFiddle) {
 
     var MyFiddleHistory = Backbone.Collection.extend({
         model: UsedFiddle,

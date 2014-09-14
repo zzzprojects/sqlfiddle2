@@ -13,8 +13,7 @@ define(
      "DateFormat",
      'text!./templates/generic.sql',
      'text!./templates/oracle.sql',
-     'text!./templates/sqlite.sql',
-     'HandlebarsHelpers/each_with_index'
+     'text!./templates/sqlite.sql'
      ],
     function ($, Handlebars, dateFormat, generic_template, oracle_template, sqlite_template) {
 

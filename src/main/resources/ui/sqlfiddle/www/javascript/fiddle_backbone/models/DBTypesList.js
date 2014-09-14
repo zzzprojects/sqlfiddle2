@@ -1,4 +1,4 @@
-define(["jquery", "Backbone", "fiddle_backbone/models/DBType"], function ($, Backbone, DBType) {
+define(["jquery", "Backbone", "./DBType"], function ($, Backbone, DBType) {
 
     return Backbone.Collection.extend({
         model: DBType,

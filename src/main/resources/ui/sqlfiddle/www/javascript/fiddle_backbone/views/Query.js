@@ -3,20 +3,13 @@ define ([
         "underscore",
         "Backbone",
         "Handlebars",
-        "FiddleEditor",
-        "libs/renderTerminator",
+        "utils/fiddleEditor",
+        "utils/renderTerminator",
         'XPlans/oracle/loadswf',
         'XPlans/mssql',
         "text!fiddle_backbone/templates/queryTabularOutput.html",
         "text!fiddle_backbone/templates/queryPlaintextOutput.html",
-        "text!fiddle_backbone/templates/queryMarkdownOutput.html",
-        'HandlebarsHelpers/divider_display',
-        'HandlebarsHelpers/each_simple_value_with_index',
-        'HandlebarsHelpers/each_with_index',
-        'HandlebarsHelpers/result_display_padded',
-        'HandlebarsHelpers/result_display',
-        'HandlebarsHelpers/code_format',
-        'HandlebarsHelpers/add'
+        "text!fiddle_backbone/templates/queryMarkdownOutput.html"
     ],
     function ($,_,Backbone,Handlebars,fiddleEditor,renderTerminator,loadswf,QP,tabTemplate,plainTemplate,mdTemplate) {
 

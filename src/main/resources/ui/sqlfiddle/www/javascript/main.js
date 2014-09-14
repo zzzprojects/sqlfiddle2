@@ -8,16 +8,15 @@ requirejs.config({
         Backbone: 'libs/backbone-min',
         Bootstrap: 'libs/bootstrap.min',
         Handlebars: 'libs/handlebars',
-        HandlebarsHelpers: 'libs/handlebarsHelpers',
         DateFormat: 'libs/date.format',
-        BrowserEngines: 'libs/browserEngines',
-        FiddleEditor: 'libs/fiddleEditor',
         XPlans: 'libs/xplans',
-        DDLBuilder: 'libs/ddl_builder'
+        DDLBuilder: 'libs/ddl_builder',
+
+        utils: 'fiddle_backbone/utils'
     },
 
     shim: {
-           DateFormat: {
+        DateFormat: {
             exports: 'dateFormat'
         },
         'XPlans/oracle/loadswf': {
@@ -40,10 +39,18 @@ require([
         'underscore',
         'fiddle_backbone/app',
         'DDLBuilder/ddl_builder',
+
         'Bootstrap',
         'jqBlockUI',
-        'jqCookie'
+        'jqCookie',
 
+        'utils/handlebarsHelpers/divider_display',
+        'utils/handlebarsHelpers/each_simple_value_with_index',
+        'utils/handlebarsHelpers/each_with_index',
+        'utils/handlebarsHelpers/result_display_padded',
+        'utils/handlebarsHelpers/result_display',
+        'utils/handlebarsHelpers/code_format',
+        'utils/handlebarsHelpers/add'
     ],
     function($, _, App, ddl_builder) {
 

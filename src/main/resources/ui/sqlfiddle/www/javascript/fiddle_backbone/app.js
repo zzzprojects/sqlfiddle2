@@ -1,23 +1,20 @@
 // this is essentially the controller, as far as I can tell
 
 define([
-    'BrowserEngines/engines',
+    'utils/browserEngines/engines',
 
-    'fiddle_backbone/models/UsedFiddle',
-    'fiddle_backbone/models/MyFiddleHistory',
-    'fiddle_backbone/models/DBTypesList',
-    'fiddle_backbone/models/SchemaDef',
-    'fiddle_backbone/models/Query',
+    './models/UsedFiddle',
+    './models/MyFiddleHistory',
+    './models/DBTypesList',
+    './models/SchemaDef',
+    './models/Query',
 
-    'fiddle_backbone/views/DBTypesList',
-    'fiddle_backbone/views/SchemaDef',
-    'fiddle_backbone/views/Query',
+    './views/DBTypesList',
+    './views/SchemaDef',
+    './views/Query',
 
-    'fiddle_backbone/router',
-    'libs/renderTerminator',
-
-    'jqBlockUI',
-    'jqCookie'
+    './router',
+    'utils/renderTerminator'
 ], function (
         browserEngines,
         UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,

@@ -1,4 +1,4 @@
-define(["jquery","BrowserEngines/sqlite_driver"], function ($,SQLite_driver) {
+define(["jquery","./sqlite_driver"], function ($,SQLite_driver) {
 
     var SQLjs_driver = function () {
         this.db = null;

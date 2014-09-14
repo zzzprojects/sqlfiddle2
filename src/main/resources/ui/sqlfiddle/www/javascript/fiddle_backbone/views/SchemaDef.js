@@ -1,6 +1,13 @@
-define (["jquery", "Backbone", "Handlebars", "FiddleEditor", "libs/renderTerminator",
-         "text!fiddle_backbone/templates/schemaOutput.html", "text!fiddle_backbone/templates/schemaBrowser.html"],
-        function ($,Backbone,Handlebars,fiddleEditor,renderTerminator,schemaOutputTemplate,schemaBrowserTemplate) {
+define ([
+        "jquery", 
+        "Backbone", 
+        "Handlebars", 
+        "utils/fiddleEditor", 
+        "utils/renderTerminator",
+        "text!fiddle_backbone/templates/schemaOutput.html", 
+        "text!fiddle_backbone/templates/schemaBrowser.html"
+    ],
+    function ($,Backbone,Handlebars,fiddleEditor,renderTerminator,schemaOutputTemplate,schemaBrowserTemplate) {
 
     var SchemaDefView = Backbone.View.extend({
 
