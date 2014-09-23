@@ -1,8 +1,7 @@
-// this is essentially the controller, as far as I can tell
-
 define([
     'utils/browserEngines/engines',
 
+    './models/OpenIDConnectProviders',
     './models/UsedFiddle',
     './models/MyFiddleHistory',
     './models/DBTypesList',
@@ -12,22 +11,27 @@ define([
     './views/DBTypesList',
     './views/SchemaDef',
     './views/Query',
+    './views/Login',
 
     './router',
-    'utils/renderTerminator'
+    'utils/renderTerminator',
+    'utils/openidconnect',
+    'underscore', 'jquery'
 ], function (
         browserEngines,
-        UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
-        DBTypesListView, SchemaDefView, QueryView,
-        Router,
-        renderTerminator
-        ) {
+        OpenIDConnectProviers, UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
+        DBTypesListView, SchemaDefView, QueryView, LoginView,
+        Router, renderTerminator, openidconnect,
+        _, $
+    ) {
 
-  var obj = {
+var obj = {
 
     initialize : function() {
 
         var router = {};
+
+        var oidc = new OpenIDConnectProviers();
 
         var myFiddleHistory = new MyFiddleHistory();
 
@@ -41,7 +45,7 @@ define([
 
         var dbTypesListView = new DBTypesListView({
             el: $("#db_type_id")[0],
-            collection:  dbTypes
+            collection: dbTypes
         });
 
         var schemaDefView = new SchemaDefView({
@@ -55,6 +59,11 @@ define([
             id: "sql",
             model: query,
             output_el: $("#output")
+        });
+
+        var loginView = new LoginView({
+            el: $("#loginModal")[0],
+            collection: oidc
         });
 
         /* UI Changes */
@@ -218,6 +227,10 @@ define([
             queryView.render();
         });
 
+        oidc.on("reset", function () {
+            loginView.render();
+        });
+
         myFiddleHistory.on("change reset remove", function () {
             if (localStorage)
             {
@@ -285,13 +298,21 @@ define([
         });
 
         dbTypes.fetch();
+        openidconnect.getLoggedUserDetails().then(function (userInfo) {
+            debugger;
+        }, function () {
+            oidc.fetch();
+        });
 
-        return {
+        _.extend(this, {
                 dbTypes: dbTypes,
                 schemaDef: schemaDef,
                 schemaDefView: schemaDefView,
-                queryView: queryView
-            };
+                queryView: queryView,
+                loginView: loginView
+            });
+
+        return this;
 
         }
 

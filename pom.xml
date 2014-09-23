@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <openidm.version>3.0.0</openidm.version>
+        <openidm.version>3.1.0-SNAPSHOT</openidm.version>
     </properties>
 
     <repositories>
@@ -38,6 +38,7 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>org.forgerock.openicf.connectors</groupId>
             <artifactId>groovy-connector</artifactId>

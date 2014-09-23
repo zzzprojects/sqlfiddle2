@@ -20,10 +20,10 @@ apt-get --yes --force-yes install oracle-java7-installer maven postgresql-client
 
 npm install -g grunt-cli
 
-cd /tmp
-svn checkout https://svn.forgerock.org/openidm/tags/3.0.0 openidm
-cd openidm
-mvn clean install
+#cd /tmp
+#svn checkout https://svn.forgerock.org/openidm/tags/3.0.0 openidm
+#cd openidm
+#mvn clean install
 cd /vagrant
 mvn clean install
 npm install

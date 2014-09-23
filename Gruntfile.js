@@ -22,7 +22,7 @@ module.exports = function(grunt) {
             }
         },
         requirejs: {
-            minifyJS: {
+            minifyMainJS: {
                 options: {
                     baseUrl: "target/sqlfiddle/ui/sqlfiddle/www/javascript",
                     mainConfigFile: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main.js",
@@ -31,6 +31,17 @@ module.exports = function(grunt) {
                     generateSourceMaps: true,
                     preserveLicenseComments: false,
                     out: "target/sqlfiddle/ui/sqlfiddle/www/javascript/main_min.js"
+                }
+            },
+            minifyOAuthJS: {
+                options: {
+                    baseUrl: "target/sqlfiddle/ui/sqlfiddle/www/javascript",
+                    mainConfigFile: "target/sqlfiddle/ui/sqlfiddle/www/javascript/oauth.js",
+                    include: ["almond", "oauth"],
+                    optimize: "uglify2",
+                    generateSourceMaps: true,
+                    preserveLicenseComments: false,
+                    out: "target/sqlfiddle/ui/sqlfiddle/www/javascript/oauth_min.js"
                 }
             },
             minifyMainCSS: {
@@ -51,7 +62,7 @@ module.exports = function(grunt) {
         watch: {
             copyUIJS: {
                 files: ['src/main/resources/ui/**/*.js'],
-                tasks: [ 'sync', 'requirejs:minifyJS' ]
+                tasks: [ 'sync', 'requirejs:minifyMainJS', 'requirejs:minifyOAuthJS' ]
             },
             copyLESS: {
                 files: ['src/main/resources/ui/**/*.less', 'src/main/resources/ui/**/*.css'],

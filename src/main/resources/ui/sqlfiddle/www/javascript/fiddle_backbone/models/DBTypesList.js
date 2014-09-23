@@ -1,23 +1,19 @@
-define(["jquery", "Backbone", "./DBType"], function ($, Backbone, DBType) {
+define(["./OpenIDMResource", "Backbone", "./DBType"], function (idm, Backbone, DBType) {
 
     return Backbone.Collection.extend({
         model: DBType,
         fetch: function () {
             var _this = this;
-            return $.ajax({
-                url: '/openidm/system/fiddles/db_types?_queryFilter=full_name gt ""',
-                headers: {
-                    "X-OpenIDM-Username" : "anonymous",
-                    "X-OpenIDM-Password" : "anonymous",
-                    "X-OpenIDM-NoSession" : "true"
-                }
-            }).then(function (qry) {
-                _this.reset(_.map(qry.result, function (r) {
-                    r.id = r.db_type_id;
-                    return new DBType(r);
-                }));
-                return _this;
-            });
+            return idm.serviceCall({
+                        url: 'system/fiddles/db_types?_queryFilter=full_name gt ""'
+                    })
+                    .then(function (qry) {
+                        _this.reset(_.map(qry.result, function (r) {
+                            r.id = r.db_type_id;
+                            return new DBType(r);
+                        }));
+                        return _this;
+                    });
         },
         getSelectedType: function () {
             return this.find(function (dbType) {
@@ -28,7 +24,7 @@ define(["jquery", "Backbone", "./DBType"], function ($, Backbone, DBType) {
             this.each(function (dbType) {
                 dbType.set({"selected": (dbType.id === db_type_id)}, {silent: true});
             });
-            if (! silentSelected) {
+            if (!silentSelected) {
                 this.trigger("change");
             }
         }

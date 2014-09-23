@@ -11,10 +11,8 @@ requirejs.config({
         DateFormat: 'libs/date.format',
         XPlans: 'libs/xplans',
         DDLBuilder: 'libs/ddl_builder',
-
         utils: 'fiddle_backbone/utils'
     },
-
     shim: {
         DateFormat: {
             exports: 'dateFormat'
@@ -26,12 +24,10 @@ requirejs.config({
         'XPlans/mssql': {
             exports: "QP"
         },
-
         jqBlockUI: ['jquery'],
         jqCookie: ['jquery'],
         Bootstrap: ['jquery']
     }
-
 });
 
 require([
@@ -207,7 +203,7 @@ require([
     });
 
 
-    /* LOGIN/LOGOUT */
+    /* LOGIN/LOGOUT
 
             // Upload localStorage fiddle history to server to use new mechanism
             if ($("#user_choices", this).length) // simple way to detect if we are logged in
@@ -261,7 +257,6 @@ require([
             .css("display", "none");
 
     });
-
     $("#userInfo").on("click", "#logout", function (e) {
         e.preventDefault();
 
@@ -271,6 +266,7 @@ require([
             .submit();
     });
 
+ */
 
     /* TEXT TO DDL */
 

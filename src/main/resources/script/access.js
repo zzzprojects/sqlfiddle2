@@ -70,6 +70,12 @@ var httpAccessConfig =
            "methods"    : "action",
            "actions"    : "query"
         },
+        {
+           "pattern"    : "endpoint/oidc",
+           "roles"      : "*",
+           "methods"    : "action,read",
+           "actions"    : "getToken"
+        },
         // openidm-admin can request nearly anything (some exceptions being a few system endpoints)
         {
             "pattern"   : "*",

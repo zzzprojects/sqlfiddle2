@@ -1,14 +1,5 @@
 {
-    "queryId" : "credential-query",
-    "queryOnResource" : "managed/user",
-    "propertyMapping" : {
-        "authenticationId" : "_id",
-        "userCredential" : "password",
-        "userRoles" : "roles"
-    },
-    "defaultUserRoles" : [ ],
     "serverAuthContext" : {
-
         "sessionModule" : {
             "name" : "JWT_SESSION",
             "properties" : {
@@ -34,6 +25,27 @@
                         "userRoles" : "roles"
                     },
                     "defaultUserRoles" : [ ]
+                },
+                "enabled" : true
+            },
+            {
+                "name" : "OPENID_CONNECT",
+                "properties" : {
+                    "openIdConnectHeader" : "oidc_id_token",
+                    "resolvers" : [
+                        {
+                            "name" : "Google",
+                            "icon" : "https://developers.google.com/accounts/images/sign-in-with-google.png",
+                            "client_id" : "1073755695213-hgckd5r1jr9l1vst1ikq48klcku7ihpg.apps.googleusercontent.com",
+                            "client_secret" : "FKwuulv4TUcj3lZNHDIAGx_y",
+                            "authorization_endpoint" : "https://accounts.google.com/o/oauth2/auth",
+                            "token_endpoint" : "https://accounts.google.com/o/oauth2/token",
+                            "well-known" : "https://accounts.google.com/.well-known/openid-configuration"
+                        }
+                    ],
+                    "defaultUserRoles" : [
+                        "openidm-authorized"
+                    ]
                 },
                 "enabled" : true
             }
