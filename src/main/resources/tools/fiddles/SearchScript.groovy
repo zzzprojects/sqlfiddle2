@@ -25,6 +25,7 @@
  */
 import groovy.sql.Sql
 import groovy.sql.DataSet
+import org.identityconnectors.framework.common.objects.AttributeBuilder
 import org.identityconnectors.framework.common.objects.filter.Filter
 import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
@@ -189,8 +190,7 @@ switch ( objectClass.objectClassValue ) {
             attribute 'minutes_since_last_used', (row.minutes_since_last_used != null ? row.minutes_since_last_used.toInteger(): null)
             attribute 'short_code', row.short_code
             attribute 'statement_separator', row.statement_separator
-            attribute 'relationships', [
-                'db_type' : [
+            attribute 'db_type', [
                     id : row.db_type_id.toInteger(),
                     context : row.context,
                     simple_name : row.simple_name,
@@ -200,7 +200,7 @@ switch ( objectClass.objectClassValue ) {
                     execution_plan_xslt : row.execution_plan_xslt,
                     batch_separator : row.batch_separator
                 ]
-            ]
+            
         }
 
     }
@@ -223,9 +223,7 @@ switch ( objectClass.objectClassValue ) {
                 attribute 'schema_def_id', dataCollector.schema_def_id
                 attribute 'sql', dataCollector.sql
                 attribute 'statement_separator', dataCollector.statement_separator
-                attribute 'relationships', [
-                    'query_sets' : dataCollector.relationships.query_sets
-                ]
+                attributes AttributeBuilder.build('query_sets',  dataCollector.query_sets)
             }
 
         }
@@ -273,14 +271,12 @@ switch ( objectClass.objectClassValue ) {
                 schema_def_id : row.schema_def_id.toInteger(),
                 sql : row.sql,
                 statement_separator : row.statement_separator,
-                relationships : [
-                    query_sets : [ ]
-                ]
+                query_sets : [ ]
             ]
         }
 
         if (row.query_set_id) {
-            dataCollector.relationships.query_sets.add([
+            dataCollector.query_sets.add([
                 id : row.query_set_id.toInteger(),
                 row_count : row.row_count,
                 execution_time : row.execution_time,

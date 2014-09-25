@@ -90,7 +90,7 @@ def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id
 
 assert schema_def != null
 
-def db_type = schema_def.relationships.db_type
+def db_type = schema_def.db_type
 
 // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
 schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
@@ -234,9 +234,9 @@ if (db_type.context == "host") {
 
     hostConnection.close()
 
-    if (query.relationships.query_sets.size() != sets.size()) {
+    if (query.query_sets.size() != sets.size()) {
         int i = 0
-        query.relationships.query_sets = []
+        query.query_sets = []
 
         sets.each {
             String columns_list = it.RESULTS?.COLUMNS?.join(",")
@@ -245,7 +245,7 @@ if (db_type.context == "host") {
             }
 
             i++
-            query.relationships.query_sets.add([
+            query.query_sets.add([
                 id : i,
                 row_count : it.RESULTS?.DATA?.size() ?: 0,
                 execution_time : it.EXECUTIONTIME ?: 0,

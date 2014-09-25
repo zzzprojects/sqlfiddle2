@@ -202,38 +202,34 @@
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
                 },
-                "relationships" : {
+                "db_type" : {
                     "type" : "object",
-                    "required" : false,
+                    "nativeName" : "db_type",
+                    "nativeType" : "object",
                     "properties" : {
-                        "db_type" : {
-                            "type" : "object",
-                            "properties" : {
-                                "id" : {
-                                    "type" : "integer"
-                                },
-                                "context" : {
-                                    "type" : "string" 
-                                },
-                                "execution_plan_prefix" : {
-                                    "type" : "string"
-                                },
-                                "execution_plan_suffix" : {
-                                    "type" : "string"
-                                },
-                                "execution_plan_xslt" : {
-                                    "type" : "string"
-                                },
-                                "simple_name" : {
-                                    "type" : "string"
-                                },
-                                "full_name" : {
-                                    "type" : "string"
-                                },
-                                "batch_separator" : {
-                                    "type" : "string"
-                                }
-                            }
+                        "id" : {
+                            "type" : "integer"
+                        },
+                        "context" : {
+                            "type" : "string" 
+                        },
+                        "execution_plan_prefix" : {
+                            "type" : "string"
+                        },
+                        "execution_plan_suffix" : {
+                            "type" : "string"
+                        },
+                        "execution_plan_xslt" : {
+                            "type" : "string"
+                        },
+                        "simple_name" : {
+                            "type" : "string"
+                        },
+                        "full_name" : {
+                            "type" : "string"
+                        },
+                        "batch_separator" : {
+                            "type" : "string"
                         }
                     }
                 }
@@ -278,40 +274,36 @@
                     "nativeName" : "query_id",
                     "nativeType" : "integer"
                 },
-                "relationships" : {
-                    "type" : "object",
-                    "required" : false,
-                    "properties" : {
-                        "query_sets" : {
-                            "type": "array",
-                            "items" : {
-                                "type" : "object",
-                                "properties" : {
-                                    "id" : {
-                                        "type" : "integer"
-                                    },
-                                    "row_count" : {
-                                        "type" : "integer"
-                                    },
-                                    "execution_time" : {
-                                        "type" : "string"
-                                    },
-                                    "execution_plan" : {
-                                        "type" : "string"
-                                    },
-                                    "succeeded" : {
-                                        "type" : "string"
-                                    },
-                                    "error_message" : {
-                                        "type" : "string"
-                                    },
-                                    "sql" : {
-                                        "type" : "string"
-                                    },
-                                    "columns_list" : {
-                                        "type" : "string"
-                                    }
-                                }
+                "query_sets" : {
+                    "type": "array",
+                    "nativeName" : "query_sets",
+                    "nativeType" : "object",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "id" : {
+                                "type" : "integer"
+                            },
+                            "row_count" : {
+                                "type" : "integer"
+                            },
+                            "execution_time" : {
+                                "type" : "string"
+                            },
+                            "execution_plan" : {
+                                "type" : "string"
+                            },
+                            "succeeded" : {
+                                "type" : "string"
+                            },
+                            "error_message" : {
+                                "type" : "string"
+                            },
+                            "sql" : {
+                                "type" : "string"
+                            },
+                            "columns_list" : {
+                                "type" : "string"
                             }
                         }
                     }

@@ -79,7 +79,7 @@ switch ( operation ) {
 
             int i = 0;
 
-            updateAttributes.findMap("relationships").query_sets.each {
+            updateAttributes.findMap("query_sets").each {
                 i++;
                 sql.execute("""
                     INSERT INTO
