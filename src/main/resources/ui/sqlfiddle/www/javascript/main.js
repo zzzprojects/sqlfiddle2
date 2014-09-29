@@ -10,6 +10,7 @@ requirejs.config({
         Handlebars: 'libs/handlebars',
         DateFormat: 'libs/date.format',
         XPlans: 'libs/xplans',
+        md5: 'libs/md5',
         DDLBuilder: 'libs/ddl_builder',
         utils: 'fiddle_backbone/utils'
     },

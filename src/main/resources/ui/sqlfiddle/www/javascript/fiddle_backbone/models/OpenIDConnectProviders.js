@@ -10,7 +10,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
                     return new Backbone.Model(r);
                 }));
                 return _this;
-            })
+            });
         }
     });
 });

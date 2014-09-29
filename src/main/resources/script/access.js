@@ -47,6 +47,12 @@ var httpAccessConfig =
     "configs" : [
         // Anyone can read from these endpoints
         {
+           "pattern"    : "info/login",
+           "roles"      : "openidm-authorized",
+           "methods"    : "read",
+           "actions"    : "*"
+        },
+        {
            "pattern"    : "system/fiddles/db_types",
            "roles"      : "*",
            "methods"    : "query",

@@ -256,6 +256,20 @@
                             <md5>2b2df1b111dfb560e7b0a1f1b8e0743a</md5>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>install-md5js</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/blueimp/JavaScript-MD5/1.1.0/js/md5.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
+                            <md5>fe66b64100a278ae560c98c191936328</md5>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 

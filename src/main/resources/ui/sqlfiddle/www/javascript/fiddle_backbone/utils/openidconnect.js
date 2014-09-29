@@ -1,6 +1,19 @@
 /*global localStorage, JSON */
 define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], function (_, $, idm) {
     return {
+        getCookies: function () {
+            var cookies = document.cookie.split(";");
+
+            return _.chain(cookies)
+                    .map(function (c) { 
+                        return c.split("="); 
+                    })
+                    .object()
+                    .value();
+        },
+        getSessionJWT: function () {
+            return this.getCookies()["session-jwt"];
+        },
         getURLParams: function () {
             return _.chain( window.location.search.replace(/^\?/, '').split("&") )
                 .map(function (arg) { 
@@ -30,21 +43,49 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
                 return result;
             });
         },
+        getTokenClaims: function (token) {
+            var components = token && token.split(".");
+            if (!components || components.length !== 3) {
+                return null;
+            }
+
+            return JSON.parse(atob(components[1]));
+        },
         getLoggedUserDetails: function () {
-            var token = localStorage.getItem("oidcToken"),
-                jwt = {};
+            var sessionJwt = this.getSessionJWT(),
+                token = localStorage.getItem("oidcToken"),
+                claims,
+                oidcJwt = {};
 
             if (token) {
                 token = JSON.parse(token);
-                jwt[token.header] = token.token;
+                oidcJwt[token.header] = token.token;
+                claims = this.getTokenClaims(token.token);
 
                 return idm.serviceCall({
                     "url": "info/login",
-                    "headers": jwt
-                });
+                    // only pass the oidcToken when there is no session-jwt cookie available
+                    "headers": (sessionJwt === undefined) ? oidcJwt : {}
+                })
+                .then(
+                    function (details) {
+                        if (details.authorizationId.id !== claims.iss + ":" + claims.sub) {
+                            localStorage.removeItem("oidcToken");
+                            return null;
+                        }
+                        return claims;
+                    },
+                    function () {
+                        localStorage.removeItem("oidcToken");
+                    }
+                );
             } else {
                 return $.Deferred().reject();
             }
+        },
+        removeTokens: function () {
+            document.cookie = "session-jwt=;expires=" + (new Date(0)).toUTCString() + ";path=/;domain=;";
+            localStorage.removeItem("oidcToken");
         }
     };
 });

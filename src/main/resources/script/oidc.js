@@ -1,6 +1,7 @@
 /*global exports, openidm, require */
 (function () {
     var _ = require("lib/lodash"),
+        base64 = Packages.org.forgerock.util.encode.Base64,
         authConfig = openidm.read("config/authentication"),
         oidcModule = _.find(authConfig.serverAuthContext.authModules, function (a) {
                         return a.name === "OPENID_CONNECT";
@@ -33,7 +34,9 @@
                 var resolver = _.find(this.getResolvers(false), function (r) {
                         return r.name === name;
                     }),
-                    response;
+                    response,
+                    claims,
+                    user;
 
                 if (!resolver) {
                     throw { "code": 400, "message": "Unable to find provider with name '" + name + "'"};
@@ -63,6 +66,20 @@
                 if (!response || !response.id_token) {
                     throw { "code": 400, "message": "Incorrect response from server", "detail": response };
                 }
+
+                claims = JSON.parse( new java.lang.String(base64.decode( response.id_token.split(".")[1]) ) );
+
+                user = openidm.read("system/fiddles/users/" + claims.iss + ":" + claims.sub);
+
+                // if the user isn't found in our local user cache, create a record for them
+                if (user === null) {
+                    openidm.create("system/fiddles/users", null, {
+                        "issuer" : claims.iss,
+                        "subject" : claims.sub,
+                        "email" : claims.email
+                    });
+                }
+
 
                 return {
                     "token": response.id_token,

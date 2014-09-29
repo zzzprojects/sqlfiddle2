@@ -39,6 +39,28 @@ def sql = new Sql(connection)
 
 switch ( objectClass.objectClassValue ) {
 
+    case "users":
+
+        sql.executeInsert("""
+            INSERT INTO 
+                users
+            (
+                issuer,
+                subject,
+                email
+            ) 
+            VALUES (?,?,?)
+            """,
+            [
+                createAttributes.findString("issuer"),
+                id,
+                createAttributes.findString("email")
+            ])
+
+        return new Uid(createAttributes.findString("issuer") + ":" + id)
+
+    break
+
     case "schema_defs":
 
         sql.executeInsert("""

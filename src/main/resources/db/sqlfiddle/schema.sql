@@ -70,20 +70,6 @@ CREATE TABLE db_types (
 ALTER TABLE public.db_types OWNER TO postgres;
 
 --
--- Name: db_types2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE db_types2_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.db_types2_id_seq OWNER TO postgres;
-
---
 -- Name: db_types_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -263,12 +249,9 @@ ALTER SEQUENCE user_fiddles_id_seq OWNED BY user_fiddles.id;
 
 CREATE TABLE users (
     id integer NOT NULL,
-    identity character varying(1000) NOT NULL,
-    openid_server character varying(1000) NOT NULL,
-    auth_token character varying(35) NOT NULL,
-    email character varying(1000),
-    firstname character varying(200),
-    lastname character varying(200)
+    issuer character varying(1000) NOT NULL,
+    subject character varying(1000) NOT NULL,
+    email character varying(1000)
 );
 
 
@@ -444,7 +427,7 @@ CREATE INDEX user_fiddles_user_schema_query_id ON user_fiddles USING btree (user
 -- Name: user_identities; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
-CREATE UNIQUE INDEX user_identities ON users USING btree (identity);
+CREATE UNIQUE INDEX user_identities ON users USING btree (issuer,subject);
 
 
 --

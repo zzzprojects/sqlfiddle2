@@ -31,6 +31,10 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
 //Need to handle the __UID__ and __NAME__ in queries
 def fieldMap = [
+    "users": [
+        "__NAME__": "u.subject",
+        "__UID__": "u.issuer = ? AND u.subject = ?"
+    ],
     "db_types": [
         "__NAME__": "d.full_name",
         "__UID__": "d.id"
@@ -70,7 +74,16 @@ queryParser = { queryObj ->
 
 
         // special cases for concatenated-keys
-        if (objectClass.objectClassValue == "schema_defs" && queryObj.get("left") == "__UID__") {
+        if (objectClass.objectClassValue == "users" && queryObj.get("left") == "__UID__") {
+            def user_parts = queryObj.get("right").split(":")
+            assert user_parts.size() == 2
+
+            whereParams.push(user_parts[0])
+            whereParams.push(user_parts[1])
+
+            return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
+
+        } else if (objectClass.objectClassValue == "schema_defs" && queryObj.get("left") == "__UID__") {
             def fragment_parts = queryObj.get("right").split("_")
             assert fragment_parts.size() == 2
 
@@ -153,6 +166,29 @@ if (filter != null) {
 }
 
 switch ( objectClass.objectClassValue ) {
+
+    case "users":
+    sql.eachRow("""
+        SELECT
+            u.id,
+            u.issuer,
+            u.subject,
+            u.email
+        FROM
+            users u
+        ${where}
+    """, whereParams) { row ->
+        handler {
+            id row.subject
+            uid row.issuer + ":" + row.subject as String
+            attribute 'issuer', row.issuer
+            attribute 'subject', row.subject
+            attribute 'email', row.email
+        }
+
+    }
+    break
+
     case "schema_defs":
 
     sql.eachRow("""

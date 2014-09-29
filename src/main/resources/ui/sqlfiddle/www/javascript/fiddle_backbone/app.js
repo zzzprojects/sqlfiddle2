@@ -12,6 +12,7 @@ define([
     './views/SchemaDef',
     './views/Query',
     './views/Login',
+    './views/UserInfoView',
 
     './router',
     'utils/renderTerminator',
@@ -20,7 +21,7 @@ define([
 ], function (
         browserEngines,
         OpenIDConnectProviers, UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
-        DBTypesListView, SchemaDefView, QueryView, LoginView,
+        DBTypesListView, SchemaDefView, QueryView, LoginView, UserInfoView,
         Router, renderTerminator, openidconnect,
         _, $
     ) {
@@ -64,6 +65,11 @@ var obj = {
         var loginView = new LoginView({
             el: $("#loginModal")[0],
             collection: oidc
+        });
+
+        var userInfoView = new UserInfoView({
+            el: $("#userInfo")[0],
+            oidc: oidc
         });
 
         /* UI Changes */
@@ -298,10 +304,11 @@ var obj = {
         });
 
         dbTypes.fetch();
+
         openidconnect.getLoggedUserDetails().then(function (userInfo) {
-            debugger;
+            userInfoView.renderAuthenticated(userInfo);
         }, function () {
-            oidc.fetch();
+            userInfoView.renderAnonymous();
         });
 
         _.extend(this, {

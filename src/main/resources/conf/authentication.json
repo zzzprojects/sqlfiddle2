@@ -8,30 +8,20 @@
                 "keystoreType" : "&{openidm.keystore.type}",
                 "keystoreFile" : "&{openidm.keystore.location}",
                 "keystorePassword" : "&{openidm.keystore.password}",
-                "maxTokenLifeMinutes" : "120",
-                "tokenIdleTimeMinutes" : "30",
-                "sessionOnly" : true
+                "maxTokenLifeMinutes" : "35791",
+                "tokenIdleTimeMinutes" : "35791",
+                "sessionOnly" : false
             }
         },
         "authModules" : [
             {
-                "name" : "INTERNAL_USER",
-                "properties" : {
-                    "queryId" : "credential-internaluser-query",
-                    "queryOnResource" : "repo/internal/user",
-                    "propertyMapping" : {
-                        "authenticationId" : "username",
-                        "userCredential" : "password",
-                        "userRoles" : "roles"
-                    },
-                    "defaultUserRoles" : [ ]
-                },
-                "enabled" : true
-            },
-            {
                 "name" : "OPENID_CONNECT",
                 "properties" : {
                     "openIdConnectHeader" : "oidc_id_token",
+                    "queryOnResource" : "system/fiddles/users",
+                    "propertyMapping" : {
+                        "authenticationId" : "subject"
+                    },
                     "resolvers" : [
                         {
                             "name" : "Google",
@@ -46,6 +36,20 @@
                     "defaultUserRoles" : [
                         "openidm-authorized"
                     ]
+                },
+                "enabled" : true
+            },
+            {
+                "name" : "INTERNAL_USER",
+                "properties" : {
+                    "queryId" : "credential-internaluser-query",
+                    "queryOnResource" : "repo/internal/user",
+                    "propertyMapping" : {
+                        "authenticationId" : "username",
+                        "userCredential" : "password",
+                        "userRoles" : "roles"
+                    },
+                    "defaultUserRoles" : [ ]
                 },
                 "enabled" : true
             }

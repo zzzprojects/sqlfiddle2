@@ -28,7 +28,7 @@ define ([
             });
 
             window.location.href = resolver.get('authorization_endpoint') +
-                                    '?response_type=code&scope=openid' +
+                                    '?response_type=code&scope=openid%20profile%20email' +
                                     '&redirect_uri=' + openidconnect.getRedirectUri() +
                                     '&state=' + resolver.get('name') +
                                     '&client_id=' + resolver.get('client_id');
