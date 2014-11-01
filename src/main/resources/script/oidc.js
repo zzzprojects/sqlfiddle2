@@ -1,7 +1,7 @@
 /*global exports, openidm, require */
 (function () {
     var _ = require("lib/lodash"),
-        base64 = Packages.org.forgerock.util.encode.Base64,
+        base64 = Packages.org.forgerock.util.encode.Base64url,
         authConfig = openidm.read("config/authentication"),
         oidcModule = _.find(authConfig.serverAuthContext.authModules, function (a) {
                         return a.name === "OPENID_CONNECT";
@@ -65,6 +65,14 @@
 
                 if (!response || !response.id_token) {
                     throw { "code": 400, "message": "Incorrect response from server", "detail": response };
+                }
+
+                if (response.id_token.split(".")[1] === null || base64.decode( response.id_token.split(".")[1]) === null) {
+                    throw { "code": 400, "message": "Unable to parse the response from server", "detail": response };
+                }
+
+                if (new java.lang.String(base64.decode( response.id_token.split(".")[1]) ) === null) {
+                    throw { "code": 400, "message": "Unable to build string from decoded response", "detail": response };
                 }
 
                 claims = JSON.parse( new java.lang.String(base64.decode( response.id_token.split(".")[1]) ) );
