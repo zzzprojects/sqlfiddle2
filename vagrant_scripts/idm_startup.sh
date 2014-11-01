@@ -1,3 +1,3 @@
 cd /vagrant
-nohup grunt > target/sqlfiddle/logs/grunt.log &
+nohup grunt > target/grunt.log &
 service openidm start
