@@ -3,7 +3,7 @@ define ([
     "Backbone", 
     "Handlebars", 
     "md5", 
-    "utils/openidconnect", 
+    "utils/openidconnect",
     "text!fiddle_backbone/templates/loginButton.html",
     "text!fiddle_backbone/templates/authenticatedUserOptions.html"
 ],
@@ -41,7 +41,7 @@ function ($,Backbone,Handlebars,md5,openidconnect,loginButtonTemplate,authentica
         },
         showMyFiddles: function (e) {
             e.preventDefault();
-            
+            this.options.myFiddleDialog.render();
         },
         logout: function (e) {
             e.preventDefault();

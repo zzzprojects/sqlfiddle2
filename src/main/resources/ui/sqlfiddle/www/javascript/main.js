@@ -60,7 +60,7 @@ require([
 
 
 
-    /* MY FIDDLES */
+    /* MY FIDDLES
 
     $("#userInfo").on("click", "#myFiddles", function (e) {
         e.preventDefault();
@@ -204,7 +204,7 @@ require([
     });
 
 
-    /* LOGIN/LOGOUT
+    LOGIN/LOGOUT
 
             // Upload localStorage fiddle history to server to use new mechanism
             if ($("#user_choices", this).length) // simple way to detect if we are logged in

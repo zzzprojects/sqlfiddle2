@@ -11,8 +11,9 @@ define([
     './views/DBTypesList',
     './views/SchemaDef',
     './views/Query',
-    './views/Login',
-    './views/UserInfoView',
+    './views/LoginDialog',
+    './views/UserOptions',
+    './views/MyFiddleDialog',
 
     './router',
     'utils/renderTerminator',
@@ -21,7 +22,7 @@ define([
 ], function (
         browserEngines,
         OpenIDConnectProviers, UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
-        DBTypesListView, SchemaDefView, QueryView, LoginView, UserInfoView,
+        DBTypesListView, SchemaDefView, QueryView, LoginDialog, UserOptions, MyFiddleDialog,
         Router, renderTerminator, openidconnect,
         _, $
     ) {
@@ -62,14 +63,19 @@ var obj = {
             output_el: $("#output")
         });
 
-        var loginView = new LoginView({
+        var loginDialog = new LoginDialog({
             el: $("#loginModal")[0],
             collection: oidc
         });
 
-        var userInfoView = new UserInfoView({
+        var myFiddleDialog = new MyFiddleDialog({
+            el: $("#myFiddlesModal")[0]
+        });
+
+        var userOptions = new UserOptions({
             el: $("#userInfo")[0],
-            oidc: oidc
+            oidc: oidc,
+            myFiddleDialog: myFiddleDialog
         });
 
         /* UI Changes */
@@ -234,12 +240,12 @@ var obj = {
         });
 
         oidc.on("reset", function () {
-            loginView.render();
+            // note that this isn't visible until the login button is clicked
+            loginDialog.render();
         });
 
         myFiddleHistory.on("change reset remove", function () {
-            if (localStorage)
-            {
+            if (localStorage) {
                 localStorage.setItem("fiddleHistory", JSON.stringify(this.toJSON()));
             }
         });
@@ -306,17 +312,16 @@ var obj = {
         dbTypes.fetch();
 
         openidconnect.getLoggedUserDetails().then(function (userInfo) {
-            userInfoView.renderAuthenticated(userInfo);
+            userOptions.renderAuthenticated(userInfo);
         }, function () {
-            userInfoView.renderAnonymous();
+            userOptions.renderAnonymous();
         });
 
         _.extend(this, {
                 dbTypes: dbTypes,
                 schemaDef: schemaDef,
                 schemaDefView: schemaDefView,
-                queryView: queryView,
-                loginView: loginView
+                queryView: queryView
             });
 
         return this;

@@ -1,4 +1,4 @@
-
+import org.forgerock.json.resource.SecurityContext
 import groovy.json.JsonBuilder
 import groovy.transform.InheritConstructors
 import groovy.sql.Sql
@@ -84,10 +84,9 @@ def execQueryStatement(connection, statement, rethrow) {
     }
 
     return set
-} 
+}
 
 def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
-
 assert schema_def != null
 
 def db_type = schema_def.db_type
@@ -108,6 +107,18 @@ def query = openidm.create("system/fiddles/queries",
 )
 
 def response = [ID: query.query_id]
+
+def securityContext = context.asContext(SecurityContext.class)
+
+if (securityContext.authorizationId.component == "system/fiddles/users") {
+
+    openidm.update("system/fiddles/users/" + securityContext.authorizationId.id, null, [
+        "fiddles" : [
+            ["schema_def_id": schema_def.schema_def_id, "query_id": query.query_id]
+        ]
+    ])
+
+}
 
 if (db_type.context == "host") {
 
@@ -263,5 +274,4 @@ if (db_type.context == "host") {
     response.sets = sets
 
 }
-
 response

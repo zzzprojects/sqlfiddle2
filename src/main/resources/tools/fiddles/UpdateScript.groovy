@@ -23,6 +23,7 @@
  *
  * $Id$
  */
+
 import groovy.sql.Sql
 import groovy.sql.DataSet
 import org.forgerock.openicf.misc.scriptedcommon.OperationType
@@ -31,14 +32,92 @@ import org.identityconnectors.framework.common.objects.AttributesAccessor
 
 def operation = operation as OperationType
 def sql = new Sql(connection)
-def fragment_parts = uid.uidValue.split("_")
 def updateAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
 switch ( operation ) {
     case OperationType.UPDATE:
     switch ( objectClass.objectClassValue ) {
 
+        case "users":
+            def fiddles = updateAttributes.findList("fiddles")
+            def user_parts = uid.uidValue.split(":")
+            assert fiddles != null
+            assert fiddles.size() == 1 && fiddles[0] != null // can only update one fiddle entry at a time
+            assert fiddles[0].schema_def_id != null
+            assert user_parts.size() == 2
+
+            def queryIdClause
+            def whereParams = [
+                    user_parts[0],
+                    user_parts[1],
+                    fiddles[0].schema_def_id
+                ]
+
+            if (fiddles[0].query_id == null) {
+                queryIdClause = " IS NULL"
+            } else {
+                whereParams.push(fiddles[0].query_id)
+                queryIdClause = " = ?"
+            }
+
+            def existingHistory = sql.firstRow("""
+                SELECT
+                    uf.id
+                FROM
+                    user_fiddles uf
+                        INNER JOIN users u ON
+                            uf.user_id = u.id
+                WHERE
+                    u.issuer = ? AND
+                    u.subject = ? AND
+                    uf.schema_def_id = ? AND
+                    uf.query_id ${queryIdClause}
+                """,
+                whereParams
+                );
+
+            if (existingHistory == null) {
+                sql.executeInsert("""
+                    INSERT INTO
+                        user_fiddles
+                    (
+                        user_id,
+                        schema_def_id,
+                        query_id
+                    )
+                    SELECT
+                        u.id,
+                        ?,
+                        ?
+                    FROM
+                        users u
+                    WHERE
+                        u.issuer = ? AND
+                        u.subject = ?
+                """, [
+                    fiddles[0].schema_def_id,
+                    fiddles[0].query_id, // can be null
+                    user_parts[0],
+                    user_parts[1]
+                ]);
+            } else {
+                sql.executeUpdate("""
+                    UPDATE
+                        user_fiddles
+                    SET
+                        last_accessed = now(),
+                        num_accesses = num_accesses + 1
+                    WHERE
+                        id = ?
+                """, [
+                    existingHistory.id
+                ]);
+            }
+
+        break;
+
         case "schema_defs":
+        def fragment_parts = uid.uidValue.split("_")
         assert fragment_parts.size() == 2
         sql.executeUpdate("""
             UPDATE 
@@ -48,9 +127,9 @@ switch ( operation ) {
             WHERE 
                 s.db_type_id  = ? AND
                 s.short_code = ?
-            """, 
+            """,
             [
-                Date.parse("yyyy-MM-dd HH:mm:ss.S", updateAttributes.findString("last_used")).toTimestamp(), 
+                Date.parse("yyyy-MM-dd HH:mm:ss.S", updateAttributes.findString("last_used")).toTimestamp(),
                 fragment_parts[0].toInteger(),
                 fragment_parts[1]
             ]
@@ -58,8 +137,8 @@ switch ( operation ) {
         break
 
         case "queries":
-
-        assert fragment_parts.size() == 3        
+        def fragment_parts = uid.uidValue.split("_")
+        assert fragment_parts.size() == 3
 
         // the only thing a query can update is its "sets", so delete any that already exist (shouldn't happen) and 
         // insert all the new ones that come in
@@ -79,7 +158,7 @@ switch ( operation ) {
 
             int i = 0;
 
-            updateAttributes.findMap("query_sets").each {
+            updateAttributes.findList("query_sets").each {
                 i++;
                 sql.execute("""
                     INSERT INTO
