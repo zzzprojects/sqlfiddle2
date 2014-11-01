@@ -2,7 +2,7 @@
     "name" : "fiddles",
     "connectorRef" : {
         "bundleName" : "org.forgerock.openicf.connectors.groovy-connector",
-        "bundleVersion" : "1.4.0.0",
+        "bundleVersion" : "[1.4.0.0,2.0.0.0)",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
@@ -80,6 +80,37 @@
                     "type" : "string",
                     "nativeName" : "email",
                     "nativeType" : "string"
+                },
+                "fiddles" : {
+                    "type": "array",
+                    "nativeName" : "fiddles",
+                    "nativeType" : "object",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "id" : {
+                                "type" : "integer"
+                            },
+                            "schema_def_id" : {
+                                "type" : "integer"
+                            },
+                            "query_id" : {
+                                "type" : "integer"
+                            },
+                            "num_accesses" : {
+                                "type" : "integer"
+                            },
+                            "last_accessed" : {
+                                "type" : "string"
+                            },
+                            "show_in_history" : {
+                                "type" : "boolean"
+                            },
+                            "favorite" : {
+                                "type" : "boolean"
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -175,6 +206,11 @@
                     "nativeName" : "db_type_id",
                     "nativeType" : "integer"
                 },
+                "owner" : {
+                    "type" : "string",
+                    "nativeName" : "owner",
+                    "nativeType" : "string"
+                },
                 "context" : {
                     "type" : "string",
                     "required" : false,
@@ -194,7 +230,7 @@
                         "NOT_CREATABLE",
                         "NOT_UPDATEABLE"
                     ]
-                },                
+                },
                 "short_code" : {
                     "type" : "string",
                     "required" : true,

@@ -2,7 +2,7 @@
     "name" : "hosts",
     "connectorRef" : {
         "bundleName" : "org.forgerock.openicf.connectors.groovy-connector",
-        "bundleVersion" : "1.4.0.0",
+        "bundleVersion" : "[1.4.0.0,2.0.0.0)",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
     "producerBufferSize" : 100,
