@@ -10,9 +10,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Note that it is optional; it won't start up by default. If you want to start it, you have to manually call it like so:
   # vagrant up windows
   config.vm.define "windows", autostart: false do |windows|
+    windows.vm.provision :shell, :path => "vagrant_scripts/windows_bootstrap.ps1"
     windows.vm.boot_timeout = 600
     windows.vm.network "private_network", ip: "192.168.50.6"
     windows.vm.communicator = "winrm"
+
+    windows.winrm.username = "Administrator"
+    windows.winrm.password = "vagrant"
+
     windows.vm.network :forwarded_port, guest: 3389, host: 3389
     windows.vm.base_mac = "0800275A6A2B"
 
