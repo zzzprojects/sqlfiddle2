@@ -6,16 +6,18 @@ define(["libs/codemirror/lib/codemirror", "libs/codemirror/mode/sql/sql", "jquer
             mode: "text/x-mysql",
             matchBrackets: true,
             extraKeys: {Tab: "indentMore"},
-            lineNumbers: true,
-            onChange: function(){ changeHandler.call(viewRef) }
+            lineNumbers: true
         }));
 
         $(this.getWrapperElement()).on("keypress", function (e) {
-            if (e.keyCode == 13 && e.ctrlKey && runHandler)
-            {
+            if (e.keyCode == 13 && e.ctrlKey && runHandler) {
                 e.preventDefault();
                 runHandler();
             }
+        });
+
+        $(this.getWrapperElement()).on("change keyup", function (e) {
+            changeHandler.call(viewRef);
         });
 
         return this;

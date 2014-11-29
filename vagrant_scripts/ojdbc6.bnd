@@ -1,0 +1,5 @@
+version=4.0
+Export-Package: *;version=3.1
+Bundle-Name: Oracle JDBC Driver 4.0
+Bundle-SymbolicName: oracle.jdbc.OracleDriver
+Bundle-Version: 3.1

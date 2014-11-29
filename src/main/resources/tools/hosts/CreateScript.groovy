@@ -64,9 +64,9 @@ def findAvailableHost = { db_type_id ->
 
 switch ( objectClass.objectClassValue ) {
     case "databases":
-        String delimiter = (char) 7;
-        char newline = 10;
-        char carrageReturn = 13;
+        String delimiter = (char) 7
+        String newline = (char) 10
+        String carrageReturn = (char) 13
 
         def host_id = findAvailableHost(createAttributes.findInteger("db_type_id"))
 
@@ -130,9 +130,9 @@ switch ( objectClass.objectClassValue ) {
             }
 
             try {
-                (Pattern.compile("([\\s\\S]*?)(?=(" + statement_separator + "\\s*)|\$)").matcher(ddl)).each {
-                    if (it[1].size() && ((Boolean) it[1] =~ /\S/) ) {
-                        hostConnection.execute(it[1])
+                (Pattern.compile("(?<=(" + statement_separator + ")|^)([\\s\\S]*?)(?=(" + statement_separator + "\\s*[\\n\$]*)|\$)").matcher(ddl)).each {
+                    if (it[0].size() && ((Boolean) it[0] =~ /\S/) ) {
+                        hostConnection.execute(it[0])
                     }
                 }
             } catch (e) {

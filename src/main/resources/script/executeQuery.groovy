@@ -5,6 +5,11 @@ import groovy.sql.Sql
 import groovy.sql.DataSet
 import java.security.MessageDigest
 import java.util.regex.Pattern
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+import java.io.ByteArrayOutputStream
+import java.nio.charset.Charset
 
 @InheritConstructors
 class PostgreSQLException extends Exception {}
@@ -40,23 +45,27 @@ def execQueryStatement(connection, statement, rethrow) {
 
             for (i = 0; i < columnCount; i++) {
                 switch ( meta.getColumnType((i+1)) ) {
-                    case java.sql.Types.TIMESTAMP: 
+                    case java.sql.Types.TIMESTAMP:
                         data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
                     break;
 
-                    case java.sql.Types.TIME: 
+                    case java.sql.Types.TIME:
                         data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
                     break;
 
-                    case java.sql.Types.DATE: 
+                    case java.sql.Types.DATE:
                         data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
                     break;
 
-                    default: 
+                    case java.sql.Types.CLOB:
+                        // for some reason, getClob is indexed starting at 1 instead of 0
+                        data.add(row.getClob(i+1).getAsciiStream().getText())
+                    break;
+
+                    default:
                         data.add(row.getAt(i))
                 }
             }
-
             set.RESULTS.DATA.add(data)
 
         })
@@ -64,7 +73,10 @@ def execQueryStatement(connection, statement, rethrow) {
     } catch (e) {
         def errorMessage = e.getMessage()
         // terrible, but if you have a better idea please post it here: http://stackoverflow.com/q/22592508/808921
-        if ( ((Boolean) errorMessage =~ /No results were returned by the query/)) {
+        if (
+                ((Boolean) errorMessage =~ /No results were returned by the query/) || // PostgreSQL
+                ((Boolean) errorMessage =~ /The executeQuery method must return a result set./) // SQL Server
+            ) {
             set.EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
         } else if ( ((Boolean) errorMessage =~ /current transaction is aborted, commands ignored until end of transaction block$/) && rethrow) {
             throw new PostgreSQLException(statement)
@@ -73,7 +85,7 @@ def execQueryStatement(connection, statement, rethrow) {
             set.SUCCEEDED = false
         } else if ( 
                 ((Boolean) errorMessage =~ /Cannot execute statement in a READ ONLY transaction./) ||
-                ((Boolean) errorMessage =~ /Can not issue data manipulation statements with executeQuery/) 
+                ((Boolean) errorMessage =~ /Can not issue data manipulation statements with executeQuery/)
             ) {
             set.ERRORMESSAGE = "DDL and DML statements are not allowed in the query panel for MySQL; only SELECT statements are allowed. Put DDL and DML in the schema panel."
             set.SUCCEEDED = false
@@ -170,11 +182,11 @@ if (db_type.context == "host") {
         hostConnection.withTransaction {
 
             def separator = content.statement_separator ? content.statement_separator : ";"
-            char newline = 10
-            char carrageReturn = 13
-            def statementGroups = Pattern.compile("([\\s\\S]*?)(?=(" + separator + "\\s*)|\$)")
+            String newline = (char) 10
+            String carrageReturn = (char) 13
+            def statementGroups = Pattern.compile("(?<=(" + separator + ")|^)([\\s\\S]*?)(?=(" + separator + "\\s*[\\n\$]*)|\$)")
 
-            if (db_type.batch_separator && db_type.batch_separator.size()) {
+            if (db_type.batch_separator?.size()) {
                 content.sql = content.sql.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
             }
             if (db_type.simple_name == "Oracle") {
@@ -184,19 +196,20 @@ if (db_type.context == "host") {
             }
 
             try {
-
                 (statementGroups.matcher(content.sql)).each { statement ->
-                    if (statement[1]?.size() && !((Boolean) statement[1] =~ /^\s*$/)) {
-
+                    if (statement[0]?.size() && !((Boolean) statement[0] =~ /^\s*$/)) {
                         def executionPlan = null
+                        def executionPlanResults = [processed : null, raw : null]
 
                         if (db_type.execution_plan_prefix || db_type.execution_plan_suffix) {
-                            def executionPlanSQL = (db_type.execution_plan_prefix?:"") + statement[1] + (db_type.execution_plan_suffix?:"")
+                            def executionPlanGroups = Pattern.compile("([\\s\\S]*)") // default pattern is the whole execution plan content
+                            def executionPlanSQL = (db_type.execution_plan_prefix?:"") + statement[0] + (db_type.execution_plan_suffix?:"")
+
                             executionPlanSQL = executionPlanSQL.replaceAll("#schema_short_code#", schema_def.short_code)
                             executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", query.query_id.toString())
 
-                            if (db_type.batch_separator && db_type.batch_separator.size()) {
-                                executionPlanSQL = executionPlanSQL.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+                            if (db_type.batch_separator && db_type.batch_separator?.size()) {
+                                executionPlanGroups = Pattern.compile("(?<=(" + db_type.batch_separator + ")|^)([\\s\\S]*?)(?=(\\n+" + db_type.batch_separator + "\\s*[\\r\\n\$]*)|\$)")
                             }
 
                             // the savepoint for postgres allows us to fail safely if users provide DDL in their queries;
@@ -206,9 +219,30 @@ if (db_type.context == "host") {
                                 hostConnection.execute("SAVEPOINT sp;")
                             }
 
-                            (statementGroups.matcher(executionPlanSQL)).each { executionPlanStatement ->
-                                if (executionPlanStatement[1]?.size()) {
-                                    executionPlan = execQueryStatement(hostConnection,executionPlanStatement[1], false)
+                            (executionPlanGroups.matcher(executionPlanSQL)).each { executionPlanStatement ->
+                                if (executionPlanStatement[0]?.size() && !((Boolean) executionPlanStatement[0] =~ /^\s*$/)) {
+                                    executionPlan = execQueryStatement(hostConnection,executionPlanStatement[0], false)
+
+                                    if (executionPlan?.SUCCEEDED && executionPlan.RESULTS.COLUMNS.size() > 0) {
+                                        executionPlanResults.processed = executionPlan.RESULTS
+                                        executionPlanResults.raw = executionPlan.RESULTS
+
+                                        if (db_type.execution_plan_xslt?.size() &&
+                                            executionPlan.RESULTS.COLUMNS?.size() == 1 &&
+                                            executionPlan.RESULTS.DATA?.size() == 1) {
+                                            try {
+                                                def factory = TransformerFactory.newInstance()
+                                                def transformer = factory.newTransformer(new StreamSource(new StringReader(db_type.execution_plan_xslt)))
+                                                def outputStream = new ByteArrayOutputStream()
+                                                transformer.transform(new StreamSource(new StringReader(executionPlanResults.raw.DATA[0][0])), new StreamResult(outputStream))
+
+                                                executionPlanResults.processed.DATA[0][0] = new String(outputStream.toByteArray(), Charset.defaultCharset())
+                                            } catch (e) {
+                                                // unable to parse the execution plan results
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
                             
@@ -218,13 +252,13 @@ if (db_type.context == "host") {
 
                         }
 
-                        sets.add(execQueryStatement(hostConnection, statement[1], true))
+                        sets.add(execQueryStatement(hostConnection, statement[0], true))
 
                         if (!sets[sets.size()-1]?.SUCCEEDED) {
                             throw new Exception("Ending query execution")
-                        } else if (executionPlan?.SUCCEEDED) {
-                            sets[sets.size()-1].EXECUTIONPLAN = executionPlan.RESULTS
-                            sets[sets.size()-1].EXECUTIONPLANRAW = executionPlan.RESULTS
+                        } else {
+                            sets[sets.size()-1].EXECUTIONPLANRAW = executionPlanResults.raw
+                            sets[sets.size()-1].EXECUTIONPLAN = executionPlanResults.processed
                         }
 
                     }

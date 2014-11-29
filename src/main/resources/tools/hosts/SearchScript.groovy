@@ -40,6 +40,7 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
                     INNER JOIN hosts h ON 
                         d.id = h.db_type_id
             """ + dbTypeWhere, dbTypeWhereParams) {
+
             def jdbc_url_template = it.jdbc_url_template
             def populatedUrl = jdbc_url_template.replace("#databaseName#", it.default_database)
             def jdbc_class_name = it.jdbc_class_name
@@ -68,27 +69,34 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
             }
 
-            def hostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
-            hostConnection.eachRow(it.list_database_script + schemaNameWhere, schemaNameWhereParams) { row ->
+            try {
 
-                def name = row.getAt(0)
-                def short_code_matcher = name =~ /^db_\d+_(.*)$/
-                def short_code = short_code_matcher[0][1]
-                populatedUrl = jdbc_url_template.replace("#databaseName#", name)
+                def hostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
+                hostConnection.eachRow(it.list_database_script + schemaNameWhere, schemaNameWhereParams) { row ->
 
-                handler {
-                    uid name as String
-                    id name
-                    attribute 'db_type_id', db_type_id
-                    attribute 'jdbc_class_name', jdbc_class_name
-                    attribute 'simple_name', simple_name
-                    attribute 'full_name', full_name
-                    attribute 'jdbc_url', populatedUrl
-                    attribute 'username', "user_" + db_type_id + "_" + short_code
-                    attribute 'pw', db_type_id + "_" + short_code
+                    def name = row.getAt(0)
+                    def short_code_matcher = name =~ /^db_\d+_(.*)$/
+                    def short_code = short_code_matcher[0][1]
+                    populatedUrl = jdbc_url_template.replace("#databaseName#", name)
+
+                    handler {
+                        uid name as String
+                        id name
+                        attribute 'db_type_id', db_type_id
+                        attribute 'jdbc_class_name', jdbc_class_name
+                        attribute 'simple_name', simple_name
+                        attribute 'full_name', full_name
+                        attribute 'jdbc_url', populatedUrl
+                        attribute 'username', "user_" + db_type_id + "_" + short_code
+                        attribute 'pw', db_type_id + "_" + short_code
+                    }
                 }
+                hostConnection.close()
+
+            } catch (e) {
+                // must be unable to query the host system
+                // TODO: improve this sort of failure handling
             }
-            hostConnection.close()
         }
 
         sql.close()

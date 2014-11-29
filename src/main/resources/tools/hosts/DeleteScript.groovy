@@ -24,8 +24,9 @@
  * $Id$
  */
  
-import groovy.sql.Sql;
-import groovy.sql.DataSet;
+import groovy.sql.Sql
+import groovy.sql.DataSet
+import java.util.regex.Pattern
 
 
 // Parameters:
@@ -42,9 +43,9 @@ def result = []
 assert uid != null
 switch ( objectClass.objectClassValue ) {
     case "databases":
-        String delimiter = (char) 7;
-        char newline = 10;
-        char carrageReturn = 13;
+        String delimiter = (char) 7
+        String newline = (char) 10
+        String carrageReturn = (char) 13
         
         def dbTypeMatcher = uid.uidValue =~ /^db_(\d+)_.*$/;
         def db_type_id = dbTypeMatcher[0][1].toInteger();

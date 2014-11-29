@@ -32,6 +32,8 @@ import groovy.sql.DataSet
 // log: a handler to the Log facility
 
 def sql = new Sql(connection)
+def onePassed = false
+
 
 sql.eachRow("""
     SELECT 
@@ -45,8 +47,19 @@ sql.eachRow("""
             INNER JOIN hosts ON
                 db_types.id = hosts.db_type_id
 """) {
-	def testUrl = it.jdbc_url_template.replaceAll("#databaseName#", it.default_database)
-    def testConnection = Sql.newInstance(testUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
+    try {
+        def testUrl = it.jdbc_url_template.replaceAll("#databaseName#", it.default_database)
+        def testConnection = Sql.newInstance(testUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
+        onePassed = true
+    } catch (e) {
+        // apparently this host isn't available
+    }
 }
+
+if (!onePassed) {
+    throw "No hosts available"
+}
+
+
 
 

@@ -1,0 +1,5 @@
+version=3.0
+Export-Package: *;version=3.1
+Bundle-Name: jTDS JDBC Driver
+Bundle-SymbolicName: net.sourceforge.jtds.jdbc.Driver
+Bundle-Version: 3.1

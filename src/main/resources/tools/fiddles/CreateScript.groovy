@@ -144,8 +144,8 @@ switch ( objectClass.objectClassValue ) {
                     WHERE
                         schema_def_id = ?
                     """, 
-                    [                               
-                        md5hash,                
+                    [
+                        md5hash,
                         sql_query,
                         statement_separator,
                         schema_def_id,
