@@ -162,9 +162,9 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>http://malsup.github.io/jquery.blockUI.js</url>
+                            <url>https://raw.githubusercontent.com/malsup/blockui/2.70/jquery.blockUI.js</url>
                             <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/jquery</outputDirectory>
-                            <md5>4ef4f2476c42316941c34ed1034d44b1</md5>
+                            <md5>5c98c0cbfacee6dab0783112cb0e233d</md5>
                         </configuration>
                     </execution>
                     <execution>

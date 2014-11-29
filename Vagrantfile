@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     windows.vm.base_mac = "0800275A6A2B"
 
     # Provide the path to your virtualbox image which is running SQL Server 2014 and/or Oracle 11G XE:
-    windows.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008SQLServer2014Oracle11GXE.box"
+    windows.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box"
   end
 
   config.vm.define "postgresql93" do |postgresql93|

@@ -31,7 +31,7 @@ To run the commercial database software (Microsoft SQL Server 2014 Express, Orac
 1) Install Windows in a Virtualbox VM
 2) Install the database software within this VM (see below sections for details)
 3) Follow the instructions listed on [this blog post to turn it into a Vagrantbox](http://dennypc.wordpress.com/2014/06/09/creating-a-windows-box-with-vagrant-1-6/)
-4) Update the Vagrantfile located in this folder to refer to your own Vagrantbox image (replace /Volumes/Virtual Disk Storage/jakefeasel.windows2008SQLServer2014Oracle11GXE.box with the path to your image)
+4) Update the Vagrantfile located in this folder to refer to your own Vagrantbox image (replace /Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box with the path to your image)
 5) Before you type vagrant up, you will need to type "vagrant up windows" to start this VM, since it is optional
 
 ### SQL Server 2014 Express
