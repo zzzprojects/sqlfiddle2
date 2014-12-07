@@ -75,7 +75,8 @@ def execQueryStatement(connection, statement, rethrow) {
         // terrible, but if you have a better idea please post it here: http://stackoverflow.com/q/22592508/808921
         if (
                 ((Boolean) errorMessage =~ /No results were returned by the query/) || // PostgreSQL
-                ((Boolean) errorMessage =~ /The executeQuery method must return a result set./) // SQL Server
+                ((Boolean) errorMessage =~ /The executeQuery method must return a result set./) || // SQL Server
+                ((Boolean) errorMessage =~ /Cannot perform fetch on a PLSQL statement/) // Oracle
             ) {
             set.EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
         } else if ( ((Boolean) errorMessage =~ /current transaction is aborted, commands ignored until end of transaction block$/) && rethrow) {
@@ -83,7 +84,7 @@ def execQueryStatement(connection, statement, rethrow) {
         } else if ( ((Boolean) errorMessage =~ /insert or update on table "deferred_.*" violates foreign key constraint "deferred_.*_ref"/)) {
             set.ERRORMESSAGE = "Explicit commits are not allowed within the query panel."
             set.SUCCEEDED = false
-        } else if ( 
+        } else if (
                 ((Boolean) errorMessage =~ /Cannot execute statement in a READ ONLY transaction./) ||
                 ((Boolean) errorMessage =~ /Can not issue data manipulation statements with executeQuery/)
             ) {
