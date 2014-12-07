@@ -79,8 +79,8 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
                             "short_code": short_code,
                             "ready": true,
                             "valid": true,
-                            "errorMessage": ""/*,
-                            "schema_structure": data["schema_structure"]*/
+                            "errorMessage": "",
+                            "schema_structure": data["schema_structure"]
                         });
 
                         thisModel.trigger("built");

@@ -125,8 +125,6 @@ try {
 
                 structure = getSchemaStructure(hostConnection, db_type, schema_filters[db_type.get('simple_name')])
 
-                response.schema_structure = structure
-
                 hostConnection.close()
 
             }
@@ -166,6 +164,7 @@ try {
 
     response._id = schema_def._id
     response.short_code = fragment_parts[1]
+    response.schema_structure = schema_def.structure
 
 } catch (e) {
     if (e.cause) {
