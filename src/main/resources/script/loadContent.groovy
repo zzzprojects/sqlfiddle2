@@ -18,7 +18,8 @@ assert schema_def != null
 def response = [
         "short_code": schema_def.short_code,
         "ddl": schema_def.ddl,
-        "schema_statement_separator": schema_def.statement_separator
+        "schema_statement_separator": schema_def.statement_separator,
+        "schema_structure": schema_def.structure
     ]
 
 if (fragment_parts.size() > 2) {

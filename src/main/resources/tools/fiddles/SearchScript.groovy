@@ -23,6 +23,7 @@
  *
  * $Id$
  */
+import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import groovy.sql.DataSet
 import org.identityconnectors.framework.common.objects.AttributeBuilder
@@ -201,6 +202,7 @@ switch ( objectClass.objectClassValue ) {
             floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60) as minutes_since_last_used,
             s.ddl,
             s.statement_separator,
+            s.structure_json,
             d.simple_name,
             d.full_name,
             d.context,
@@ -213,6 +215,8 @@ switch ( objectClass.objectClassValue ) {
                 INNER JOIN db_types d ON 
                     s.db_type_id = d.id
         """ + where, whereParams) { row ->
+
+        def structure = row.structure_json != null ? (new JsonSlurper()).parseText(row.structure_json) : null
 
         handler {
             id row.md5
@@ -236,6 +240,7 @@ switch ( objectClass.objectClassValue ) {
                     execution_plan_xslt : row.execution_plan_xslt,
                     batch_separator : row.batch_separator
                 ]
+            attribute 'structure', structure
             
         }
 

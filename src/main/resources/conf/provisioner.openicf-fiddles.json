@@ -273,6 +273,36 @@
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
                 },
+                "structure" : {
+                    "type": "array",
+                    "nativeName" : "structure",
+                    "nativeType" : "object",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "table_name" : {
+                                "type" : "string"
+                            },
+                            "table_type" : {
+                                "type" : "string"
+                            },
+                            "columns": {
+                                "type": "array",
+                                "items": {
+                                    "type" : "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "db_type" : {
                     "type" : "object",
                     "nativeName" : "db_type",

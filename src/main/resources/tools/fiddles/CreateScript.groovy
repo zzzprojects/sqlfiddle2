@@ -23,7 +23,7 @@
  *
  * $Id$
  */
-
+import groovy.json.JsonBuilder
 import groovy.sql.Sql
 import groovy.sql.DataSet
 import java.security.MessageDigest
@@ -62,6 +62,7 @@ switch ( objectClass.objectClassValue ) {
     break
 
     case "schema_defs":
+        def structure = createAttributes.findList("structure")
 
         sql.executeInsert("""
             INSERT INTO 
@@ -72,16 +73,18 @@ switch ( objectClass.objectClassValue ) {
                 ddl,
                 md5,
                 statement_separator,
+                structure_json,
                 last_used
             ) 
-            VALUES (?,?,?,?,?,current_timestamp)
+            VALUES (?,?,?,?,?,?,current_timestamp)
             """,
             [
                 createAttributes.findInteger("db_type_id"),
                 createAttributes.findString("short_code"),
                 createAttributes.findString("ddl"),
                 id,
-                createAttributes.findString("statement_separator")
+                createAttributes.findString("statement_separator"),
+                structure != null ? (new JsonBuilder(structure).toString()) : null
             ])
 
         return new Uid(createAttributes.findInteger("db_type_id").toString() + "_" + createAttributes.findString("short_code") as String)

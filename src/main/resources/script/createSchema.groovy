@@ -1,9 +1,49 @@
 
 import java.security.MessageDigest
+import java.util.List
+import java.util.Map
+import groovy.sql.Sql
+import java.sql.Statement
+import java.sql.ResultSet
+
+
 
 def digest = MessageDigest.getInstance("MD5")
 def response = [:]
 def content = request.getContent().asMap()
+
+// We have to use CompileStatic for this function because Groovy 2.2 doesn't play well with the Oracle thin driver when using dynamic types
+// See here for details: 
+// http://jira.codehaus.org/browse/GROOVY-7105
+// https://groups.google.com/forum/#!msg/groovy-user/_w7qoAkKERM/tsOXq0861woJ
+@groovy.transform.CompileStatic
+List getSchemaStructure(Sql hostConnection, Map db_type, String filter) {
+    List structure = []
+    String[] types = ["TABLE","VIEW"]
+
+    ResultSet tables = hostConnection.connection.metaData.getTables(null, filter, null, types)
+    while (tables.next()) {
+
+        if (db_type.get('simple_name') != "PostgreSQL" || !(tables.getString("TABLE_NAME") =~ /^deferred_.*/) ) {
+            structure.add([
+                "table_name": tables.getString("TABLE_NAME"),
+                "table_type": tables.getString("TABLE_TYPE"),
+                "columns": (List) []
+            ])
+
+            ResultSet columns = hostConnection.connection.metaData.getColumns(tables.getString("TABLE_CAT"), tables.getString("TABLE_SCHEM"), tables.getString("TABLE_NAME"), null)
+
+            while (columns.next()) {
+                ((List) ((Map) structure[-1]).get('columns')).add([
+                    "name": columns.getString("COLUMN_NAME"),
+                    "type": columns.getString("TYPE_NAME") + "(" + columns.getString("COLUMN_SIZE") + ")"
+                ])
+            }
+        }
+    }
+
+    return structure
+}
 
 try {
 
@@ -41,6 +81,7 @@ try {
 
         def short_code = md5hash.substring(0,5)
         def checkedUniqueCode = false
+        def structure = []
 
         while (!checkedUniqueCode) {
             checkedUniqueCode = 
@@ -61,7 +102,7 @@ try {
             // if there is an error thrown from here, it will be caught below;
             // It is necessary to build the real db at this stage so that we can fail early if there
             // is a problem (and get a handle on the real error involved in the creation)
-            openidm.create("system/hosts/databases", null, [
+            def hostDetails = openidm.create("system/hosts/databases", null, [
                 "db_type_id": content.db_type_id,
                 "schema_name": "db_" + content.db_type_id + "_" + short_code,
                 "username": "user_" + content.db_type_id + "_" + short_code,
@@ -70,14 +111,36 @@ try {
                 "statement_separator": content.statement_separator
             ])
 
+            Map schema_filters = [
+                "SQL Server": "dbo",
+                "MySQL": null,
+                "PostgreSQL": "public",
+                "Oracle": ("user_" + content.db_type_id + "_" + short_code).toUpperCase()
+            ]
+
+            if (schema_filters.containsKey(db_type.get('simple_name'))) {
+
+                Sql hostConnection = Sql.newInstance(hostDetails.get('jdbc_url'), hostDetails.get('username'), hostDetails.get('pw'), hostDetails.get('jdbc_class_name'))
+                hostConnection.withStatement { ((Statement) it).setQueryTimeout(10) }
+
+                structure = getSchemaStructure(hostConnection, db_type, schema_filters[db_type.get('simple_name')])
+
+                response.schema_structure = structure
+
+                hostConnection.close()
+
+            }
+
         }
+
         // this schema_def will be linked to the above running db below as part of reconById
         schema_def = openidm.create("system/fiddles/schema_defs", null, [
             "db_type_id": content.db_type_id,
             "short_code": short_code,
             "md5": md5hash,
             "ddl": content.ddl,
-            "statement_separator": content.statement_separator
+            "statement_separator": content.statement_separator,
+            "structure": structure
         ])
 
     }
@@ -92,7 +155,7 @@ try {
 
         // this ensures that there is a live running db up for the schema_def
         // if this schema was just created for the first time, then it will link to the newly-created DB from above
-        response.reconId = openidm.action("recon", "reconById", [:],
+        openidm.action("recon", "reconById", [:],
             [
                 "mapping" : "fiddles_hosts",
                 "ids" : schema_def._id,
