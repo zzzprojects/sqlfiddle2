@@ -5,7 +5,7 @@ module.exports = function(grunt) {
             custom: {
                 files: [{
                     cwd     : 'src/main/resources',
-                    src     : ['**/*'], 
+                    src     : ['**/*'],
                     dest    : 'target/sqlfiddle',
                     flatten : false,
                     expand  : true
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
         },
         watch: {
             copyUIJS: {
-                files: ['src/main/resources/ui/**/*.js'],
+                files: ['src/main/resources/ui/sqlfiddle/www/javascript/**/*'],
                 tasks: [ 'sync', 'requirejs:minifyMainJS', 'requirejs:minifyOAuthJS' ]
             },
             copyLESS: {

@@ -37,7 +37,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     mysql56.vm.box = "ubuntu/trusty64"
   end
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   config.vm.define "idm", primary: true do |idm|
+
     idm.vm.provision "shell", path: "vagrant_scripts/idm_bootstrap.sh"
     idm.vm.provision "shell", path: "vagrant_scripts/idm_startup.sh", run: "always"
 
