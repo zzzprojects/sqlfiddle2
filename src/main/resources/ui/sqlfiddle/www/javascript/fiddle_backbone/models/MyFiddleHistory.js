@@ -11,31 +11,39 @@ define(["Backbone", "./UsedFiddle"], function (Backbone, UsedFiddle) {
                 return 1;
         },
         insert: function (uf) {
-            // simple way to detect if we are logged in
-            if (!$("#user_choices", this).length) {
-                var existingFiddle = this.find(function (m) {
-                    return m.get("fragment") == uf.get("fragment");
-                });
 
-                if (existingFiddle) {
-                    existingFiddle.set("last_used", uf.get("last_used"));
-                    this.sort();
-                } else {
-                    this.add(uf);
-                }
-                this.trigger("change");
+            var existingFiddle = this.find(function (m) {
+                return m.get("fragment") == uf.get("fragment");
+            });
+
+            if (existingFiddle) {
+                existingFiddle.set("last_used", uf.get("last_used"));
+                this.sort();
+            } else {
+                this.add(uf);
             }
+            this.trigger("change");
+
         },
         initialize: function () {
             try {
-                if (localStorage) {
-                    var historyJSON = localStorage.getItem("fiddleHistory");
+                if (sessionStorage) {
+                    var historyJSON = sessionStorage.getItem("fiddleHistory");
                     if (historyJSON && historyJSON.length) {
                         this.add($.parseJSON(historyJSON));
                     }
                 }
             } catch (e) {
-                // I guess localStorage isn't available
+                // I guess sessionStorage isn't available
+            }
+        },
+        sync: function () {
+            try {
+                if (sessionStorage) {
+                    sessionStorage.setItem("fiddleHistory", JSON.stringify(this.toJSON()));
+                }
+            } catch (e) {
+                // I guess sessionStorage isn't available
             }
         }
     });

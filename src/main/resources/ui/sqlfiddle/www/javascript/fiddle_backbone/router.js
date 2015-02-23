@@ -204,7 +204,19 @@ define([
 
                             if (resp["sql"]) {
                                 myFiddleHistory.insert(new UsedFiddle({
-                                    "fragment": "!" + db_type_id + "/" + resp["short_code"] + "/" + resp["id"]
+                                    "fragment": "!" + db_type_id + "/" + resp["short_code"] + "/" + resp["id"],
+                                    "full_name": resp["full_name"],
+                                    "structure": resp["schema_structure"],
+                                    "sql": resp["sql"],
+                                    "sets": _.map(resp["sets"], function (set) {
+                                        return {
+                                            "succeeded": set.SUCCEEDED,
+                                            "statement_sql": set.STATEMENT.substring(0,400),
+                                            "row_count": set.RESULTS.DATA.length,
+                                            "columns": set.RESULTS.COLUMNS.join(", "),
+                                            "error_message": set.ERRORMESSAGE
+                                        };
+                                    })
                                 }));
 
                                 query.set({
@@ -216,7 +228,9 @@ define([
                                 query.trigger("reloaded");
                             } else {
                                 myFiddleHistory.insert(new UsedFiddle({
-                                    "fragment": "!" + db_type_id + "/" + resp["short_code"]
+                                    "fragment": "!" + db_type_id + "/" + resp["short_code"],
+                                    "full_name": resp["full_name"],
+                                    "structure": resp["schema_structure"]
                                 }));
                             }
 

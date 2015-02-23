@@ -5,7 +5,9 @@ define(["Backbone"], function (Backbone) {
             "fragment": "",
             "full_name": "",
             "ddl": "",
-            "sql": ""
+            "sql": "",
+            "structure": [],
+            "sets": []
         },
         initialize: function () {
             this.set("last_used", new Date());

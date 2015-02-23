@@ -69,11 +69,12 @@ var obj = {
         });
 
         var myFiddleDialog = new MyFiddleDialog({
-            el: $("#myFiddlesModal")[0]
+            el: $("#myFiddlesModal")[0],
+            collection: myFiddleHistory
         });
 
         var userOptions = new UserOptions({
-            el: $("#userInfo")[0],
+            el: $("#userOptions .dropdown-menu")[0],
             oidc: oidc,
             myFiddleDialog: myFiddleDialog
         });
@@ -244,11 +245,7 @@ var obj = {
             loginDialog.render();
         });
 
-        myFiddleHistory.on("change reset remove", function () {
-            if (localStorage) {
-                localStorage.setItem("fiddleHistory", JSON.stringify(this.toJSON()));
-            }
-        });
+        myFiddleHistory.on("change reset remove", myFiddleHistory.sync, myFiddleHistory);
 
 
         /* Events which will trigger new route navigation */
@@ -288,7 +285,9 @@ var obj = {
         schemaDef.on("built", function () {
 
             myFiddleHistory.insert(new UsedFiddle({
-                "fragment": "!" + this.get("dbType").id + "/" + this.get("short_code")
+                "fragment": "!" + this.get("dbType").id + "/" + this.get("short_code"),
+                "full_name": this.get("dbType").get("full_name"),
+                "structure": this.get("schema_structure")
             }));
 
             router.navigate("!" + this.get("dbType").id + "/" + this.get("short_code"));
@@ -299,7 +298,19 @@ var obj = {
 
             if (this.id) {
                 myFiddleHistory.insert(new UsedFiddle({
-                    "fragment": "!" + schemaDef.get("dbType").id + "/" + schemaDef.get("short_code") + "/" + this.id
+                    "fragment": "!" + schemaDef.get("dbType").id + "/" + schemaDef.get("short_code") + "/" + this.id,
+                    "full_name": schemaDef.get("dbType").get("full_name"),
+                    "structure": schemaDef.get("schema_structure"),
+                    "sql": this.get("sql"),
+                    "sets": _.map(this.get("sets"), function (set) {
+                                return {
+                                    "succeeded": set.SUCCEEDED,
+                                    "statement_sql": set.STATEMENT.substring(0,400),
+                                    "row_count": set.RESULTS.DATA.length,
+                                    "columns": set.RESULTS.COLUMNS.join(", "),
+                                    "error_message": set.ERRORMESSAGE
+                                };
+                            })
                 }));
 
                 router.navigate(
@@ -313,8 +324,10 @@ var obj = {
 
         openidconnect.getLoggedUserDetails().then(function (userInfo) {
             userOptions.renderAuthenticated(userInfo);
+            myFiddleDialog.setAnonymous(false);
         }, function () {
             userOptions.renderAnonymous();
+            myFiddleDialog.setAnonymous(true);
         });
 
         _.extend(this, {

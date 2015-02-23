@@ -78,10 +78,13 @@ textarea.fullscreen {
 .resultSetPreview {
     list-style-type: none;
     margin: 0;
+    max-height: 500px;
+    overflow-y: hidden;
 }
 
 .resultSetPreview li {
     white-space: nowrap;
+    overflow-x: hidden;
 }
 
 .resultSetPreview pre {
@@ -93,12 +96,13 @@ textarea.fullscreen {
 }
 .resultSetPreview>pre, .schemaPreview>pre {
     margin-bottom: 2px;
-    overflow-x: hidden;
+    overflow: hidden;
     max-height: 200px;
-    overflow-y: hidden;
     background-color: white;
 }
-
+.favoriteLink {
+    line-height: 0;
+}
 
 pre.results, .resultSetPreview li pre {
     font-family:monospace;
@@ -303,7 +307,7 @@ pre.results, .resultSetPreview li pre {
 }
 
 #myFiddlesModal .modal-body {
-    overflow-y: auto;
+    overflow: visible;
 }
 #myFiddlesTabs {
     margin-bottom: 0;

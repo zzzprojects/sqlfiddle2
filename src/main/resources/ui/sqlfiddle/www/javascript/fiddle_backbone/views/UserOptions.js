@@ -41,11 +41,11 @@ function ($,Backbone,Handlebars,md5,openidconnect,loginButtonTemplate,authentica
         },
         showMyFiddles: function (e) {
             e.preventDefault();
-            this.options.myFiddleDialog.render();
+            this.options.myFiddleDialog.render(true);
         },
         logout: function (e) {
             e.preventDefault();
-
+            this.options.myFiddleDialog.setAnonymous(true);
             openidconnect.removeTokens();
             this.renderAnonymous();
         }

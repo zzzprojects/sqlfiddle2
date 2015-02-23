@@ -19,7 +19,8 @@ def response = [
         "short_code": schema_def.short_code,
         "ddl": schema_def.ddl,
         "schema_statement_separator": schema_def.statement_separator,
-        "schema_structure": schema_def.structure
+        "schema_structure": schema_def.structure,
+        "full_name": schema_def.db_type.full_name
     ]
 
 if (fragment_parts.size() > 2) {
