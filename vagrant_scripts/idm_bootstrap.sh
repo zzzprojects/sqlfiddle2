@@ -13,7 +13,9 @@ echo "192.168.50.6 SQLSERVER2014_HOST" >> /etc/hosts
 apt-get --yes update
 apt-get --yes upgrade
 
+
 apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish
+cp -R /vagrant/src/main/resources/varnish /etc
 ln -s /usr/bin/nodejs /usr/bin/node
 npm install -g grunt-cli
 

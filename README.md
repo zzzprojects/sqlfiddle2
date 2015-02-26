@@ -13,7 +13,7 @@ You are going to need [Vagrant](http://www.vagrantup.com/) and [VirtualBox](http
 
     vagrant up
 
-This will take a while to download the base image and all of the many dependencies. Once it has finished, you will have the software running in a set of VMs. You can now access your local server at [localhost:18080/sqlfiddle](http://localhost:18080/sqlfiddle).
+This will take a while to download the base image and all of the many dependencies. Once it has finished, you will have the software running in a set of VMs. You can now access your local server at [localhost:6081](http://localhost:6081/).
 
 Note for Windows users - be sure that you run "vagrant up" as an administrator.
 
