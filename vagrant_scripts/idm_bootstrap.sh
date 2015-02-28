@@ -15,7 +15,8 @@ apt-get --yes upgrade
 
 
 apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish
-cp -R /vagrant/src/main/resources/varnish /etc
+cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish
+cp /vagrant/src/main/resources/varnish/defaults_varnish /etc/defaults/varnish
 ln -s /usr/bin/nodejs /usr/bin/node
 npm install -g grunt-cli
 
