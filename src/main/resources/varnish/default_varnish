@@ -1,4 +1,4 @@
-# will be copied to /etc/defaults/varnish
+# will be copied to /etc/default/varnish
 START=yes
 NFILES=131072
 MEMLOCK=82000
