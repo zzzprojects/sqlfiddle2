@@ -54,7 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # commented out but left here to demonstrate what needs to be executed on this server to prep the DBs
     # windows.vm.provision :shell, :path => "vagrant_scripts/windows_bootstrap.ps1"
 
-    windows.vm.network "private_network", ip: "10.0.0.16"
+    windows.vm.network "private_network", ip: "10.0.0.17"
     windows.vm.network :forwarded_port, guest: 3389, host: 3389
     windows.vm.base_mac = "0800275A6A2B"
 
