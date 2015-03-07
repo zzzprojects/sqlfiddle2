@@ -32,3 +32,8 @@ psql -U postgres sqlfiddle < /vagrant/src/main/resources/db/sqlfiddle/data.sql
 # initialize the openidm repository
 psql -U postgres < /vagrant/src/main/resources/db/openidm/createuser.pgsql
 psql -U openidm < /vagrant/src/main/resources/db/openidm/openidm.pgsql
+
+if ping -c 1 10.0.0.113 &> /dev/null
+then
+    psql -U postgres sqlfiddle < /vagrant/src/main/resources/db/sqlfiddle/migrate.sql
+fi

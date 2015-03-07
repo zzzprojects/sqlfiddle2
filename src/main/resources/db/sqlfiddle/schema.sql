@@ -250,7 +250,7 @@ ALTER SEQUENCE user_fiddles_id_seq OWNED BY user_fiddles.id;
 CREATE TABLE users (
     id integer NOT NULL,
     issuer character varying(1000) NOT NULL,
-    subject character varying(1000) NOT NULL,
+    subject character varying(1000),
     email character varying(1000)
 );
 

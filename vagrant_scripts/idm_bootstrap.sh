@@ -13,7 +13,7 @@ echo "10.0.0.15 MYSQL56_HOST" >> /etc/hosts
 echo "10.0.0.17 ORACLE11G_HOST" >> /etc/hosts
 echo "10.0.0.17 SQLSERVER2014_HOST" >> /etc/hosts
 
-apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish
+apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish s3cmd
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish
 cp /vagrant/src/main/resources/varnish/default_varnish /etc/default/varnish
 ln -s /usr/bin/nodejs /usr/bin/node
