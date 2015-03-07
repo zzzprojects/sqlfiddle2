@@ -359,6 +359,7 @@ switch ( objectClass.objectClassValue ) {
             d.sample_fragment,
             d.batch_separator
         ORDER BY
+            d.is_latest_stable desc,
             d.full_name
     """, whereParams) { row ->
         handler {

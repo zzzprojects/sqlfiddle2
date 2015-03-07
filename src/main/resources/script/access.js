@@ -53,9 +53,9 @@ var httpAccessConfig =
            "actions"    : "*"
         },
         {
-           "pattern"    : "system/fiddles/db_types",
+           "pattern"    : "endpoint/dbTypes",
            "roles"      : "*",
-           "methods"    : "query",
+           "methods"    : "read",
            "actions"    : "*"
         },
         {

@@ -5,7 +5,7 @@ define(["./OpenIDMResource", "Backbone", "./DBType"], function (idm, Backbone, D
         fetch: function () {
             var _this = this;
             return idm.serviceCall({
-                        url: 'system/fiddles/db_types?_queryFilter=full_name gt ""'
+                        url: 'endpoint/dbTypes'
                     })
                     .then(function (qry) {
                         _this.reset(_.map(qry.result, function (r) {
