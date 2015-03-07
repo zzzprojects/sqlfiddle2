@@ -102,7 +102,7 @@ def execQueryStatement(connection, statement, rethrow) {
 def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
 assert schema_def != null
 
-def db_type = openidm.read("system/fiddles/db_type/" + content.db_type_id)
+def db_type = openidm.read("system/fiddles/db_types/" + content.db_type_id)
 
 // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
 schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
