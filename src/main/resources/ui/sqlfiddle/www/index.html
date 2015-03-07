@@ -255,7 +255,14 @@
 
     <div id="hosting">
         <ul id="hostingPartners">
-            <li id="sqlsentry"><a href="http://www.sqlsentry.net/download-trial/landing/complete.asp?ad=201208-sqlfiddle" target="_new"><img src="images/sqlsentry/00.jpg" alt="SQL Sentry"></a></li>
+            <li id="sqlsentry"><a href="http://www.sqlsentry.net/download-trial/landing/complete.asp?ad=201208-sqlfiddle" target="_new"><script>
+function getRandomArbitrary(min, max) {
+  return parseInt(Math.random() * (max - min) + min);
+}
+document.write('<img src="images/sqlsentry/0' + parseInt(getRandomArbitrary(0,5)) + '.jpg" alt="SQL Sentry">');
+</script></a></li>
+
+            <li id="csi"><a href="http://www.collectserver.info/" target="_new"><img src="images/collectserver_info.png" alt="CollectServer.info - Easy Server Health Monitoring"></a></li>
         </ul>
     </div>
 
@@ -286,7 +293,23 @@
 
     </div>
 
-    <div id="myFiddlesModal" class="modal"></div>
+    <div id="myFiddlesModal" class="modal">
+
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">x</a>
+            <ul class="nav nav-tabs" id="myFiddlesTabs">
+                <li class="active"><a href="#fiddle_history" data-toggle="tab">Fiddle History (this session)</a></li>
+                <li id="favorites_tab"><a href="#favorites" data-toggle="tab">Favorites <i class="icon-star"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="fiddle_history">
+            </div>
+            <div class="tab-pane" id="favorites">
+            </div>
+        </div>
+    </div>
 
     <div id="loginModal" class="modal"></div>
 

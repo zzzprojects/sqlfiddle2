@@ -7,11 +7,12 @@ define ([
     var MyFiddlesDialog = Backbone.View.extend({
         initialize: function (options) {
             this.options = options;
-            this.compiledTemplate = Handlebars.compile(myFiddlesTemplate);
+            this.compiledMyFiddlesTemplate = Handlebars.compile(myFiddlesTemplate);
         },
         events: {
             "click .showAll": "showAllFiddlesForSchema",
-            "click .tab-content a": "showFiddle",
+            "click a.fiddleLink": "showFiddle",
+            "click .favoriteLink a": "addFavorite",
             "click button.forgetSchema": "forgetSchema",
             "click button.forgetQuery": "forgetQuery",
             "click button.forgetOtherQueries": "forgetOtherQueries"
@@ -69,12 +70,22 @@ define ([
                                     .value();
 
 
-            this.$el.html(
-                this.compiledTemplate({
+            this.$el.find("#fiddle_history").html(
+                this.compiledMyFiddlesTemplate({
                     fiddles: groupedHistory,
                     anonymous: this.isAnonymous
                 })
             );
+
+            if (this.isAnonymous) {
+                // lame way to disable a bootstrap tab
+                this.$el.find("#favorites_tab").addClass('disabled');
+                this.$el.find("#favorites_tab a").removeAttr('data-toggle').removeAttr('href');
+            } else {
+                this.$el.find("#favorites_tab").removeClass('disabled');
+                this.$el.find("#favorites_tab a").attr('data-toggle', 'tab').attr('href', '#favorites');
+
+            }
 
             if (showDialog) {
                 this.$el.modal('show');
@@ -170,6 +181,12 @@ define ([
         setAnonymous: function (isAnonymous) {
             this.isAnonymous = isAnonymous;
             this.render();
+        },
+        addFavorite: function (e) {
+            var fragment = $(e.target).attr("fragment");
+
+            e.preventDefault();
+
         }
 /*
             $(".favorite", this).click(function (e) {

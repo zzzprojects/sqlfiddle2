@@ -1,11 +1,4 @@
 <form>
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">x</a>
-        <ul class="nav nav-tabs" id="myFiddlesTabs">
-            <li class="active"><a href="#fiddle_history" data-toggle="tab">Fiddle History (this session)</a></li>
-            {{#unless anonymous}}<li><a href="#favorites" data-toggle="tab">Favorites <i class="icon-star"></i></a></li>{{/unless}}
-        </ul>
-    </div>
 
     <div class="modal-body tab-content">
     
@@ -23,7 +16,7 @@
         {{#each fiddles}}
             <tr class="schemaLog" schemaGroup="{{schemaGroup}}">
                 <td>{{full_name}}</td>
-                <td><a href="#{{schemaFragment}}">#{{schemaFragment}}</a></td>
+                <td><a class="fiddleLink" href="#{{schemaFragment}}">#{{schemaFragment}}</a></td>
                 <td>{{last_used}}</td>
                 <td>&nbsp;</td>
                 <td>
@@ -46,7 +39,7 @@
                                     
                                 </ul>
                         </div>  
-                        <a href="#{{schemaFragment}}" class="label label-info preview-schema popover-anchor">{{structure.length}} tables</a>
+                        <a class="fiddleLink" href="#{{schemaFragment}}" class="label label-info preview-schema popover-anchor">{{structure.length}} tables</a>
 
                     {{else}}
 
@@ -55,7 +48,7 @@
                                 {{ddl}}
                             </div>
                         </div>
-                        <a href="#{{schemaFragment}}" class="label label-info preview-ddl popover-anchor">preview ddl</a>
+                        <a class="fiddleLink" href="#{{schemaFragment}}" class="label label-info preview-ddl popover-anchor">preview ddl</a>
 
                     {{/if}}
                     
@@ -74,18 +67,18 @@
             {{#each queries}}
                 <tr class="queryLog for-schema-{{../schemaGroup}}{{#unless mostRecent}} queryLog-hidden{{/unless}}" schemaGroup="{{../schemaGroup}}" fragment="{{fragment}}">
                     <td>&nbsp;</td>
-                    <td><a href="#{{fragment}}">#{{fragment}}</a></td>
+                    <td><a class="fiddleLink" href="#{{fragment}}">#{{fragment}}</a></td>
                     <td>{{last_used}}</td>
                     <td class="favoriteLink">
-                        <!--cfif favorite IS 1>
-                            <a href="##removeFavorite" schema_def_id="#schema_def_id#" query_id="#query_id#" title="Remove from favorites" class="favorite"><i class="icon-star"></i></a>
-                        <cfelse>
-                            <a href="#addFavorite" fragment="{{fragment}}" title="Add to favorites" class="favorite"--><i class="icon-star-empty"></i><!--/a>
-                        </cfif-->
+                        {{#if ../../anonymous}}
+                            <i class="icon-star-empty"></i>
+                        {{else}}
+                            <a href="#addFavorite" fragment="{{fragment}}" title="Add to favorites"><i class="icon-star-empty"></i></a>
+                        {{/if}}
                     </td>
                     <td>
                         {{#if sets}}
-                    
+
                             <div class="resultSetWrapper">
                                 <ol class="resultSetPreview">
                                     {{#each sets}}
@@ -98,8 +91,8 @@
                                     {{/each}}
                                 </ol>
                             </div>
-                            <a href="#{{fragment}}" class="label label-info result-sets popover-anchor">{{sets.length}} result sets</a>
-                            
+                            <a class="fiddleLink" href="#{{fragment}}" class="label label-info result-sets popover-anchor">{{sets.length}} result sets</a>
+
                         {{else}}
 
                             <div class="resultSetWrapper">
@@ -107,7 +100,7 @@
                                     {{sql}}
                                 </div>
                             </div>
-                            <a href="#{{fragment}}" class="label label-info preview-sql popover-anchor">preview sql</a>
+                            <a class="fiddleLink" href="#{{fragment}}" class="label label-info preview-sql popover-anchor">preview sql</a>
 
                         {{/if}}
                     </td>
