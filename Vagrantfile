@@ -48,36 +48,46 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     windows.winrm.username = "Administrator"
     windows.winrm.password = "vagrant"
 
-    # Provide the path to your virtualbox image which is running SQL Server 2014 and/or Oracle 11G XE:
-    windows.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE_prepped.box"
+    windows.vm.provider "virtualbox" do |v, override|
+      # Provide the path to your virtualbox image which is running SQL Server 2014 and/or Oracle 11G XE:
+      override.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box"
 
-    # commented out but left here to demonstrate what needs to be executed on this server to prep the DBs
-    # windows.vm.provision :shell, :path => "vagrant_scripts/windows_bootstrap.ps1"
+      override.vm.provision :shell, :path => "vagrant_scripts/windows_bootstrap.ps1"
 
-    windows.vm.network "private_network", ip: "10.0.0.17"
-    windows.vm.network :forwarded_port, guest: 3389, host: 3389
-    windows.vm.base_mac = "0800275A6A2B"
+      override.vm.network "private_network", ip: "10.0.0.17"
+      override.vm.network :forwarded_port, guest: 3389, host: 3389
+      override.vm.base_mac = "0800275A6A2B"
+    end
 
-    # rsync to windows on aws doesn't seem to work, so don't bother (do the necessary provisioning before creating the ami)
-    windows.vm.synced_folder ".", "/vagrant", disabled: true
-
-    windows.vm.provider "aws" do |aws|
+    windows.vm.provider "aws" do |aws, override|
 
       aws.private_ip_address = "10.0.0.17"
       # is it expected that the ami has already executed the code in vagrant_scripts/windows_bootstrap.ps1
       aws.ami = "ami-892d0db9" # Windows Server 2008 w/ MS SQL 2014 Express and Oracle 11g XE (private)
+
+      # rsync to windows on aws doesn't seem to work, so don't bother (do the necessary provisioning before creating the ami)
+      override.vm.synced_folder ".", "/vagrant", disabled: true
+
     end
 
   end
 
   config.vm.define "postgresql93" do |postgresql93|
+    postgresql93.vm.provider "aws" do |aws, override|
+      aws.private_ip_address = "10.0.0.16"
+      aws.block_device_mapping = [{
+        'VirtualName' => "postgresql_data",
+        'DeviceName' => '/dev/sda1',
+        'Ebs.VolumeSize' => 50,
+        'Ebs.DeleteOnTermination' => true,
+        'Ebs.VolumeType' => 'io1',
+        'Ebs.Iops' => 500
+      }]
+    end
+
     postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
     postgresql93.vm.box = "ubuntu/trusty64"
     postgresql93.vm.network "private_network", ip: "10.0.0.16"
-
-    postgresql93.vm.provider "aws" do |aws|
-      aws.private_ip_address = "10.0.0.16"
-    end
   end
 
   config.vm.define "mysql56" do |mysql56|
@@ -98,8 +108,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.network "forwarded_port", guest: 8080, host: 18080
     idm.vm.network "forwarded_port", guest: 8443, host: 18443
 
-    idm.vm.provider "aws" do |aws|
+    idm.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.14"
+      override.vm.provision :shell, :path => "vagrant_scripts/idm_aws.sh"
     end
 
     idm.vm.provision "shell", path: "vagrant_scripts/idm_bootstrap.sh"
