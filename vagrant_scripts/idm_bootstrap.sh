@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export OPENIDM_OPTS="-Xms128m -Xmx256m"
+export OPENIDM_OPTS="-Xms512m -Xmx768m"
 echo "export OPENIDM_OPTS=\"${OPENIDM_OPTS}\"" >> /etc/profile
 
 apt-get --yes update
