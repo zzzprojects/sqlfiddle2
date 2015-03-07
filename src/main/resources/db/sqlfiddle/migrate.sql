@@ -43,16 +43,15 @@ SELECT id,user_id,schema_def_id,query_id,last_accessed,num_accesses,show_in_hist
 FROM dblink('sqlfiddle_old', 'SELECT uf.id,uf.user_id,uf.schema_def_id,uf.query_id,uf.last_accessed,uf.num_accesses,uf.show_in_history,uf.favorite FROM user_fiddles uf INNER JOIN users u ON u.id = uf.user_id WHERE u.openid_server = ''https://www.google.com/accounts/o8/ud''') 
 AS u(id integer,user_id integer,schema_def_id integer,query_id integer,last_accessed timestamp without time zone,num_accesses integer,show_in_history smallint,favorite smallint);
 
-INSERT INTO schema_defs (id,db_type_id,short_code,last_used,ddl,current_host_id,md5,statement_separator,owner_id,structure_json)
-SELECT id,db_type_id,short_code,last_used,ddl,current_host_id,md5,statement_separator,owner_id,structure_json
-FROM dblink('sqlfiddle_old', 'SELECT id,db_type_id,short_code,last_used,ddl,current_host_id,md5,statement_separator,owner_id,structure_json FROM schema_defs')
+INSERT INTO schema_defs (id,db_type_id,short_code,last_used,ddl,md5,statement_separator,owner_id,structure_json)
+SELECT id,db_type_id,short_code,last_used,ddl,md5,statement_separator,owner_id,structure_json
+FROM dblink('sqlfiddle_old', 'SELECT id,db_type_id,short_code,last_used,ddl,md5,statement_separator,owner_id,structure_json FROM schema_defs')
 as t(
     id integer,
     db_type_id integer,
     short_code character varying(32),
     last_used timestamp without time zone,
     ddl text,
-    current_host_id integer,
     md5 character varying(32),
     statement_separator character varying(5),
     owner_id integer,
