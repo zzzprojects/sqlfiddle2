@@ -21,6 +21,7 @@ define([
             DBType: function (db_type_id) {
                 // update currently-selected dbtype
                 dbTypes.setSelectedType(parseInt(db_type_id), true);
+                schemaDef.set({"dbType": dbTypes.getSelectedType()});
                 dbTypesListView.render();
             },
 

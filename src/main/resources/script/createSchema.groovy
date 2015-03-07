@@ -1,12 +1,15 @@
 
+
 import java.security.MessageDigest
 import java.util.List
 import java.util.Map
 import groovy.sql.Sql
 import java.sql.Statement
 import java.sql.ResultSet
+import groovy.transform.InheritConstructors
 
-
+@InheritConstructors
+class NoHostException extends Exception {}
 
 def digest = MessageDigest.getInstance("MD5")
 def response = [:]
@@ -78,6 +81,10 @@ try {
     if (existing_schema.size() == 1) {
         schema_def = existing_schema[0]
     } else {
+
+        if (db_type.context == "host" && db_type.num_hosts == 0) {
+            throw new NoHostException("No host of this type available to create schema. Try using a different database version.")
+        }
 
         def short_code = md5hash.substring(0,5)
         def checkedUniqueCode = false

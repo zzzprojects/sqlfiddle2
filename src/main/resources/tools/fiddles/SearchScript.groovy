@@ -343,10 +343,21 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.jdbc_class_name,
             d.sample_fragment,
-            d.batch_separator
+            d.batch_separator,
+            count(h.id) as num_hosts
         FROM
             db_types d
+                LEFT OUTER JOIN hosts h ON
+                    d.id = h.db_type_id
         ${where}
+        GROUP BY
+            d.id,
+            d.context,
+            d.full_name,
+            d.simple_name,
+            d.jdbc_class_name,
+            d.sample_fragment,
+            d.batch_separator
         ORDER BY
             d.full_name
     """, whereParams) { row ->
@@ -358,6 +369,7 @@ switch ( objectClass.objectClassValue ) {
             attribute 'className', row.jdbc_class_name
             attribute 'sample_fragment', row.sample_fragment
             attribute 'batch_separator', row.batch_separator
+            attribute 'num_hosts', row.num_hosts
         }
 
     }

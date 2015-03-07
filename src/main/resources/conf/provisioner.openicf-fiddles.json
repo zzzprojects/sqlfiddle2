@@ -185,6 +185,16 @@
                     "required" : false,
                     "nativeName" : "batch_separator",
                     "nativeType" : "string"
+                },
+                "num_hosts" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "num_hosts",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
                 }
             }
         },

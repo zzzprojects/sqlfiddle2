@@ -102,7 +102,7 @@ def execQueryStatement(connection, statement, rethrow) {
 def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
 assert schema_def != null
 
-def db_type = schema_def.db_type
+def db_type = openidm.read("system/fiddles/db_type/" + content.db_type_id)
 
 // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
 schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
@@ -135,6 +135,13 @@ if (securityContext.authorizationId.component == "system/fiddles/users") {
 
 if (db_type.context == "host") {
 
+    if (db_type.num_hosts == 0) {
+        return [
+            sets: [
+                [error_message: "No host of this type available to execute query. Try using a different database version."]
+            ]
+        ]
+    }
     // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
     def hostLink = openidm.query("repo/link", [
             "_queryId": "links-for-firstId",
