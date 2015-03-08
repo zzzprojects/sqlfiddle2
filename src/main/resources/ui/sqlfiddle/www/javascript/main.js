@@ -237,7 +237,9 @@ require([
     /* COLLAPSING NAV (for responsive UI) */
 
     $(".nav").on('click', 'a', function (e) {
-        $(".nav-collapse.in").collapse('hide');
+        if ($(this).parent('li').attr('id') !== 'db_type_id') {
+            $(".nav-collapse.in").collapse('hide');
+        }
     });
 
 
