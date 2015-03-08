@@ -51,7 +51,7 @@
             <fileMode>0640</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}/CodeMirror-4.5.0/lib</directory>
+            <directory>${project.build.directory}/CodeMirror-5.0.0/lib</directory>
             <outputDirectory>/ui/sqlfiddle/www/css</outputDirectory>
             <includes>
                 <include>codemirror.css</include>
@@ -59,7 +59,7 @@
             <fileMode>0640</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}/CodeMirror-4.5.0</directory>
+            <directory>${project.build.directory}/CodeMirror-5.0.0</directory>
             <outputDirectory>/ui/sqlfiddle/www/javascript/libs/codemirror</outputDirectory>
             <includes>
                 <include>lib/codemirror.js</include>
