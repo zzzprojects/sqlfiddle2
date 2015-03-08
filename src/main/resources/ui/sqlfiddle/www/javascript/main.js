@@ -237,13 +237,13 @@ require([
     /* COLLAPSING NAV (for responsive UI) */
 
     $(".nav").on('click', 'a', function (e) {
-        if ($(this).parent('li').attr('id') !== 'db_type_id') {
+
+        if ($(this).parent('li').attr('id') !== 'db_type_id' &&
+            $(this).parent('li').attr('id') !== 'userOptions') {
+
             $(".nav-collapse.in").collapse('hide');
+
         }
     });
-
-
-
-
 
 });
