@@ -344,6 +344,9 @@ switch ( objectClass.objectClassValue ) {
             d.jdbc_class_name,
             d.sample_fragment,
             d.batch_separator,
+            d.execution_plan_prefix,
+            d.execution_plan_suffix,
+            d.execution_plan_xslt,
             count(h.id) as num_hosts
         FROM
             db_types d
@@ -357,7 +360,10 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.jdbc_class_name,
             d.sample_fragment,
-            d.batch_separator
+            d.batch_separator,
+            d.execution_plan_prefix,
+            d.execution_plan_suffix,
+            d.execution_plan_xslt
         ORDER BY
             d.simple_name,
             d.is_latest_stable desc,
@@ -371,6 +377,9 @@ switch ( objectClass.objectClassValue ) {
             attribute 'className', row.jdbc_class_name
             attribute 'sample_fragment', row.sample_fragment
             attribute 'batch_separator', row.batch_separator
+            attribute 'execution_plan_prefix', row.execution_plan_prefix
+            attribute 'execution_plan_suffix', row.execution_plan_suffix
+            attribute 'execution_plan_xslt', row.execution_plan_xslt
             attribute 'num_hosts', row.num_hosts
         }
 
