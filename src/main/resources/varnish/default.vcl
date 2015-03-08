@@ -12,4 +12,9 @@ backend default {
     if ( req.url == "/sqlfiddle/") {
       set req.url = "/sqlfiddle/index.html"; 
     }
+
+    if (req.request == "GET" && req.url != "/openidm/info/login") {
+        unset req.http.cookie;
+    }
+
  }
