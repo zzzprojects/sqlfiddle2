@@ -429,6 +429,8 @@ CREATE INDEX user_fiddles_user_schema_query_id ON user_fiddles USING btree (user
 
 CREATE UNIQUE INDEX user_identities ON users USING btree (issuer,subject);
 
+CREATE UNIQUE INDEX user_email ON users USING btree (email);
+
 
 --
 -- Name: db_type_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres

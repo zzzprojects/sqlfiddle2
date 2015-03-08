@@ -81,11 +81,24 @@
 
                 // if the user isn't found in our local user cache, create a record for them
                 if (user === null) {
-                    openidm.create("system/fiddles/users", null, {
-                        "issuer" : claims.iss,
-                        "subject" : claims.sub,
-                        "email" : claims.email
-                    });
+
+                    // "email" is a poor-man's subject, standing in for the real value we might be missing
+                    user = openidm.read("system/fiddles/users/" + claims.iss + ":" + claims.email);
+
+                    if (user === null) {
+                        openidm.create("system/fiddles/users", null, {
+                            "issuer" : claims.iss,
+                            "subject" : claims.sub,
+                            "email" : claims.email
+                        });
+                    } else {
+                        openidm.update("system/fiddles/users/" + user._id, null, {
+                            "issuer" : claims.iss,
+                            "subject" : claims.sub,
+                            "email" : claims.email
+                        });
+                    }
+
                 }
 
 
