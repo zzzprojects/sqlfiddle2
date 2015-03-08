@@ -9,10 +9,9 @@
     <meta name="author" content="Jake Feasel">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link href="stylesheets/bootstrap-2.0.4/bootstrap.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/bootstrap-2.0.4/responsive.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/fiddle.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/about.css" media="all" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="css/styles_min.css">
+    <link rel="stylesheet" type="text/css" href="css/print_min.css" media="print" />
 
 
 
@@ -371,7 +370,7 @@
                 <div class="span12 panel pull-left">
                     <h2>Source Code</h2>
                     <p>
-                        If you are interested in the fine details of the code behind SQL Fiddle, it is all available on <a href="https://github.com/jakefeasel/sqlfiddle"><span class="label label-info">github</span></a>
+                        If you are interested in the fine details of the code behind SQL Fiddle, it is all available on <a href="https://github.com/jakefeasel/sqlfiddle2"><span class="label label-info">github</span></a>
                     </p>
                 </div>
 
@@ -402,7 +401,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://www.codemirror.net">CodeMirror</a> <span class="badge badge-important">plugin</span>
+                                    <a href="http://www.codemirror.net">CodeMirror</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
                                     For browser-based SQL editing with text highlighting.
@@ -410,25 +409,25 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> <span class="badge badge-inverse">html / css / js</span>
+                                    <a href="http://getbootstrap.com/2.3.2/">Bootstrap</a> <span class="badge badge-warning">css</span>
                                 </th>
                                 <td>
-                                    Twitter's CSS framework.
+                                    Twitter's CSS framework (v2).
                                 </td>
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://lesscss.org/">LESS</a> <span class="badge badge-inverse">html / css / js</span>
+                                    <a href="http://lesscss.org/">LESS</a> <span class="badge badge-warning">css</span>
                                 <td>
-                                    CSS pre-processor
+                                    CSS pre-processor.
                                 </td>
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://documentcloud.github.com/backbone/">Backbone.js</a> <span class="badge badge-success">js</span>
+                                    <a href="http://backbonejs.org/">Backbone.js</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
-                                    MVC JavaScript framework.
+                                    MV* JavaScript framework.
                                 </td>
                             </tr>
                             <tr>
@@ -441,15 +440,15 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://openid.riaforge.org/">OpenID</a> <span class="badge badge-info">cfm</span>
+                                    <a href="https://lodash.com/">Lodash.js</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
-                                    ColdFusion library for OpenID integration.
+                                    Functional programming library for Javascript.
                                 </td>
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://blog.stevenlevithan.com/archives/date-time-format">Date.format.js</a> <span class="badge badge-important">plugin</span>
+                                    <a href="http://blog.stevenlevithan.com/archives/date-time-format">Date.format.js</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
                                     Date formatting JavaScript library.
@@ -460,12 +459,12 @@
                                     <a href="http://jquery.com">jQuery</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
-                                    AJAX, plus misc JS goodness. (Also jq plugin <a href="http://malsup.com/jquery/block/"><span class="label label-info">Block UI</span></a> and <a href="https://github.com/carhartl/jquery-cookie"><span class="label label-info">Cookie</span></a>).
+                                    AJAX, plus misc JS goodness. (Also jq plugins <a href="http://malsup.com/jquery/block/"><span class="label label-success">Block UI</span></a> and <a href="https://github.com/carhartl/jquery-cookie"><span class="label label-success">Cookie</span></a>).
                                 </td>
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://code.google.com/p/html-query-plan/">html-query-plan</a> <span class="badge badge-important">plugin</span>
+                                    <a href="http://code.google.com/p/html-query-plan/">html-query-plan</a> <span class="badge badge-success">js</span>
                                 </th>
                                 <td>
                                     XSLT for building rich query plans for SQL Server.
@@ -473,42 +472,18 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://sqlformat.appspot.com/">SQLFormat</a> <span class="badge badge-inverse">webservice</span>
+                                    <a href="https://forgerock.org/openidm/">OpenIDM</a> <span class="badge badge-info">backend</span>
                                 </th>
                                 <td>
-                                    Online instant SQL statement formatter.
+                                    Open Source Java-based Application Server.
                                 </td>
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://cfwheels.org">ColdFusion on Wheels</a> <span class="badge badge-info">cfm</span>
+                                    <a href="https://www.varnish-cache.org/">Varnish</a> <span class="badge badge-info">backend</span>
                                 </th>
                                 <td>
-                                    ColdFusion framework modeled after Ruby on Rails.
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    <a href="http://www.getrailo.org">Railo</a> <span class="badge badge-info">cfm</span>
-                                </th>
-                                <td>
-                                    Open Source CFML Application server.
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    <a href="http://tomcat.apache.org">Tomcat</a> <span class="badge badge-warning">java</span>
-                                </th>
-                                <td>
-                                    Open Source Java Servlet Engine.
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    <a href="http://httpd.apache.org">Apache HTTPD</a> <span class="badge badge">www</span>
-                                </th>
-                                <td>
-                                    Open Source HTTP Server.
+                                    Content-caching reverse proxy.
                                 </td>
                             </tr>
                             <tr>
@@ -521,7 +496,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="http://www.centos.org">RedHat Enterprise Linux</a> <span class="badge badge">os</span>
+                                    <a href="http://www.ubuntu.com/">Ubuntu</a> <span class="badge badge-inverse">os</span>
                                 </th>
                                 <td>
                                     Linux distribution.
@@ -537,26 +512,48 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <a href="https://github.com">GitHub</a> <span class="badge badge-inverse">hosting</span>
+                                    <a href="http://gruntjs.com/">Grunt</a> <span class="badge badge-important">devops</span>
                                 </th>
                                 <td>
-                                    Git repository, collaboration enviroment.
+                                    Javascript task runner, config and frontend build automation.
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <a href="http://maven.apache.org/">Maven</a> <span class="badge badge-important">devops</span>
+                                </th>
+                                <td>
+                                    Dependency management, backend build automation.
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <a href="http://www.vagrantup.com/">Vagrant</a> <span class="badge badge-important">devops</span>
+                                </th>
+                                <td>
+                                    VM management.
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <a href="https://github.com/jakefeasel/sqlfiddle2">GitHub</a> <span class="badge badge-important">devops</span>
+                                </th>
+                                <td>
+                                    Git repository, collaboration environment.
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="alert alert-info">
                           <p>
-                            <i class="icon-search icon-info-sign"></i> This list doesn't include the stacks used to run the database engines.  Those are pretty standard installs of the various products.  For example, I'm running a Windows 2008 VPS running SQL Server 2012, 2008 and Oracle, and various CentOS VPS instances running the others.
+                            <i class="icon-search icon-info-sign"></i> This list doesn't include the stacks used to run the database engines.  Those are pretty standard installs of the various products.  For example, I'm running a Windows 2008 VPS running SQL Server 2014 and Oracle, and various Ubuntu VPS instances running the others.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="javascripts/libs/jquery/jquery.js" type="text/javascript"></script>
-    <script src="javascripts/libs/bootstrap/bootstrap-collapse.js" type="text/javascript"></script>
-    <script src="javascripts/libs/bootstrap/bootstrap-dropdown.js" type="text/javascript"></script>
-    <script src="javascripts/libs/bootstrap/bootstrap-modal.js" type="text/javascript"></script>
+    <script src="javascript/libs/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="javascript/libs/bootstrap.min.js" type="text/javascript"></script>
 </body>
 </html>
