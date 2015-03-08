@@ -212,9 +212,9 @@ define([
                                     "sets": _.map(resp["sets"], function (set) {
                                         return {
                                             "succeeded": set.SUCCEEDED,
-                                            "statement_sql": set.STATEMENT.substring(0,400),
-                                            "row_count": set.RESULTS.DATA.length,
-                                            "columns": set.RESULTS.COLUMNS.join(", "),
+                                            "statement_sql": set.STATEMENT ? set.STATEMENT.substring(0,400) : "",
+                                            "row_count": set.RESULTS ? set.RESULTS.DATA.length : null,
+                                            "columns": set.RESULTS ? set.RESULTS.COLUMNS.join(", ") : null,
                                             "error_message": set.ERRORMESSAGE
                                         };
                                     })
