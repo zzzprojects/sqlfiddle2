@@ -102,8 +102,8 @@ switch ( objectClass.objectClassValue ) {
             drop_script = drop_script.replaceAll('#databaseName#', id.replaceFirst("db_", ""))
 
             if (batch_separator && batch_separator.size()) {
-                setup_script = setup_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
-                drop_script = drop_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), delimiter)
+                setup_script = setup_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), delimiter)
+                drop_script = drop_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), delimiter)
             }
 
             setup_script.tokenize(delimiter).each {
@@ -126,11 +126,15 @@ switch ( objectClass.objectClassValue ) {
             }
 
             if (batch_separator && batch_separator.size()) {
-                ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), statement_separator)
+                ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), statement_separator)
             }
 
             try {
-                (Pattern.compile("(?<=(" + statement_separator + ")|^)([\\s\\S]*?)(?=(" + statement_separator + "\\s*[\\n\$]*)|\$)").matcher(ddl)).each {
+                // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
+                // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
+                // 2) The main statement body - this is the one we execute
+                // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
+                (Pattern.compile("(?<=(" + statement_separator + ")|^)([\\s\\S]*?)(?=(" + statement_separator + "\\s*\\n+)|(" + statement_separator + "\\s*\$)|\$)").matcher(ddl)).each {
                     if (it[0].size() && ((Boolean) it[0] =~ /\S/) ) {
                         hostConnection.execute(it[0])
                     }

@@ -138,7 +138,10 @@ if (db_type.context == "host") {
     if (db_type.num_hosts == 0) {
         return [
             sets: [
-                [error_message: "No host of this type available to execute query. Try using a different database version."]
+                [
+                    ERRORMESSAGE: "No host of this type available to execute query. Try using a different database version.",
+                    SUCCEEDED: false
+                ]
             ]
         ]
     }
@@ -192,10 +195,15 @@ if (db_type.context == "host") {
             def separator = content.statement_separator ? content.statement_separator : ";"
             String newline = (char) 10
             String carrageReturn = (char) 13
-            def statementGroups = Pattern.compile("(?<=(" + separator + ")|^)([\\s\\S]*?)(?=(" + separator + "\\s*[\\n\$]*)|\$)")
+
+            // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
+            // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
+            // 2) The main statement body - this is the one we execute
+            // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
+            def statementGroups = Pattern.compile("(?<=(" + separator + ")|^)([\\s\\S]*?)(?=(" + separator + "\\s*\\n+)|(" + separator + "\\s*\$)|\$)")
 
             if (db_type.batch_separator?.size()) {
-                content.sql = content.sql.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + "|\$)", Pattern.CASE_INSENSITIVE), separator)
+                content.sql = content.sql.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), separator)
             }
             if (db_type.simple_name == "Oracle") {
                 hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
@@ -217,7 +225,11 @@ if (db_type.context == "host") {
                             executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", query.query_id.toString())
 
                             if (db_type.batch_separator && db_type.batch_separator?.size()) {
-                                executionPlanGroups = Pattern.compile("(?<=(" + db_type.batch_separator + ")|^)([\\s\\S]*?)(?=(\\n+" + db_type.batch_separator + "\\s*[\\r\\n\$]*)|\$)")
+                                // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
+                                // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
+                                // 2) The main statement body - this is the one we execute
+                                // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
+                                executionPlanGroups = Pattern.compile("(?<=(" + db_type.batch_separator + ")|^)([\\s\\S]*?)(?=(" + db_type.batch_separator + "\\s*\\n+)|(" + db_type.batch_separator + "\\s*\$)|\$)")
                             }
 
                             // the savepoint for postgres allows us to fail safely if users provide DDL in their queries;
