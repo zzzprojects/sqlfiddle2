@@ -342,15 +342,6 @@
                         "context" : {
                             "type" : "string" 
                         },
-                        "execution_plan_prefix" : {
-                            "type" : "string"
-                        },
-                        "execution_plan_suffix" : {
-                            "type" : "string"
-                        },
-                        "execution_plan_xslt" : {
-                            "type" : "string"
-                        },
                         "simple_name" : {
                             "type" : "string"
                         },

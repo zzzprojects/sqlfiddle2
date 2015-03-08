@@ -206,9 +206,6 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.full_name,
             d.context,
-            d.execution_plan_prefix,
-            d.execution_plan_suffix,
-            d.execution_plan_xslt,
             d.batch_separator
         FROM 
             schema_defs s 
@@ -235,9 +232,6 @@ switch ( objectClass.objectClassValue ) {
                     context : row.context,
                     simple_name : row.simple_name,
                     full_name : row.full_name,
-                    execution_plan_prefix : row.execution_plan_prefix,
-                    execution_plan_suffix : row.execution_plan_suffix,
-                    execution_plan_xslt : row.execution_plan_xslt,
                     batch_separator : row.batch_separator
                 ]
             attribute 'structure', structure
