@@ -63,7 +63,18 @@ define ([
                     });
 
                     // then increase the width as needed if a bigger value is found in the data
-                    _.each(set.RESULTS.DATA, function (row) {
+                    _.each(set.RESULTS.DATA, function (row,ridx) {
+
+                        row = _.map(row, function (value) {
+                            if (value === null) {
+                                return "(null)";
+                            } else {
+                                return value;
+                            }
+                        });
+
+                        set.RESULTS.DATA[ridx] = row;
+
                         columnWidths = _.map(row, function (col,cidx) {
                             return _.max([col.toString().length,columnWidths[cidx]]) ;
                         });
