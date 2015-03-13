@@ -18,3 +18,12 @@ backend default {
     }
 
  }
+
+sub vcl_fetch {
+        if (req.request == "GET" && req.url != "/openidm/info/login") {
+                set beresp.ttl = 3600s;
+        }
+        if (beresp.status != 200) {
+                set beresp.ttl = 0s;
+        }
+}
