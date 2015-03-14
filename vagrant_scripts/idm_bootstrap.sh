@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# create a 512mb swapfile
+dd if=/dev/zero of=/swapfile1 bs=1024 count=524288
+chown root:root /swapfile1
+chmod 0600 /swapfile1
+mkswap /swapfile1
+swapon /swapfile1
+echo "/swapfile1 none swap sw 0 0" >> /etc/fstab
+
 export OPENIDM_OPTS="-Xms512m -Xmx768m"
 echo "export OPENIDM_OPTS=\"${OPENIDM_OPTS}\"" >> /etc/profile
 
@@ -13,7 +21,7 @@ echo "10.0.0.15 MYSQL56_HOST" >> /etc/hosts
 echo "10.0.0.17 ORACLE11G_HOST" >> /etc/hosts
 echo "10.0.0.17 SQLSERVER2014_HOST" >> /etc/hosts
 
-apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish s3cmd
+apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish
 cp /vagrant/src/main/resources/varnish/default_varnish /etc/default/varnish
 ln -s /usr/bin/nodejs /usr/bin/node
@@ -30,11 +38,13 @@ mvn install:install-file -DgroupId=net.sourceforge.jtds -DartifactId=jtds -Dvers
 
 # If you want to enable Oracle support, manually download ojdbc6.jar and put it in the root folder (up one level from here)
 # Download it from here: http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-112010-090769.html
-# Afterwards, uncomment the below line as well as the dependency in ../pom.xml
-#java -jar ~/biz.aQute.bnd.jar wrap -properties /vagrant/vagrant_scripts/ojdbc6.bnd /vagrant/ojdbc6.jar
-#mv /vagrant/vagrant_scripts/ojdbc6.bar ojdbc6.jar
-#mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar -Dfile=./ojdbc6.jar
-
+# Afterwards, uncomment the dependency in ../pom.xml
+if [ -e "/vagrant/ojdbc6.jar" ]
+then
+    java -jar ~/biz.aQute.bnd.jar wrap -properties /vagrant/vagrant_scripts/ojdbc6.bnd /vagrant/ojdbc6.jar
+    mv /vagrant/vagrant_scripts/ojdbc6.bar ojdbc6.jar
+    mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar -Dfile=./ojdbc6.jar
+fi
 
 
 cd /vagrant
