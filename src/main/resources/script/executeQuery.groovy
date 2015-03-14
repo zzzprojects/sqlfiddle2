@@ -46,20 +46,20 @@ def execQueryStatement(connection, statement, rethrow) {
             for (i = 0; i < columnCount; i++) {
                 switch ( meta.getColumnType((i+1)) ) {
                     case java.sql.Types.TIMESTAMP:
-                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                        data.add(row.getAt(i) != null ? row.getAt(i).format("MMMM, dd yyyy HH:mm:ss") : null)
                     break;
 
                     case java.sql.Types.TIME:
-                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                        data.add(row.getAt(i) != null ? row.getAt(i).format("MMMM, dd yyyy HH:mm:ss") : null)
                     break;
 
                     case java.sql.Types.DATE:
-                        data.add(row.getAt(i).format("MMMM, dd yyyy HH:mm:ss"))
+                        data.add(row.getAt(i) != null ? row.getAt(i).format("MMMM, dd yyyy HH:mm:ss") : null)
                     break;
 
                     case java.sql.Types.CLOB:
                         // for some reason, getClob is indexed starting at 1 instead of 0
-                        data.add(row.getClob(i+1).getAsciiStream().getText())
+                        data.add(row.getClob(i+1) != null ? row.getClob(i+1).getAsciiStream().getText() : null)
                     break;
 
                     default:
