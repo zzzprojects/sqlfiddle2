@@ -47,3 +47,10 @@ To run the commercial database software (Microsoft SQL Server 2014 Express, Orac
 ### Oracle 11g R2 XE
 1) "system" password is "password"
 2) Follow instructions in vagrant_scripts/idm_bootstrap.sh for details on what must be done to obtain and use the JDBC driver
+
+
+## Running on AWS
+
+With a bit of preparations, you should be able to deploy the whole app into Amazon Web Services. See the comments in Vagrantfile for example config that you can fill in with your own AWS account details. For MS SQL and Oracle support, you will have to create your own AMI with Windows, following the same steps mentioned above.
+
+You may also wish to have automated backups of your sqlfiddle database to S3. If so, you will need to add a .s3cfg file under vagrant_scripts. This file will not be added to the git repo (it is ignored) but if present the PostgreSQL server will automatically schedule backups to write to your account. The .s3cfg file is produced by "s3cmd" - check this site for more details: http://s3tools.org/s3cmd-howto

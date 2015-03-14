@@ -83,6 +83,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         'Ebs.VolumeType' => 'io1',
         'Ebs.Iops' => 500
       }]
+
+      override.vm.provision :shell, :path => "vagrant_scripts/pg93_aws.sh"
     end
 
     postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# create a 512mb swapfile
+dd if=/dev/zero of=/swapfile1 bs=1024 count=524288
+chown root:root /swapfile1
+chmod 0600 /swapfile1
+mkswap /swapfile1
+swapon /swapfile1
+echo "/swapfile1 none swap sw 0 0" >> /etc/fstab
+
 export LANGUAGE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
@@ -8,7 +16,7 @@ echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc/apt
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 apt-get --yes update
 apt-get --yes upgrade
-apt-get --yes --force-yes install postgresql-9.3 postgresql-contrib-9.3
+apt-get --yes --force-yes install postgresql-9.3 postgresql-contrib-9.3 s3cmd
 
 pg_dropcluster --stop 9.3 main
 echo "listen_addresses = '*'" >> /etc/postgresql-common/createcluster.conf
@@ -32,8 +40,3 @@ psql -U postgres sqlfiddle < /vagrant/src/main/resources/db/sqlfiddle/data.sql
 # initialize the openidm repository
 psql -U postgres < /vagrant/src/main/resources/db/openidm/createuser.pgsql
 psql -U openidm < /vagrant/src/main/resources/db/openidm/openidm.pgsql
-
-if ping -c 1 10.0.0.113 &> /dev/null
-then
-    psql -U postgres sqlfiddle < /vagrant/src/main/resources/db/sqlfiddle/migrate.sql
-fi
