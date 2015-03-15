@@ -43,7 +43,7 @@
                 }
 
                 try {
-                    response = openidm.action("external/rest", "call", {
+                    response = openidm.action("endpoint/restClient", "call", {
                         "method": "POST",
                         "url": resolver.token_endpoint,
                         "contentType": "application/x-www-form-urlencoded",

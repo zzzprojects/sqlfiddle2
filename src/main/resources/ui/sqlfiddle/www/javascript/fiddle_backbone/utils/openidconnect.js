@@ -31,7 +31,7 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
         },
         getMainUri: function () {
             return  window.location.protocol + "//" + window.location.host + 
-                    window.location.pathname.replace(/(\/oauth\.html)|(\/$)/, '/index.html');
+                    window.location.pathname.replace(/(\/oauth\.html)|(\/$)/, '/');
         },
         getToken: function () {
             var params = this.getURLParams();

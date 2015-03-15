@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/restClient",
+    "type" : "groovy",
+    "file" : "script/restClient.groovy"
+}
