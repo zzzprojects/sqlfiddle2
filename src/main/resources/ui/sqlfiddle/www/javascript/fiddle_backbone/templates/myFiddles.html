@@ -39,7 +39,7 @@
                                     
                                 </ul>
                         </div>  
-                        <a class="fiddleLink" href="#{{schemaFragment}}" class="label label-info preview-schema popover-anchor">{{structure.length}} tables</a>
+                        <a href="#{{schemaFragment}}" class="fiddleLink label label-info preview-schema popover-anchor">{{structure.length}} tables</a>
 
                     {{else}}
 
@@ -48,7 +48,7 @@
                                 {{ddl}}
                             </div>
                         </div>
-                        <a class="fiddleLink" href="#{{schemaFragment}}" class="label label-info preview-ddl popover-anchor">preview ddl</a>
+                        <a href="#{{schemaFragment}}" class="fiddleLink label label-info preview-ddl popover-anchor">preview ddl</a>
 
                     {{/if}}
                     
@@ -91,7 +91,7 @@
                                     {{/each}}
                                 </ol>
                             </div>
-                            <a class="fiddleLink" href="#{{fragment}}" class="label label-info result-sets popover-anchor">{{sets.length}} result sets</a>
+                            <a href="#{{fragment}}" class="fiddleLink label label-info result-sets popover-anchor">{{sets.length}} result sets</a>
 
                         {{else}}
 
@@ -100,7 +100,7 @@
                                     {{sql}}
                                 </div>
                             </div>
-                            <a class="fiddleLink" href="#{{fragment}}" class="label label-info preview-sql popover-anchor">preview sql</a>
+                            <a href="#{{fragment}}" class="fiddleLink label label-info preview-sql popover-anchor">preview sql</a>
 
                         {{/if}}
                     </td>
