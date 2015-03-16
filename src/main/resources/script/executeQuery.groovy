@@ -74,6 +74,7 @@ def execQueryStatement(connection, statement, rethrow) {
         def errorMessage = e.getMessage()
         // terrible, but if you have a better idea please post it here: http://stackoverflow.com/q/22592508/808921
         if (
+                ((Boolean) errorMessage =~ /ResultSet is from UPDATE. No Data./) || // MySQL when using SELECT ... INTO @var
                 ((Boolean) errorMessage =~ /No results were returned by the query/) || // PostgreSQL
                 ((Boolean) errorMessage =~ /The executeQuery method must return a result set./) || // SQL Server
                 ((Boolean) errorMessage =~ /Cannot perform fetch on a PLSQL statement/) // Oracle
