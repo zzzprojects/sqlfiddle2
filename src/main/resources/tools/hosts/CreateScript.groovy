@@ -94,6 +94,7 @@ switch ( objectClass.objectClassValue ) {
             def populatedUrl = it.jdbc_url_template.replace("#databaseName#", it.default_database)
 
             def adminHostConnection = Sql.newInstance(populatedUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
+            def hostConnection = null
 
             // the setup scripts expect "databaseName" placeholders in the form of 2_abcde, 
             // but the id is the form db_2_abcde (the scripts will add the "db_" prefix as needed)
@@ -106,45 +107,56 @@ switch ( objectClass.objectClassValue ) {
                 drop_script = drop_script.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), delimiter)
             }
 
-            setup_script.tokenize(delimiter).each {
-                adminHostConnection.execute(it)
-            }
-
-            populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
-            hostConnection = Sql.newInstance(populatedUrl, createAttributes.findString("username"), createAttributes.findString("pw"), it.jdbc_class_name)
-
-            hostConnection.withStatement { it.queryTimeout = 10 }
-
-            def ddl = ""
-            if (createAttributes.findString("ddl")) {
-                ddl = createAttributes.findString("ddl")
-            }
-
-            def statement_separator = ";"
-            if (createAttributes.findString("statement_separator")) {
-                statement_separator = createAttributes.findString("statement_separator")
-            }
-
-            if (batch_separator && batch_separator.size()) {
-                ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), statement_separator)
-            }
-
             try {
+
+                setup_script.tokenize(delimiter).each {
+                    adminHostConnection.execute(it)
+                }
+
+                populatedUrl = it.jdbc_url_template.replaceAll("#databaseName#", id)
+                hostConnection = Sql.newInstance(populatedUrl, createAttributes.findString("username"), createAttributes.findString("pw"), it.jdbc_class_name)
+
+                hostConnection.withStatement { it.queryTimeout = 10 }
+
+                def ddl = ""
+                if (createAttributes.findString("ddl")) {
+                    ddl = createAttributes.findString("ddl")
+                }
+
+                def statement_separator = ";"
+                if (createAttributes.findString("statement_separator")) {
+                    statement_separator = createAttributes.findString("statement_separator")
+                }
+
+                if (batch_separator && batch_separator.size()) {
+                    ddl = ddl.replaceAll(Pattern.compile(newline + batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), statement_separator)
+                }
+
                 // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
                 // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
                 // 2) The main statement body - this is the one we execute
                 // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
                 (Pattern.compile("(?<=(" + statement_separator + ")|^)([\\s\\S]*?)(?=(" + statement_separator + "\\s*\\n+)|(" + statement_separator + "\\s*\$)|\$)").matcher(ddl)).each {
                     if (it[0].size() && ((Boolean) it[0] =~ /\S/) ) {
+                        println "Attempting to execute " + it[0]
                         hostConnection.execute(it[0])
                     }
                 }
             } catch (e) {
-                hostConnection.close()
+                println "ERROR CAUGHT!"
+                if (hostConnection != null) {
+                    hostConnection.close()
+                }
+
                 drop_script.tokenize(delimiter).each { adminHostConnection.execute(it) }
                 throw new ConnectorException(e.getMessage())
+
             } finally {
-                hostConnection.close()
+
+                if (hostConnection != null) {
+                    hostConnection.close()
+                }
+
                 adminHostConnection.close()
             }
 
