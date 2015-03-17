@@ -39,79 +39,100 @@ switch ( operation ) {
     switch ( objectClass.objectClassValue ) {
 
         case "users":
-            def fiddles = updateAttributes.findList("fiddles")
+
             def user_parts = uid.uidValue.split(":")
-            assert fiddles != null
-            assert fiddles.size() == 1 && fiddles[0] != null // can only update one fiddle entry at a time
-            assert fiddles[0].schema_def_id != null
             assert user_parts.size() == 2
 
-            def queryIdClause
-            def whereParams = [
-                    user_parts[0],
-                    user_parts[1],
-                    fiddles[0].schema_def_id
-                ]
-
-            if (fiddles[0].query_id == null) {
-                queryIdClause = " IS NULL"
-            } else {
-                whereParams.push(fiddles[0].query_id)
-                queryIdClause = " = ?"
-            }
-
-            def existingHistory = sql.firstRow("""
-                SELECT
-                    uf.id
-                FROM
-                    user_fiddles uf
-                        INNER JOIN users u ON
-                            uf.user_id = u.id
+            sql.executeUpdate("""
+                UPDATE
+                    users
+                SET
+                    issuer = coalesce(?, issuer),
+                    email = coalesce(?, email),
+                    subject = coalesce(?, subject)
                 WHERE
-                    u.issuer = ? AND
-                    u.subject = ? AND
-                    uf.schema_def_id = ? AND
-                    uf.query_id ${queryIdClause}
-                """,
-                whereParams
-                );
+                    issuer = ? AND 
+                    subject = ?
+            """, [
+                updateAttributes.findString("issuer"),
+                updateAttributes.findString("email"),
+                id as String,
+                user_parts[0],
+                user_parts[1]
+            ])
 
-            if (existingHistory == null) {
-                sql.executeInsert("""
-                    INSERT INTO
-                        user_fiddles
-                    (
-                        user_id,
-                        schema_def_id,
-                        query_id
-                    )
+            def fiddles = updateAttributes.findList("fiddles")
+            if (fiddles != null) {
+                assert fiddles.size() == 1 && fiddles[0] != null // can only update one fiddle entry at a time
+                assert fiddles[0].schema_def_id != null
+
+                def queryIdClause
+                def whereParams = [
+                        user_parts[0],
+                        user_parts[1],
+                        fiddles[0].schema_def_id
+                    ]
+
+                if (fiddles[0].query_id == null) {
+                    queryIdClause = " IS NULL"
+                } else {
+                    whereParams.push(fiddles[0].query_id)
+                    queryIdClause = " = ?"
+                }
+
+                def existingHistory = sql.firstRow("""
                     SELECT
-                        u.id,
-                        ?,
-                        ?
+                        uf.id
                     FROM
-                        users u
+                        user_fiddles uf
+                            INNER JOIN users u ON
+                                uf.user_id = u.id
                     WHERE
                         u.issuer = ? AND
-                        u.subject = ?
-                """, [
-                    fiddles[0].schema_def_id,
-                    fiddles[0].query_id, // can be null
-                    user_parts[0],
-                    user_parts[1]
-                ]);
-            } else {
-                sql.executeUpdate("""
-                    UPDATE
-                        user_fiddles
-                    SET
-                        last_accessed = now(),
-                        num_accesses = num_accesses + 1
-                    WHERE
-                        id = ?
-                """, [
-                    existingHistory.id
-                ]);
+                        u.subject = ? AND
+                        uf.schema_def_id = ? AND
+                        uf.query_id ${queryIdClause}
+                    """,
+                    whereParams
+                    );
+
+                if (existingHistory == null) {
+                    sql.executeInsert("""
+                        INSERT INTO
+                            user_fiddles
+                        (
+                            user_id,
+                            schema_def_id,
+                            query_id
+                        )
+                        SELECT
+                            u.id,
+                            ?,
+                            ?
+                        FROM
+                            users u
+                        WHERE
+                            u.issuer = ? AND
+                            u.subject = ?
+                    """, [
+                        fiddles[0].schema_def_id,
+                        fiddles[0].query_id, // can be null
+                        user_parts[0],
+                        user_parts[1]
+                    ]);
+                } else {
+                    sql.executeUpdate("""
+                        UPDATE
+                            user_fiddles
+                        SET
+                            last_accessed = now(),
+                            num_accesses = num_accesses + 1
+                        WHERE
+                            id = ?
+                    """, [
+                        existingHistory.id
+                    ]);
+                }
             }
 
         break;
