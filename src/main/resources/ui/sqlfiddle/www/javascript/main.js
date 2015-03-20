@@ -243,6 +243,8 @@ require([
 
             $(".nav-collapse.in").collapse('hide');
 
+        } else {
+            $(this).parents('div.nav-collapse.in').css('height', 'auto');
         }
     });
 
