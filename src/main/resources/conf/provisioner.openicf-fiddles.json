@@ -5,6 +5,12 @@
         "bundleVersion" : "[1.4.0.0,2.0.0.0)",
         "connectorName" : "org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector"
     },
+    "resultsHandlerConfig" : {
+        "enableNormalizingResultsHandler" : false,
+        "enableFilteredResultsHandler" : false,
+        "enableCaseInsensitiveFilter" : false,
+        "enableAttributesToGetSearchResultsHandler" : false
+    },
     "producerBufferSize" : 100,
     "connectorPoolingSupported" : true,
     "poolConfigOption" : {
@@ -88,26 +94,139 @@
                     "items" : {
                         "type" : "object",
                         "properties" : {
-                            "id" : {
-                                "type" : "integer"
-                            },
                             "schema_def_id" : {
                                 "type" : "integer"
                             },
                             "query_id" : {
                                 "type" : "integer"
-                            },
-                            "num_accesses" : {
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "user_fiddles" : {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "user_fiddles",
+            "type" : "object",
+            "nativeType" : "user_fiddles",
+            "properties" : {
+                "_id" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "__UID__",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "user_fiddles_id" : {
+                    "type" : "string",
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string"
+                },
+                "user_id" : {
+                    "type" : "string",
+                    "nativeName" : "user_id",
+                    "nativeType" : "string"
+                },
+                "full_name" : {
+                    "type" : "string",
+                    "nativeName" : "full_name",
+                    "nativeType" : "string"
+                },
+                "db_type_id" : {
+                    "type" : "integer",
+                    "nativeName" : "db_type_id",
+                    "nativeType" : "integer"
+                },
+                "short_code" : {
+                    "type" : "string",
+                    "nativeName" : "short_code",
+                    "nativeType" : "string"
+                },
+                "query_id" : {
+                    "type" : "integer",
+                    "nativeName" : "query_id",
+                    "nativeType" : "integer"
+                },
+                "num_accesses" : {
+                    "type" : "integer",
+                    "nativeName" : "num_accesses",
+                    "nativeType" : "integer"
+                },
+                "last_accessed" : {
+                    "type" : "string",
+                    "nativeName" : "last_accessed",
+                    "nativeType" : "string"
+                },
+                "favorite" : {
+                    "type" : "boolean",
+                    "nativeName" : "favorite",
+                    "nativeType" : "boolean"
+                },
+                "ddl" : {
+                    "type" : "string",
+                    "nativeName" : "ddl",
+                    "nativeType" : "string"
+                },
+                "sql" : {
+                    "type" : "string",
+                    "nativeName" : "sql",
+                    "nativeType" : "string"
+                },
+                "sets" : {
+                    "type": "array",
+                    "nativeName" : "sets",
+                    "nativeType" : "object",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "row_count" : {
                                 "type" : "integer"
                             },
-                            "last_accessed" : {
+                            "columns" : {
                                 "type" : "string"
                             },
-                            "show_in_history" : {
+                            "succeeded" : {
                                 "type" : "boolean"
                             },
-                            "favorite" : {
-                                "type" : "boolean"
+                            "error_message" : {
+                                "type" : "string"
+                            },
+                            "statement_sql" : {
+                                "type" : "string"
+                            }
+                        }
+                    }
+                },
+                "structure" : {
+                    "type": "array",
+                    "nativeName" : "structure",
+                    "nativeType" : "object",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "table_name" : {
+                                "type" : "string"
+                            },
+                            "table_type" : {
+                                "type" : "string"
+                            },
+                            "columns": {
+                                "type": "array",
+                                "items": {
+                                    "type" : "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

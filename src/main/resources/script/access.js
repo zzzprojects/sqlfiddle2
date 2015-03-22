@@ -82,6 +82,18 @@ var httpAccessConfig =
            "methods"    : "action,read",
            "actions"    : "getToken"
         },
+        {
+           "pattern"    : "endpoint/favorites",
+           "roles"      : "openidm-authorized",
+           "methods"    : "query",
+           "actions"    : "*"
+        },
+        {
+           "pattern"    : "endpoint/favorites/*",
+           "roles"      : "openidm-authorized",
+           "methods"    : "update",
+           "actions"    : "*"
+        },
         // openidm-admin can request nearly anything (some exceptions being a few system endpoints)
         {
             "pattern"   : "*",

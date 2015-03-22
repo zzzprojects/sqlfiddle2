@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/favorites*",
+    "type" : "text/javascript",
+    "file" : "script/favorites.js"
+}

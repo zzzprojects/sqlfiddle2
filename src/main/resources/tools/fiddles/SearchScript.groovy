@@ -36,6 +36,12 @@ def fieldMap = [
         "__NAME__": "u.subject",
         "__UID__": "u.issuer = ? AND u.subject = ?"
     ],
+    "user_fiddles": [
+        "__UID__": "uf.id",
+        "__NAME__": "u.issuer = ? AND u.subject = ? AND sd.db_type_id = ? AND sd.short_code = ?",
+        "user_id": "u.issuer = ? AND u.subject = ?",
+        "favorite": "uf.favorite = (case when 'true' = ? then 1 else 0 end)"
+    ],
     "db_types": [
         "__NAME__": "d.full_name",
         "__UID__": "d.id"
@@ -75,7 +81,28 @@ queryParser = { queryObj ->
 
 
         // special cases for concatenated-keys
-        if (objectClass.objectClassValue == "users" && queryObj.get("left") == "__UID__") {
+        if (objectClass.objectClassValue == "user_fiddles" && queryObj.get("left") == "__NAME__") {
+            def id_parts = queryObj.get("right").split(":")
+            def queryString = fieldMap[objectClass.objectClassValue][queryObj.get("left")]
+
+            whereParams.push(id_parts[0]) // issuer
+            whereParams.push(id_parts[1]) // subject
+            whereParams.push(id_parts[2].toInteger()) // db_type_id
+            whereParams.push(id_parts[3]) // short_code
+
+            if (id_parts.size() == 5) {
+                whereParams.push(id_parts[4].toInteger()) // query_id
+                queryString += " AND uf.query_id = ?"
+            } else {
+                queryString += " AND uf.query_id IS NULL"
+            }
+
+            return queryString
+
+        } else if (
+                    (objectClass.objectClassValue == "users" && queryObj.get("left") == "__UID__") ||
+                    (objectClass.objectClassValue == "user_fiddles" && queryObj.get("left") == "user_id")
+                ) {
             def user_parts = queryObj.get("right").split(":")
             assert user_parts.size() == 2
 
@@ -108,6 +135,9 @@ queryParser = { queryObj ->
             int rightSide = queryObj.get("right").toInteger()
             return fieldMap[objectClass.objectClassValue][queryObj.get("left")] + " >= (current_timestamp - interval '${rightSide} minutes')"
 
+        } else if (queryObj.get("left") == "favorite") {
+            whereParams.push(queryObj.get("right").toString())
+            return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
         } else {
 
             if (queryObj.get("operation") == "CONTAINS") {
@@ -125,8 +155,9 @@ queryParser = { queryObj ->
             // integer parameters
             } else if (queryObj.get("left") == "schema_def_id" ||
                        queryObj.get("left") == "db_type_id" ||
-                       (objectClass.objectClassValue == "db_types" && queryObj.get("left") == "__UID__")) {
-
+                       (objectClass.objectClassValue == "db_types" && queryObj.get("left") == "__UID__") ||
+                       (objectClass.objectClassValue == "user_fiddles" && queryObj.get("left") == "__UID__")
+                    ) {
                 whereParams.push(queryObj.get("right").toInteger())
 
             } else {
@@ -188,6 +219,131 @@ switch ( objectClass.objectClassValue ) {
         }
 
     }
+    break
+
+    case "user_fiddles":
+
+    def dataCollector = [ uid : "" ]
+    def handleCollectedData = { 
+
+        if (dataCollector.uid != "") {
+            handler {
+                id dataCollector.id
+                uid dataCollector.uid
+                attribute 'user_id', dataCollector.user_id
+                attribute 'db_type_id', dataCollector.db_type_id
+                attribute 'short_code', dataCollector.short_code
+                attribute 'query_id', dataCollector.query_id
+                attribute 'last_accessed', dataCollector.last_accessed
+                attribute 'num_accesses', dataCollector.num_accesses
+                attribute 'favorite', dataCollector.favorite
+                attribute 'structure', dataCollector.structure
+                attribute 'full_name', dataCollector.full_name
+                attribute 'ddl', dataCollector.ddl
+                attribute 'sql', dataCollector.sql
+                attribute 'sets', dataCollector.sets
+            }
+        }
+    }
+    
+    sql.eachRow("""
+        SELECT
+            uf.id,
+            u.issuer,
+            u.subject,
+            to_char(uf.last_accessed, 'YYYY-MM-DD HH24:MI:SS.MS') as last_accessed,
+            uf.num_accesses,
+            uf.favorite,
+            sd.db_type_id,
+            dt.full_name,
+            sd.short_code,
+            sd.ddl,
+            sd.structure_json,
+            uf.query_id,
+            query_plus_sets.query_set_id,
+            query_plus_sets.sql,
+            query_plus_sets.row_count,
+            query_plus_sets.columns,
+            query_plus_sets.succeeded,
+            query_plus_sets.statement_sql,
+            query_plus_sets.error_message
+        FROM
+            user_fiddles uf
+                INNER JOIN schema_defs sd ON
+                    uf.schema_def_id = sd.id
+                INNER JOIN db_types dt ON
+                    sd.db_type_id = dt.id
+                INNER JOIN users u ON
+                    uf.user_id = u.id
+                LEFT OUTER JOIN LATERAL (
+                    SELECT
+                        q.sql,
+                        qs.id as query_set_id,
+                        qs.row_count,
+                        qs.columns_list as columns,
+                        qs.succeeded,
+                        qs.sql as statement_sql,
+                        qs.error_message
+                    FROM
+                        queries q
+                            LEFT OUTER JOIN query_sets qs ON
+                                q.id = qs.query_id AND
+                                q.schema_def_id = qs.schema_def_id
+                    WHERE
+                        q.schema_def_id = uf.schema_def_id AND
+                        q.id = uf.query_id
+
+                ) query_plus_sets ON
+                    (true = true)
+        ${where}
+        ORDER BY
+            uf.last_accessed DESC,
+            uf.id,
+            query_plus_sets.query_set_id
+    """, whereParams) { row ->
+
+        def structure = row.structure_json != null ? (new JsonSlurper()).parseText(row.structure_json) : null
+        String user_fiddles_id = row.issuer + ":" + row.subject + ":" + row.db_type_id + ":" + row.short_code
+
+        if (row.query_id != null) {
+            user_fiddles_id += ":" + row.query_id
+        }
+
+        if (dataCollector.uid != (row.id as String)) {
+            handleCollectedData()
+
+            dataCollector = [
+                id : user_fiddles_id,
+                uid : row.id as String,
+                user_id: row.issuer + ":" + row.subject as String,
+                db_type_id: row.db_type_id,
+                short_code: row.short_code,
+                query_id: row.query_id,
+                last_accessed: row.last_accessed,
+                num_accesses: row.num_accesses,
+                favorite: row.favorite,
+                structure: structure,
+                full_name: row.full_name,
+                ddl: row.ddl,
+                sql: row.sql,
+                sets : [ ]
+            ]
+        }
+
+        if (row.query_id != null) {
+            dataCollector.sets.add([
+                row_count: row.row_count,
+                columns: row.columns,
+                succeeded: row.succeeded,
+                statement_sql: row.statement_sql,
+                error_message: row.error_message
+            ])
+        }
+
+    }
+
+    handleCollectedData()
+
     break
 
     case "schema_defs":

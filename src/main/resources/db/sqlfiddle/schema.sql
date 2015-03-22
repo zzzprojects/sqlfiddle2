@@ -215,7 +215,6 @@ CREATE TABLE user_fiddles (
     query_id integer,
     last_accessed timestamp without time zone DEFAULT now(),
     num_accesses integer DEFAULT 1,
-    show_in_history smallint DEFAULT 1,
     favorite smallint DEFAULT 0
 );
 
