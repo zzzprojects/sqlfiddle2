@@ -62,6 +62,11 @@ def execQueryStatement(connection, statement, rethrow) {
                         data.add(row.getClob(i+1) != null ? row.getClob(i+1).getAsciiStream().getText() : null)
                     break;
 
+                    case java.sql.Types.ARRAY:
+                        // for some reason, getArray is indexed starting at 1 instead of 0
+                        data.add(row.getArray(i+1) != null ? row.getArray(i+1).getArray() : null)
+                    break;
+
                     default:
                         data.add(row.getAt(i))
                 }
