@@ -8,8 +8,16 @@ mkswap /swapfile1
 swapon /swapfile1
 echo "/swapfile1 none swap sw 0 0" >> /etc/fstab
 
-export OPENIDM_OPTS="-Xms512m -Xmx768m"
+
+export OPENIDM_OPTS="-Xms1024m -Xmx1280m"
+export JAVA_OPTS="-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.port=9010 \
+-Dcom.sun.management.jmxremote.local.only=true \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Dcom.sun.management.jmxremote.ssl=false"
+
 echo "export OPENIDM_OPTS=\"${OPENIDM_OPTS}\"" >> /etc/profile
+echo "export JAVA_OPTS=\"${JAVA_OPTS}\"" >> /etc/profile
 
 apt-get --yes update
 apt-get --yes upgrade
