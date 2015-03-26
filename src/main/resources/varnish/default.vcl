@@ -11,7 +11,7 @@ sub vcl_recv {
 
     # Require that the content be less than 8000 characters
     if (req.request == "POST" && !req.http.Content-Length ~ "^[1-7]?[0-9]{1,3}$") {
-        error 413 "Request content too large";
+        error 413 "Request content too large (>8000)";
     }
 
     if (! (req.url ~ "^/openidm/") ) {
