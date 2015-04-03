@@ -19,6 +19,8 @@ define(["jquery"], function ($) {
                 }),
                 dataType: "json",
                 data: args.data
+            }).fail(function () {
+                alert("Oops! Something went wrong. Try it again and if this keeps happening, email admin@sqlfiddle.com about it.");
             });
         }
     };
