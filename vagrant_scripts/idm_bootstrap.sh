@@ -28,6 +28,7 @@ echo "10.0.0.16 POSTGRESQL93_HOST" >> /etc/hosts
 echo "10.0.0.15 MYSQL56_HOST" >> /etc/hosts
 echo "10.0.0.17 ORACLE11G_HOST" >> /etc/hosts
 echo "10.0.0.17 SQLSERVER2014_HOST" >> /etc/hosts
+echo "10.0.0.18 MYSQL55_HOST" >> /etc/hosts
 
 apt-get --yes --force-yes install openjdk-7-jdk maven npm varnish
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish

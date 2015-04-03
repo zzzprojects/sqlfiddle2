@@ -32,10 +32,6 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 1024
-  end
-
   # VM for commercial databases (Oracle and SQL Server) running on a commercial OS (Windows 2008 Server)
   # Note that it is optional; it won't start up by default. If you want to start it, you have to manually call it like so:
   # vagrant up windows
@@ -49,6 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     windows.winrm.password = "vagrant"
 
     windows.vm.provider "virtualbox" do |v, override|
+      v.memory = 1024
       # Provide the path to your virtualbox image which is running SQL Server 2014 and/or Oracle 11G XE:
       override.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box"
 
@@ -72,6 +69,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
+
+  config.vm.define "mysql56" do |mysql56|
+    mysql56.vm.provision :shell, :path => "vagrant_scripts/my56_bootstrap.sh"
+    mysql56.vm.box = "ubuntu/trusty64"
+    mysql56.vm.network "private_network", ip: "10.0.0.15"
+
+    mysql56.vm.provider "aws" do |aws|
+      aws.private_ip_address = "10.0.0.15"
+    end
+  end
+
+  config.vm.define "mysql55" do |mysql55|
+    mysql55.vm.provision :shell, :path => "vagrant_scripts/my55_bootstrap.sh"
+    mysql55.vm.box = "ubuntu/trusty64"
+    mysql55.vm.network "private_network", ip: "10.0.0.18"
+
+    mysql55.vm.provider "aws" do |aws|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.18"
+    end
+  end
+
   config.vm.define "postgresql93" do |postgresql93|
     postgresql93.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.16"
@@ -92,16 +111,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     postgresql93.vm.network "private_network", ip: "10.0.0.16"
   end
 
-  config.vm.define "mysql56" do |mysql56|
-    mysql56.vm.provision :shell, :path => "vagrant_scripts/my56_bootstrap.sh"
-    mysql56.vm.box = "ubuntu/trusty64"
-    mysql56.vm.network "private_network", ip: "10.0.0.15"
-
-    mysql56.vm.provider "aws" do |aws|
-      aws.private_ip_address = "10.0.0.15"
-    end
-  end
-
   config.vm.define "idm", primary: true do |idm|
 
     idm.vm.box = "ubuntu/trusty64"
@@ -112,6 +121,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.14"
       override.vm.provision :shell, :path => "vagrant_scripts/idm_aws.sh"
+    end
+
+    idm.vm.provider "virtualbox" do |v, override|
+      v.memory = 1024
     end
 
     idm.vm.provision "shell", path: "vagrant_scripts/idm_bootstrap.sh"
