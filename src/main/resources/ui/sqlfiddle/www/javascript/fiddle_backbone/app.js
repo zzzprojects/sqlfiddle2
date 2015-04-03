@@ -254,6 +254,7 @@ var obj = {
             e.preventDefault();
             schemaDef.reset();
             query.reset();
+            $("body").unblock();
             router.navigate("!" + dbTypes.getSelectedType().id, {trigger: true});
         });
 
