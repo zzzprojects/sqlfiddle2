@@ -138,12 +138,10 @@ switch ( objectClass.objectClassValue ) {
                 // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
                 (Pattern.compile("(?<=(" + statement_separator + ")|^)([\\s\\S]*?)(?=(" + statement_separator + "\\s*\\n+)|(" + statement_separator + "\\s*\$)|\$)").matcher(ddl)).each {
                     if (it[0].size() && ((Boolean) it[0] =~ /\S/) ) {
-                        println "Attempting to execute " + it[0]
                         hostConnection.execute(it[0])
                     }
                 }
             } catch (e) {
-                println "ERROR CAUGHT!"
                 if (hostConnection != null) {
                     hostConnection.close()
                 }
