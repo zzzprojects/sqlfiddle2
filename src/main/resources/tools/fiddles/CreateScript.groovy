@@ -34,6 +34,7 @@ def createAttributes = new AttributesAccessor(attributes as Set<Attribute>)
 
 def digest = MessageDigest.getInstance("MD5")
 def sql = new Sql(connection)
+def returnVal = null
 
 //Create must return UID. 
 
@@ -57,7 +58,7 @@ switch ( objectClass.objectClassValue ) {
                 createAttributes.findString("email")
             ])
 
-        return new Uid(createAttributes.findString("issuer") + ":" + id)
+        returnVal = new Uid(createAttributes.findString("issuer") + ":" + id)
 
     break
 
@@ -87,7 +88,7 @@ switch ( objectClass.objectClassValue ) {
                 structure != null ? (new JsonBuilder(structure).toString()) : null
             ])
 
-        return new Uid(createAttributes.findInteger("db_type_id").toString() + "_" + createAttributes.findString("short_code") as String)
+        returnVal = new Uid(createAttributes.findInteger("db_type_id").toString() + "_" + createAttributes.findString("short_code") as String)
 
 
     break
@@ -169,13 +170,19 @@ switch ( objectClass.objectClassValue ) {
                     ]
                 )
             }
-            return new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + new_query.queryId) as String)
+            returnVal = new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + new_query.queryId) as String)
         } else {
-            return new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId) as String)
+            returnVal = new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId) as String)
         }
 
     break
+
+    default:
+        sql.close()
+        throw new UnsupportedOperationException(operation.name() + " operation of type:" +
+                        objectClass.objectClassValue + " is not supported.")
 }
 
-throw new UnsupportedOperationException(operation.name() + " operation of type:" +
-                objectClass.objectClassValue + " is not supported.")
+sql.close()
+
+return returnVal

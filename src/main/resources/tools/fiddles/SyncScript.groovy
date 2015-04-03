@@ -120,3 +120,4 @@ switch ( objectClass ) {
         return null
 
 }
+sql.close()

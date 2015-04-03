@@ -49,6 +49,7 @@ sql.eachRow("""
 """) {
     try {
         def testUrl = it.jdbc_url_template.replaceAll("#databaseName#", it.default_database)
+        println "Testing connection " + testUrl
         def testConnection = Sql.newInstance(testUrl, it.admin_username, it.admin_password, it.jdbc_class_name)
         onePassed = true
     } catch (e) {
@@ -60,6 +61,8 @@ if (!onePassed) {
     throw "No hosts available"
 }
 
+
+sql.close()
 
 
 

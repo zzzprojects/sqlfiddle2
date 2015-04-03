@@ -536,5 +536,5 @@ switch ( objectClass.objectClassValue ) {
     }
     break
 }
-
+sql.close()
 return new SearchResult()

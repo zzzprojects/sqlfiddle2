@@ -168,4 +168,6 @@ switch ( objectClass.objectClassValue ) {
     break
 }
 
+sql.close()
+
 return new Uid(id as String)

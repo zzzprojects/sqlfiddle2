@@ -46,3 +46,4 @@ switch ( objectClass.objectClassValue ) {
     default:
     uid
 }
+sql.close()

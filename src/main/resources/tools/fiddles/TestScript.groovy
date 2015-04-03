@@ -34,5 +34,5 @@ import groovy.sql.DataSet;
 def sql = new Sql(connection);
 
 sql.eachRow("select count(id) as numTypes from db_types", { println it.numTypes} );
-
+sql.close()
 

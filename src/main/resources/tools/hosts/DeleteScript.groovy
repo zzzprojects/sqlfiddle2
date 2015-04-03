@@ -86,4 +86,6 @@ switch ( objectClass.objectClassValue ) {
 
 }
 
-uid;
+sql.close()
+
+uid

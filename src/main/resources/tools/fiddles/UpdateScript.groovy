@@ -220,13 +220,17 @@ switch ( operation ) {
     break
 
     case OperationType.ADD_ATTRIBUTE_VALUES:
+        sql.close()
         throw new UnsupportedOperationException(operation.name() + " operation of type:" +
                 objectClass.objectClassValue + " is not supported.")
     case OperationType.REMOVE_ATTRIBUTE_VALUES:
+        sql.close()
         throw new UnsupportedOperationException(operation.name() + " operation of type:" +
                 objectClass.objectClassValue + " is not supported.")
     default:
+        sql.close()
         throw new ConnectorException("UpdateScript can not handle operation:" + operation.name())
 }
 
+sql.close()
 return uid
