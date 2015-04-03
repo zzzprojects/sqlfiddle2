@@ -50,6 +50,7 @@ def fieldMap = [
         "__NAME__": "s.md5",
         "__UID__": "s.db_type_id = ? AND s.short_code = ?",
         "schema_def_id": "s.id",
+        "db_type_id": "s.db_type_id",
         "minutes_since_last_used": "last_used"
     ],
     "queries": [
@@ -362,11 +363,18 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.full_name,
             d.context,
-            d.batch_separator
+            d.batch_separator,
+            coalesce(hosts_available.total, 0) as num_hosts_available
         FROM 
             schema_defs s 
                 INNER JOIN db_types d ON 
                     s.db_type_id = d.id
+                LEFT OUTER JOIN (
+                    SELECT h.db_type_id, count(*) as total
+                    FROM hosts h
+                    GROUP BY h.db_type_id
+                ) as hosts_available ON
+                    d.id = hosts_available.db_type_id
         """ + where, whereParams) { row ->
 
         def structure = row.structure_json != null ? (new JsonSlurper()).parseText(row.structure_json) : null
@@ -383,6 +391,7 @@ switch ( objectClass.objectClassValue ) {
             attribute 'minutes_since_last_used', (row.minutes_since_last_used != null ? row.minutes_since_last_used.toInteger(): null)
             attribute 'short_code', row.short_code
             attribute 'statement_separator', row.statement_separator
+            attribute 'num_hosts_available', row.num_hosts_available.toInteger()
             attribute 'db_type', [
                     id : row.db_type_id.toInteger(),
                     context : row.context,

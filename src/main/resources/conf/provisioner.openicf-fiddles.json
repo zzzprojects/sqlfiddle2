@@ -397,6 +397,16 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
+                "num_hosts_available" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "nativeName" : "num_hosts_available",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
                 "last_used" : {
                     "type" : "string",
                     "required" : false,
