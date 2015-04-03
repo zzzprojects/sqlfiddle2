@@ -65,7 +65,7 @@
                 },
                 {
                     "situation" : "ABSENT",
-                    "action" : "CREATE"
+                    "action" : "IGNORE"
                 },
                 {
                     "situation" : "MISSING",
