@@ -16,7 +16,7 @@ class PostgreSQLException extends Exception {}
 
 def content = request.getContent().asMap()
 
-assert content.sql
+assert content.sql != null
 assert content.db_type_id
 assert content.schema_short_code
 
