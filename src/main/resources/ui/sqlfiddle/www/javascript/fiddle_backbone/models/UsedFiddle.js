@@ -3,6 +3,8 @@ define(["Backbone"], function (Backbone) {
     var UsedFiddle = Backbone.Model.extend({
         defaults: {
             "fragment": "",
+            "favorite": false,
+            "num_accesses": 0,
             "full_name": "",
             "ddl": "",
             "sql": "",
@@ -10,7 +12,9 @@ define(["Backbone"], function (Backbone) {
             "sets": []
         },
         initialize: function () {
-            this.set("last_used", new Date());
+            if (!this.get("last_used")) {
+                this.set("last_used", new Date());
+            }
         }
     });
 

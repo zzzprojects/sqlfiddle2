@@ -22,13 +22,13 @@ sub vcl_recv {
       set req.url = "/sqlfiddle/index.html"; 
     }
 
-    if (req.request == "GET" && req.url != "/openidm/info/login") {
+    if (req.request == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
         unset req.http.cookie;
     }
 }
 
 sub vcl_fetch {
-    if (req.request == "GET" && req.url != "/openidm/info/login") {
+    if (req.request == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
         set beresp.ttl = 60m;
     }
     if (beresp.status != 200) {

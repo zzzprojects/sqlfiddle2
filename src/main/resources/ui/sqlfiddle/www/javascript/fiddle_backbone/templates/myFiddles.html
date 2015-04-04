@@ -65,7 +65,7 @@
 
 
             {{#each queries}}
-                <tr class="queryLog for-schema-{{../schemaGroup}}{{#unless mostRecent}} queryLog-hidden{{/unless}}" schemaGroup="{{../schemaGroup}}" fragment="{{fragment}}">
+                <tr class="queryLog for-schema-{{../schemaGroup}}{{#unless displayByDefault}} queryLog-hidden{{/unless}}" schemaGroup="{{../schemaGroup}}" fragment="{{fragment}}">
                     <td>&nbsp;</td>
                     <td><a class="fiddleLink" href="#{{fragment}}">#{{fragment}}</a></td>
                     <td>{{last_used}}</td>
@@ -73,7 +73,11 @@
                         {{#if ../../anonymous}}
                             <i class="icon-star-empty"></i>
                         {{else}}
-                            <a href="#addFavorite" fragment="{{fragment}}" title="Add to favorites"><i class="icon-star-empty"></i></a>
+                            {{#if favorite}}
+                                <a href="#toggleFavorite" favorite="true" fragment="{{fragment}}" title="Remove from favorites"><i class="icon-star"></i></a>
+                            {{else}}
+                                <a href="#toggleFavorite" favorite="false" fragment="{{fragment}}" title="Add to favorites"><i class="icon-star-empty"></i></a>
+                            {{/if}}
                         {{/if}}
                     </td>
                     <td>
