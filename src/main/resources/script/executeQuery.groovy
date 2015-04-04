@@ -67,6 +67,18 @@ def execQueryStatement(connection, statement, rethrow) {
                         data.add(row.getArray(i+1) != null ? row.getArray(i+1).getArray() : null)
                     break;
 
+                    case java.sql.Types.OTHER:
+                        // for some reason, getObject is indexed starting at 1 instead of 0
+                        def obj = row.getObject(i+1)
+
+                        try {
+                            data.add(obj.toString())
+                        } catch (e) {
+                            // apparently it doesn't like toString(), so hopefully it can be serialized some other way eventually...
+                            data.add(obj)
+                        }
+                    break;
+
                     default:
                         data.add(row.getAt(i))
                 }
