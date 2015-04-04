@@ -22,6 +22,7 @@ echo "export JAVA_OPTS=\"${JAVA_OPTS}\"" >> /etc/profile
 apt-get --yes update
 apt-get --yes upgrade
 
+echo "10.0.0.14 openidm" >> /etc/hosts
 echo "10.0.0.16 OPENIDM_REPO_HOST" >> /etc/hosts
 echo "10.0.0.16 SQLFIDDLE_HOST" >> /etc/hosts
 echo "10.0.0.16 POSTGRESQL93_HOST" >> /etc/hosts
