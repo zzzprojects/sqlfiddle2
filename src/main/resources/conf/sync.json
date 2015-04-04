@@ -47,6 +47,7 @@
                 },
                 {
                     "source" : "ddl",
+                    "default" : "",
                     "target" : "ddl"
                 },
                 {

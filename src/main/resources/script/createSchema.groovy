@@ -114,7 +114,7 @@ try {
                 "schema_name": "db_" + content.db_type_id + "_" + short_code,
                 "username": "user_" + content.db_type_id + "_" + short_code,
                 "pw": content.db_type_id + "_" + short_code,
-                "ddl": content.ddl,
+                "ddl": content.ddl ?: "",
                 "statement_separator": content.statement_separator
             ])
 

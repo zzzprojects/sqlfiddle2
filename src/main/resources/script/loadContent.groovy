@@ -17,7 +17,7 @@ assert schema_def != null
 
 def response = [
         "short_code": schema_def.short_code,
-        "ddl": schema_def.ddl,
+        "ddl": schema_def.ddl ?: "",
         "schema_statement_separator": schema_def.statement_separator,
         "schema_structure": schema_def.structure,
         "full_name": schema_def.db_type.full_name
@@ -29,7 +29,7 @@ if (fragment_parts.size() > 2) {
     assert query != null
 
     response["query_statement_separator"] = query.statement_separator
-    response["sql"] = query.sql
+    response["sql"] = query.sql ?: "",
     response["id"] = query.query_id
     response["sets"] = openidm.action("endpoint/executeQuery", "query", [
             "db_type_id": fragment_parts[0],
