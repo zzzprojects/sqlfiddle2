@@ -25,12 +25,24 @@ sub vcl_recv {
     if (req.request == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
         unset req.http.cookie;
     }
+
+    if (req.request == "GET" && req.url == "/openidm/info/ping") {
+        set req.http.X-OpenIDM-Username = "anonymous";
+        set req.http.X-OpenIDM-Password = "anonymous";
+        set req.http.X-OpenIDM-NoSession = "true";
+    }
+
 }
 
 sub vcl_fetch {
-    if (req.request == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
-        set beresp.ttl = 60m;
+    if (req.request == "GET") {
+        if (req.url ~ "/openidm/info/.*" || req.url == "/openidm/endpoint/favorites?_queryId=myFavorites") {
+            set beresp.ttl = 0s;
+        } else {
+            set beresp.ttl = 60m;
+        }
     }
+
     if (beresp.status != 200) {
         set beresp.ttl = 0s;
     }

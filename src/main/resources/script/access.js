@@ -45,10 +45,17 @@
 var httpAccessConfig =
 {
     "configs" : [
-        // Anyone can read from these endpoints
         {
            "pattern"    : "info/login",
            "roles"      : "openidm-authorized",
+           "methods"    : "read",
+           "actions"    : "*"
+        },
+
+        // Anyone can read from these endpoints
+        {
+           "pattern"    : "info/ping",
+           "roles"      : "*",
            "methods"    : "read",
            "actions"    : "*"
         },

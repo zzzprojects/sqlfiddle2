@@ -141,20 +141,30 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm2.vm.network "private_network", ip: "10.0.0.24"
     idm2.vm.network "forwarded_port", guest: 8080, host: 28080
 
+    idm2.vm.provision :shell, path: "vagrant_scripts/idm_prep.sh"
+
     idm2.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.24"
+
+      # In aws, we can reuse the build output from the main idm box, since everything is local to each machine. So we have to build again:
+      override.vm.provision :shell, path: "vagrant_scripts/idm_build.sh"
+
+      override.vm.provision :shell, :inline => "cp /vagrant/src/main/resources/conf/boot/boot.node2.properties /vagrant/target/sqlfiddle/conf/boot/boot.properties"
+      override.vm.provision :shell, :inline => "cp /vagrant/target/sqlfiddle/bin/openidm /etc/init.d"
       override.vm.provision :shell, :path => "vagrant_scripts/idm_aws.sh"
     end
 
     idm2.vm.provider "virtualbox" do |v, override|
-      v.memory = 1024
-      idm2.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
-      override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
-    end
 
-    idm2.vm.provision :shell, path: "vagrant_scripts/idm_prep.sh"
-    idm2.vm.provision :shell, :inline => "cp /vagrant/src/main/resources/conf/boot/boot.node2.properties /vagrant/target/sqlfiddle/conf/boot/boot.properties"
-    idm2.vm.provision :shell, :inline => "cp /vagrant/target/sqlfiddle/bin/openidm /etc/init.d"
+      # when running virtualbox, we can use the built target from the main idm box to skip having to build it for this one
+      # however, we don't want them to be shared when running, as that could cause conflicts with logs and what-not. A copy is best, so we just rsync:
+      override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
+
+      v.memory = 1024
+      override.vm.provision :shell, :inline => "cp /vagrant/src/main/resources/conf/boot/boot.node2.properties /vagrant/target/sqlfiddle/conf/boot/boot.properties"
+      override.vm.provision :shell, :inline => "cp /vagrant/target/sqlfiddle/bin/openidm /etc/init.d"
+      override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
+    end
 
   end
 
