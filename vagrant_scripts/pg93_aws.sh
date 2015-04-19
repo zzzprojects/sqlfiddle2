@@ -23,6 +23,6 @@ EOF
     chmod +x ~/backup.sh
 
     # run backups every four hours
-    echo "0 */4 * * *       /root/backup.sh >> /root/backup.out 2>&1" | crontab
+    echo "0 2 * * *       /root/backup.sh >> /root/backup.out 2>&1" | crontab
 
 fi
