@@ -13,6 +13,7 @@
             <fileMode>0640</fileMode>
             <excludes>
                 <exclude>varnish/*</exclude>
+                <exclude>conf/boot/*</exclude>
             </excludes>
         </fileSet>
         <fileSet>

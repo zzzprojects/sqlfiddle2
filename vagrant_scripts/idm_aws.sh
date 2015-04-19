@@ -1,4 +1,9 @@
 #!/bin/bash
+
+grunt sync less requirejs
+update-rc.d openidm defaults
+service varnish restart
+
 if [ -d "./openvpn" ]
 then
 
@@ -14,3 +19,5 @@ then
     service openvpn restart
 
 fi
+
+service openidm start

@@ -2,7 +2,7 @@
 CREATE SCHEMA openidm AUTHORIZATION openidm;
 
 -- -----------------------------------------------------
--- Table openidm.auditactivity
+-- Table openidm.objecttpyes
 -- -----------------------------------------------------
 
 CREATE TABLE openidm.objecttypes (
@@ -107,7 +107,7 @@ CREATE INDEX fk_configobjects_objecttypes ON openidm.configobjects (objecttypes_
 CREATE TABLE openidm.configobjectproperties (
   configobjects_id BIGINT NOT NULL,
   propkey VARCHAR(255) NOT NULL,
-  proptype VARCHAR(32) DEFAULT NULL,
+  proptype VARCHAR(255) DEFAULT NULL,
   propvalue TEXT,
   CONSTRAINT fk_configobjectproperties_configobjects FOREIGN KEY (configobjects_id) REFERENCES openidm.configobjects (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
@@ -129,9 +129,32 @@ CREATE TABLE openidm.links (
   PRIMARY KEY (objectid)
 );
 
-CREATE INDEX idx_links_first ON openidm.links (linktype, firstid);
-CREATE INDEX idx_links_second ON openidm.links (linktype, secondid);
+CREATE UNIQUE INDEX idx_links_first ON openidm.links (linktype, firstid);
+CREATE UNIQUE INDEX idx_links_second ON openidm.links (linktype, secondid);
 
+
+-- -----------------------------------------------------
+-- Table openidm.security
+-- -----------------------------------------------------
+
+CREATE TABLE openidm.security (
+  objectid VARCHAR(38) NOT NULL,
+  rev VARCHAR(38) NOT NULL,
+  storestring TEXT,
+  PRIMARY KEY (objectid)
+);
+
+
+-- -----------------------------------------------------
+-- Table openidm.securitykeys
+-- -----------------------------------------------------
+
+CREATE TABLE openidm.securitykeys (
+  objectid VARCHAR(38) NOT NULL,
+  rev VARCHAR(38) NOT NULL,
+  keypair TEXT,
+  PRIMARY KEY (objectid)
+);
 
 -- -----------------------------------------------------
 -- Table openidm.auditaccess
@@ -145,6 +168,7 @@ CREATE TABLE openidm.auditaccess (
   principal TEXT,
   roles VARCHAR(1024) DEFAULT NULL,
   status VARCHAR(7) DEFAULT NULL,
+  userid VARCHAR(24) DEFAULT NULL ,
   PRIMARY KEY (objectid)
 );
 
@@ -185,6 +209,7 @@ CREATE TABLE openidm.auditrecon (
   entrytype VARCHAR(7) DEFAULT NULL,
   rootactionid VARCHAR(511) DEFAULT NULL,
   reconid VARCHAR(36) DEFAULT NULL,
+  reconaction VARCHAR(36) DEFAULT NULL,
   reconciling VARCHAR(12) DEFAULT NULL,
   sourceobjectid VARCHAR(511) DEFAULT NULL,
   targetobjectid VARCHAR(511) DEFAULT NULL,
@@ -196,7 +221,29 @@ CREATE TABLE openidm.auditrecon (
   message TEXT,
   actionid VARCHAR(255) DEFAULT NULL,
   exceptiondetail TEXT,
-  mapping TEXT,
+  mapping VARCHAR(511) DEFAULT NULL,
+  messagedetail TEXT,
+  PRIMARY KEY (objectid)
+);
+
+
+-- -----------------------------------------------------
+-- Table openidm.auditsync
+-- -----------------------------------------------------
+
+CREATE TABLE openidm.auditsync (
+  objectid VARCHAR(38) NOT NULL,
+  rootactionid VARCHAR(511) DEFAULT NULL,
+  sourceobjectid VARCHAR(511) DEFAULT NULL,
+  targetobjectid VARCHAR(511) DEFAULT NULL,
+  activitydate VARCHAR(29) DEFAULT NULL,
+  situation VARCHAR(24) DEFAULT NULL,
+  activity VARCHAR(24) DEFAULT NULL,
+  status VARCHAR(7) DEFAULT NULL,
+  message TEXT,
+  actionid VARCHAR(255) DEFAULT NULL,
+  exceptiondetail TEXT,
+  mapping VARCHAR(511) DEFAULT NULL,
   messagedetail TEXT,
   PRIMARY KEY (objectid)
 );
@@ -287,3 +334,6 @@ INSERT INTO openidm.internaluser (objectid, rev, pwd, roles) VALUES ('openidm-ad
 INSERT INTO openidm.internaluser (objectid, rev, pwd, roles) VALUES ('anonymous', '0', 'anonymous', 'openidm-reg');
 
 COMMIT;
+
+CREATE INDEX idx_json_clusterobjects_timestamp ON openidm.clusterobjects ( json_extract_path_text(fullobject, 'timestamp') );
+CREATE INDEX idx_json_clusterobjects_state ON openidm.clusterobjects ( json_extract_path_text(fullobject, 'state') );
