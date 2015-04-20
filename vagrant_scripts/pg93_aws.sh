@@ -22,7 +22,7 @@ EOF
 
     chmod +x ~/backup.sh
 
-    # run backups every four hours
+    # run backups every day at 2am server time
     echo "0 2 * * *       /root/backup.sh >> /root/backup.out 2>&1" | crontab
 
 fi
