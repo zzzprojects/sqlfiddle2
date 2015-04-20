@@ -121,6 +121,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.14"
       override.vm.provision :shell, :path => "vagrant_scripts/idm_aws.sh"
+
+      # reboot instance every day at 4am server time
+      override.vm.provision :shell, :inline => 'echo "0 4 * * *       /root/reboot-clean.sh >> /root/reboot.out 2>&1" | crontab'
     end
 
     idm.vm.provider "virtualbox" do |v, override|
@@ -152,6 +155,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       override.vm.provision :shell, :inline => "cp /vagrant/src/main/resources/conf/boot/boot.node2.properties /vagrant/target/sqlfiddle/conf/boot/boot.properties"
       override.vm.provision :shell, :inline => "cp /vagrant/target/sqlfiddle/bin/openidm /etc/init.d"
       override.vm.provision :shell, :path => "vagrant_scripts/idm_aws.sh"
+
+      # reboot instance every day at 3am server time
+      override.vm.provision :shell, :inline => 'echo "0 3 * * *       /root/reboot-clean.sh >> /root/reboot.out 2>&1" | crontab'
     end
 
     idm2.vm.provider "virtualbox" do |v, override|
