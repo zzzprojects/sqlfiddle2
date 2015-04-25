@@ -153,46 +153,22 @@ if (securityContext.authorizationId.component == "system/fiddles/users") {
 
 if (db_type.context == "host") {
 
-    if (db_type.num_hosts == 0) {
-        return [
-            sets: [
-                [
-                    ERRORMESSAGE: "No host of this type available to execute query. Try using a different database version.",
-                    SUCCEEDED: false
-                ]
+    def schema = openidm.action("endpoint/createSchema", "create", schema_def)
+
+    if (schema.containsKey("error")) {
+        response.sets = [
+            [
+                STATEMENT: "",
+                RESULTS: [DATA: [], COLUMNS: []],
+                SUCCEEDED: false,
+                ERRORMESSAGE: schema.error
             ]
         ]
+        return response
     }
-    // Use the presence of a link between fiddle and host db to determine if we need to provision a running instance of this db
-    def hostLink = openidm.query("repo/link", [
-            "_queryId": "links-for-firstId",
-            "linkType": "fiddles_hosts",
-            "firstId" : schema_def._id
-        ]).result[0]
-
-    if (hostLink == null) {
-        openidm.action("recon",
-            "reconById", [:],
-            [
-                "mapping" : "fiddles_hosts",
-                "ids" : schema_def._id,
-                "waitForCompletion" : "true"
-            ]
-        )
-
-        hostLink = openidm.query("repo/link", [
-            "_queryId": "links-for-firstId",
-            "linkType": "fiddles_hosts",
-            "firstId" : schema_def._id
-        ]).result[0]
-    }
-
-    // At this point we should have a link between schema definition and running db; otherwise provisioning 
-    // went wrong and we won't be able to connect to this db to perform our query
-    assert hostLink != null
 
     // We get the details about how to connect to the running DB by doing a read on it
-    def hostDatabase = openidm.read("system/hosts/databases/" + hostLink.secondId)
+    def hostDatabase = openidm.read("system/hosts/databases/db_" + schema._id)
     def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
 
 
