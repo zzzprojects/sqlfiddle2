@@ -430,6 +430,11 @@
                     "nativeName" : "statement_separator",
                     "nativeType" : "string"
                 },
+                "deprovision" : {
+                    "type" : "boolean",
+                    "nativeName" : "deprovision",
+                    "nativeType" : "boolean"
+                },
                 "structure" : {
                     "type": "array",
                     "nativeName" : "structure",

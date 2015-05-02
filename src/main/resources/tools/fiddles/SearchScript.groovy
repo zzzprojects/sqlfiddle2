@@ -51,7 +51,8 @@ def fieldMap = [
         "__UID__": "s.db_type_id = ? AND s.short_code = ?",
         "schema_def_id": "s.id",
         "db_type_id": "s.db_type_id",
-        "minutes_since_last_used": "last_used"
+        "minutes_since_last_used": "last_used",
+        "deprovision": "s.deprovision = (case when 'true' = ? then 1 else 0 end)"
     ],
     "queries": [
         "__NAME__": "q.md5",
@@ -136,7 +137,7 @@ queryParser = { queryObj ->
             int rightSide = queryObj.get("right").toInteger()
             return fieldMap[objectClass.objectClassValue][queryObj.get("left")] + " >= (current_timestamp - interval '${rightSide} minutes')"
 
-        } else if (queryObj.get("left") == "favorite") {
+        } else if (queryObj.get("left") == "favorite" || queryObj.get("left") == "deprovision") {
             whereParams.push(queryObj.get("right").toString())
             return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
         } else {
@@ -360,6 +361,7 @@ switch ( objectClass.objectClassValue ) {
             s.ddl,
             s.statement_separator,
             s.structure_json,
+            s.deprovision,
             d.simple_name,
             d.full_name,
             d.context,
@@ -391,6 +393,7 @@ switch ( objectClass.objectClassValue ) {
             attribute 'minutes_since_last_used', (row.minutes_since_last_used != null ? row.minutes_since_last_used.toInteger(): null)
             attribute 'short_code', row.short_code
             attribute 'statement_separator', row.statement_separator
+            attribute 'deprovision', row.deprovision
             attribute 'num_hosts_available', row.num_hosts_available.toInteger()
             attribute 'db_type', [
                     id : row.db_type_id.toInteger(),

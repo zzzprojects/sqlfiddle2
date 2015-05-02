@@ -177,7 +177,8 @@ CREATE TABLE schema_defs (
     md5 character varying(32),
     statement_separator character varying(5) DEFAULT ';'::character varying,
     owner_id integer,
-    structure_json text
+    structure_json text,
+    deprovision smallint default 1
 );
 
 
@@ -406,6 +407,10 @@ CREATE INDEX schema_last_used ON schema_defs USING btree (last_used);
 --
 
 CREATE UNIQUE INDEX schema_short_codes ON schema_defs USING btree (short_code, db_type_id);
+
+
+CREATE INDEX schema_defs_deprovision ON schema_defs (short_code, db_type_id) 
+WHERE deprovision = 0;
 
 
 --
