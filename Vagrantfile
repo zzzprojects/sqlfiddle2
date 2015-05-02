@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     windows.vm.provider "virtualbox" do |v, override|
       v.memory = 1024
       # Provide the path to your virtualbox image which is running SQL Server 2014 and/or Oracle 11G XE:
-      override.vm.box = "/Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box"
+      override.vm.box = "~/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box"
 
       override.vm.provision :shell, :path => "vagrant_scripts/windows_bootstrap.ps1"
 

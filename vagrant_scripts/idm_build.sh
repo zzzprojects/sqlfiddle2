@@ -14,19 +14,21 @@ java -jar ~/biz.aQute.bnd.jar wrap -properties /vagrant/vagrant_scripts/jtds.bnd
 mv /vagrant/vagrant_scripts/jtds-1.3.1.bar ~/jtds-1.3.1.jar
 mvn install:install-file -DgroupId=net.sourceforge.jtds -DartifactId=jtds -Dversion=1.3.1 -Dpackaging=jar -Dfile=./jtds-1.3.1.jar
 
+cd /vagrant
+mvn clean install
+npm install
+
+
 # If you want to enable Oracle support, manually download ojdbc6.jar and put it in the root folder (up one level from here)
 # Download it from here: http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-112010-090769.html
-# Afterwards, uncomment the dependency in ../pom.xml
 if [ -e "/vagrant/ojdbc6.jar" ]
 then
     java -jar ~/biz.aQute.bnd.jar wrap -properties /vagrant/vagrant_scripts/ojdbc6.bnd /vagrant/ojdbc6.jar
     mv /vagrant/vagrant_scripts/ojdbc6.bar ojdbc6.jar
     mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar -Dfile=./ojdbc6.jar
+    cp ./ojdbc6.jar /vagrant/target/sqlfiddle/bundle
 fi
 
 
-cd /vagrant
-mvn clean install
-npm install
 cd target/sqlfiddle/bin
 ./create-openidm-rc.sh
