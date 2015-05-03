@@ -153,24 +153,26 @@ if (securityContext.authorizationId.component == "system/fiddles/users") {
 
 if (db_type.context == "host") {
 
-    def schema = openidm.action("endpoint/createSchema", "create", schema_def)
+    // schemas that we never deprovision don't need to be created
+    if (schema_def.deprovision) {
+        def schema = openidm.action("endpoint/createSchema", "create", schema_def)
 
-    if (schema.containsKey("error")) {
-        response.sets = [
-            [
-                STATEMENT: "",
-                RESULTS: [DATA: [], COLUMNS: []],
-                SUCCEEDED: false,
-                ERRORMESSAGE: schema.error
+        if (schema.containsKey("error")) {
+            response.sets = [
+                [
+                    STATEMENT: "",
+                    RESULTS: [DATA: [], COLUMNS: []],
+                    SUCCEEDED: false,
+                    ERRORMESSAGE: schema.error
+                ]
             ]
-        ]
-        return response
+            return response
+        }
     }
 
     // We get the details about how to connect to the running DB by doing a read on it
-    def hostDatabase = openidm.read("system/hosts/databases/db_" + schema._id)
+    def hostDatabase = openidm.read("system/hosts/databases/db_" + schema_def._id)
     def hostConnection = Sql.newInstance(hostDatabase.jdbc_url, hostDatabase.username, hostDatabase.pw, hostDatabase.jdbc_class_name)
-
 
     hostConnection.withStatement { it.queryTimeout = 10 }
 
