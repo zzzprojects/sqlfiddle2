@@ -68,7 +68,7 @@
                     "situation" : "ABSENT",
                     "action" : {
                         "type" : "text/javascript",
-                        "source" : "if (source.num_hosts_available > 0) { 'CREATE'; } else { 'IGNORE'; }"
+                        "source" : "if (source.num_hosts_available > 0 && source.deprovision) { 'CREATE'; } else { 'IGNORE'; }"
                     }
                 },
                 {
