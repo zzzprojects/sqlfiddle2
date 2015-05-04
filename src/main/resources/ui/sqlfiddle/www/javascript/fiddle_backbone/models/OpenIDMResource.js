@@ -19,8 +19,10 @@ define(["jquery"], function ($) {
                 }),
                 dataType: "json",
                 data: args.data
-            }).fail(function () {
-                alert("Oops! Something went wrong. Try it again and if this keeps happening, email admin@sqlfiddle.com about it.");
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status !== 413) {
+                    alert("Oops! Something went wrong. Try it again and if this keeps happening, email admin@sqlfiddle.com about it.");
+                }
             });
         }
     };
