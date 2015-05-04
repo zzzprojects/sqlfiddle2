@@ -58,27 +58,25 @@ try {
     def schema_def
     def md5hash
 
-    if (content.statement_separator != ";") {
-        md5hash = new BigInteger(
-                            1, digest.digest( content.ddl.getBytes() )
-                        ).toString(16).padLeft(32,"0")
-    } else {
-        md5hash = new BigInteger(
-                            1, digest.digest( (content.statement_separator + content.ddl).getBytes() )
-                        ).toString(16).padLeft(32,"0")
-    }
+    md5hash = new BigInteger(
+                        1, digest.digest( (content.statement_separator + content.ddl).getBytes() )
+                    ).toString(16).padLeft(32,"0")
 
     if (!content.statement_separator) {
         content.statement_separator = ";"
     }
 
-    existing_schema = openidm.query("system/fiddles/schema_defs", [
-        "_queryFilter": 'md5 eq "'+md5hash+'" and db_type_id eq "'+content.db_type_id+'"'
-    ]).result
+    if (content.short_code) {
+        existing_schema = openidm.query("system/fiddles/schema_defs", [
+            "_queryFilter": 'short_code eq "'+content.short_code+'" and md5 eq "'+md5hash+'" and db_type_id eq "'+content.db_type_id+'"'
+        ]).result
+    } else {
+        existing_schema = openidm.query("system/fiddles/schema_defs", [
+            "_queryFilter": 'md5 eq "'+md5hash+'" and db_type_id eq "'+content.db_type_id+'"'
+        ]).result
+    }
 
-    assert existing_schema.size() < 2
-
-    if (existing_schema.size() == 1) {
+    if (existing_schema.size() > 0) {
         schema_def = existing_schema[0]
     } else {
 

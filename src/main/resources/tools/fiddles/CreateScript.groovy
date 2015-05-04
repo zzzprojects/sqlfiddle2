@@ -102,15 +102,9 @@ switch ( objectClass.objectClassValue ) {
 
         def md5hash
 
-        if (statement_separator != ";") {
-            md5hash = new BigInteger(
-                                1, digest.digest( sql_query.getBytes() )
-                            ).toString(16).padLeft(32,"0")
-        } else {
-            md5hash = new BigInteger(
-                                1, digest.digest( (statement_separator + sql_query).getBytes() )
-                            ).toString(16).padLeft(32,"0")
-        }
+        md5hash = new BigInteger(
+                            1, digest.digest( (statement_separator + sql_query).getBytes() )
+                        ).toString(16).padLeft(32,"0")
 
         def existing_query = sql.firstRow("""
             SELECT 
@@ -124,6 +118,8 @@ switch ( objectClass.objectClassValue ) {
                        q.md5 = ?
             WHERE
                 s.id = ?
+            ORDER BY
+                q.id
             """, [md5hash, schema_def_id])
 
         if (!existing_query.queryId) {
