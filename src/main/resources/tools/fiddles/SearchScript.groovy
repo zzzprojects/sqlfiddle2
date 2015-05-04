@@ -358,7 +358,7 @@ switch ( objectClass.objectClassValue ) {
             s.short_code,
             to_char(s.last_used, 'YYYY-MM-DD HH24:MI:SS.MS') as last_used,
             floor(EXTRACT(EPOCH FROM age(current_timestamp, last_used))/60) as minutes_since_last_used,
-            s.ddl,
+            coalesce(s.ddl, '') as ddl,
             s.statement_separator,
             s.structure_json,
             s.deprovision,
