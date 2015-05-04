@@ -62,6 +62,8 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
                 oidcJwt[token.header] = token.token;
                 claims = this.getTokenClaims(token.token);
 
+                claims.iss = claims.iss.replace(/^https?:\/\//, '');
+
                 return idm.serviceCall({
                     "url": "info/login",
                     // only pass the oidcToken when there is no session-jwt cookie available

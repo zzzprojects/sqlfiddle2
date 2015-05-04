@@ -77,6 +77,8 @@
 
                 claims = JSON.parse( new java.lang.String(base64.decode( response.id_token.split(".")[1]) ) );
 
+                claims.iss = claims.iss.replace(/^https?:\/\//, '');
+
                 user = openidm.read("system/fiddles/users/" + claims.iss + ":" + claims.sub);
 
                 // if the user isn't found in our local user cache, create a record for them
@@ -100,7 +102,6 @@
                     }
 
                 }
-
 
                 return {
                     "token": response.id_token,
