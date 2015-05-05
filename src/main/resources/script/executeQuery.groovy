@@ -153,6 +153,18 @@ if (securityContext.authorizationId.component == "system/fiddles/users") {
 
 if (db_type.context == "host") {
 
+    if (db_type.num_hosts == 0) {
+        response.sets = [
+            [
+                STATEMENT: "",
+                RESULTS: [DATA: [], COLUMNS: []],
+                SUCCEEDED: false,
+                ERRORMESSAGE: "No host of this type available to create schema. Try using a different database version."
+            ]
+        ]
+        return response
+    }
+
     // schemas that we never deprovision don't need to be created
     if (schema_def.deprovision) {
         def schema = openidm.action("endpoint/createSchema", "create", schema_def)
