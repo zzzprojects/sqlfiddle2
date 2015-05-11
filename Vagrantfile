@@ -53,7 +53,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       override.vm.network "private_network", ip: "10.0.0.17"
       override.vm.network :forwarded_port, guest: 3389, host: 3389
-      override.vm.base_mac = "0800275A6A2B"
     end
 
     windows.vm.provider "aws" do |aws, override|
@@ -92,7 +91,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "postgresql93" do |postgresql93|
-    postgresql93.vm.provider "aws" do |aws, override|
+    postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
+    postgresql93.vm.box = "ubuntu/trusty64"
+    postgresql93.vm.network "private_network", ip: "10.0.0.19"
+
+    postgresql93.vm.provider "aws" do |aws|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.19"
+    end
+  end
+
+  config.vm.define "appdb1" do |appdb1|
+    appdb1.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.16"
       aws.block_device_mapping = [{
         'VirtualName' => "postgresql_data",
@@ -103,12 +113,45 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         'Ebs.Iops' => 500
       }]
 
-      override.vm.provision :shell, :path => "vagrant_scripts/pg93_aws.sh"
+      override.vm.provision :shell, :path => "vagrant_scripts/appdb_aws.sh"
     end
 
-    postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
-    postgresql93.vm.box = "ubuntu/trusty64"
-    postgresql93.vm.network "private_network", ip: "10.0.0.16"
+    appdb1.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
+    appdb1.vm.provision :shell, :path => "vagrant_scripts/appdb_bootstrap.sh"
+    appdb1.vm.box = "ubuntu/trusty64"
+    appdb1.vm.network "private_network", ip: "10.0.0.16"
+  end
+
+  config.vm.define "appdb2", autostart: false do |appdb2|
+    appdb2.vm.provider "aws" do |aws, override|
+      aws.private_ip_address = "10.0.0.26"
+      aws.block_device_mapping = [{
+        'VirtualName' => "postgresql_data",
+        'DeviceName' => '/dev/sda1',
+        'Ebs.VolumeSize' => 50,
+        'Ebs.DeleteOnTermination' => true,
+        'Ebs.VolumeType' => 'io1',
+        'Ebs.Iops' => 500
+      }]
+
+      override.vm.provision :shell, :path => "vagrant_scripts/appdb_aws.sh"
+    end
+
+    appdb2.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
+    appdb2.vm.provision :shell, :path => "vagrant_scripts/appdb_bootstrap.sh"
+    appdb2.vm.box = "ubuntu/trusty64"
+    appdb2.vm.network "private_network", ip: "10.0.0.26"
+  end
+
+  config.vm.define "pgpool" do |pgpool|
+    pgpool.vm.provision :shell, :path => "vagrant_scripts/pgpool_bootstrap.sh"
+    pgpool.vm.box = "ubuntu/trusty64"
+    pgpool.vm.network "private_network", ip: "10.0.0.20"
+
+    pgpool.vm.provider "aws" do |aws|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.20"
+    end
   end
 
   config.vm.define "idm", primary: true do |idm|

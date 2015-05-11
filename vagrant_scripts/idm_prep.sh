@@ -19,9 +19,10 @@ export JAVA_OPTS="-Dcom.sun.management.jmxremote \
 echo "export OPENIDM_OPTS=\"${OPENIDM_OPTS}\"" >> /etc/profile
 echo "export JAVA_OPTS=\"${JAVA_OPTS}\"" >> /etc/profile
 
-echo "10.0.0.14 openidm" >> /etc/hosts
-echo "10.0.0.16 OPENIDM_REPO_HOST" >> /etc/hosts
-echo "10.0.0.16 SQLFIDDLE_HOST" >> /etc/hosts
+echo "10.0.0.14 openidm1" >> /etc/hosts
+echo "10.0.0.24 openidm2" >> /etc/hosts
+echo "10.0.0.20 OPENIDM_REPO_HOST" >> /etc/hosts
+echo "10.0.0.20 SQLFIDDLE_HOST" >> /etc/hosts
 echo "10.0.0.16 POSTGRESQL93_HOST" >> /etc/hosts
 echo "10.0.0.15 MYSQL56_HOST" >> /etc/hosts
 echo "10.0.0.17 ORACLE11G_HOST" >> /etc/hosts
