@@ -32,6 +32,10 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
+  config.vm.provider "aws" do |aws, override|
+      override.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".vagrant/", ".git/", "target/", "node_modules/"]
+  end
+
   # VM for commercial databases (Oracle and SQL Server) running on a commercial OS (Windows 2008 Server)
   # Note that it is optional; it won't start up by default. If you want to start it, you have to manually call it like so:
   # vagrant up windows
@@ -74,7 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     mysql56.vm.box = "ubuntu/trusty64"
     mysql56.vm.network "private_network", ip: "10.0.0.15"
 
-    mysql56.vm.provider "aws" do |aws|
+    mysql56.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.15"
     end
   end
@@ -84,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     mysql55.vm.box = "ubuntu/trusty64"
     mysql55.vm.network "private_network", ip: "10.0.0.18"
 
-    mysql55.vm.provider "aws" do |aws|
+    mysql55.vm.provider "aws" do |aws, override|
       aws.instance_type = "t2.micro"
       aws.private_ip_address = "10.0.0.18"
     end
@@ -95,7 +99,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     postgresql93.vm.box = "ubuntu/trusty64"
     postgresql93.vm.network "private_network", ip: "10.0.0.19"
 
-    postgresql93.vm.provider "aws" do |aws|
+    postgresql93.vm.provider "aws" do |aws, override|
       aws.instance_type = "t2.micro"
       aws.private_ip_address = "10.0.0.19"
     end
@@ -148,7 +152,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pgpool.vm.box = "ubuntu/trusty64"
     pgpool.vm.network "private_network", ip: "10.0.0.20"
 
-    pgpool.vm.provider "aws" do |aws|
+    pgpool.vm.provider "aws" do |aws, override|
       aws.instance_type = "t2.micro"
       aws.private_ip_address = "10.0.0.20"
     end
