@@ -192,9 +192,9 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js</url>
+                            <url>https://raw.githubusercontent.com/lodash/lodash/3.9.3/lodash.min.js</url>
                             <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
-                            <md5>0c206fd8e9a6376a3f9ddb6555bb7856</md5>
+                            <md5>c1f590724b1aa51800f77afcbfbe68de</md5>
                         </configuration>
                     </execution>
 
@@ -218,10 +218,10 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://github.com/codemirror/CodeMirror/archive/5.0.0.zip</url>
+                            <url>https://github.com/codemirror/CodeMirror/archive/5.3.0.zip</url>
                             <unpack>true</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
-                            <md5>7b0c74ad4744ebe0f7d676fd9353bf90</md5>
+                            <md5>5e677b6a530644c08b78cd9327f5c44c</md5>
                         </configuration>
                     </execution>
 
