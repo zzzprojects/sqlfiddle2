@@ -1,8 +1,8 @@
 define ([
-    "jquery", 
-    "Backbone", 
-    "Handlebars", 
-    "md5", 
+    "jquery",
+    "Backbone",
+    "Handlebars",
+    "md5",
     "utils/openidconnect",
     "text!fiddle_backbone/templates/loginButton.html",
     "text!fiddle_backbone/templates/authenticatedUserOptions.html"
@@ -32,8 +32,8 @@ function ($,Backbone,Handlebars,md5,openidconnect,loginButtonTemplate,authentica
 
             $(this.el).html(
                 this.authCompiledTemplate({
-                    gravatar: md5(userDetails.email.toLowerCase()).toLowerCase(),
-                    email: userDetails.email
+                    gravatar: md5(decodeURIComponent(userDetails.email).toLowerCase()).toLowerCase(),
+                    email: decodeURIComponent(userDetails.email)
                 })
             );
 

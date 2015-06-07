@@ -324,8 +324,13 @@ var obj = {
         dbTypes.fetch();
 
         openidconnect.getLoggedUserDetails().then(function (userInfo) {
-            userOptions.renderAuthenticated(userInfo);
-            myFiddleDialog.setAnonymous(false);
+            if (userInfo) {
+                userOptions.renderAuthenticated(userInfo);
+                myFiddleDialog.setAnonymous(false);
+            } else {
+                userOptions.renderAnonymous();
+                myFiddleDialog.setAnonymous(true);
+            }
         }, function () {
             userOptions.renderAnonymous();
             myFiddleDialog.setAnonymous(true);

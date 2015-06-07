@@ -5,8 +5,8 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
             var cookies = document.cookie.split(";");
 
             return _.chain(cookies)
-                    .map(function (c) { 
-                        return c.split("="); 
+                    .map(function (c) {
+                        return c.split("=");
                     })
                     .object()
                     .value();
@@ -16,8 +16,8 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
         },
         getURLParams: function () {
             return _.chain( window.location.search.replace(/^\?/, '').split("&") )
-                .map(function (arg) { 
-                    return arg.split("="); 
+                .map(function (arg) {
+                    return arg.split("=");
                 })
                 .object()
                 .value();
@@ -26,11 +26,11 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
             return this.getURLParams().code;
         },
         getRedirectUri: function () {
-            return  window.location.protocol + "//" + window.location.host + 
+            return  window.location.protocol + "//" + window.location.host +
                     window.location.pathname.replace(/(\/index\.html)|(\/$)/, '/oauth.html');
         },
         getMainUri: function () {
-            return  window.location.protocol + "//" + window.location.host + 
+            return  window.location.protocol + "//" + window.location.host +
                     window.location.pathname.replace(/(\/oauth\.html)|(\/$)/, '/');
         },
         getToken: function () {
@@ -62,7 +62,9 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
                 oidcJwt[token.header] = token.token;
                 claims = this.getTokenClaims(token.token);
 
-                claims.iss = claims.iss.replace(/^https?:\/\//, '');
+                claims = _.transform(claims, function (result, val, key) {
+                    result[key] = encodeURIComponent(val);
+                });
 
                 return idm.serviceCall({
                     "url": "info/login",
@@ -71,7 +73,7 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
                 })
                 .then(
                     function (details) {
-                        if (details.authorizationId.id !== claims.iss + ":" + claims.sub) {
+                        if (details.authorizationId.id !== encodeURIComponent(claims.iss) + ":" + encodeURIComponent(claims.sub)) {
                             localStorage.removeItem("oidcToken");
                             return null;
                         }

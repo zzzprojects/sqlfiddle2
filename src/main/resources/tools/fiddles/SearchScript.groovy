@@ -24,6 +24,7 @@
  * $Id$
  */
 import groovy.json.JsonSlurper
+import java.net.URLEncoder
 import groovy.sql.Sql
 import groovy.sql.DataSet
 import org.identityconnectors.framework.common.objects.AttributeBuilder
@@ -166,7 +167,7 @@ queryParser = { queryObj ->
                 whereParams.push(queryObj.get("right"))
             }
 
-            
+
 
             if (fieldMap[objectClass.objectClassValue] && fieldMap[objectClass.objectClassValue][queryObj.get("left")]) {
                 queryObj.put("left",fieldMap[objectClass.objectClassValue][queryObj.get("left")])
@@ -214,7 +215,7 @@ switch ( objectClass.objectClassValue ) {
     """, whereParams) { row ->
         handler {
             id row.subject
-            uid row.issuer + ":" + row.subject as String
+            uid URLEncoder.encode(row.issuer, "UTF-8") + ":" + URLEncoder.encode(row.subject, "UTF-8") as String
             attribute 'issuer', row.issuer
             attribute 'subject', row.subject
             attribute 'email', row.email
@@ -226,7 +227,7 @@ switch ( objectClass.objectClassValue ) {
     case "user_fiddles":
 
     def dataCollector = [ uid : "" ]
-    def handleCollectedData = { 
+    def handleCollectedData = {
 
         if (dataCollector.uid != "") {
             handler {
@@ -247,7 +248,7 @@ switch ( objectClass.objectClassValue ) {
             }
         }
     }
-    
+
     sql.eachRow("""
         SELECT
             uf.id,
@@ -351,7 +352,7 @@ switch ( objectClass.objectClassValue ) {
     case "schema_defs":
 
     sql.eachRow("""
-        SELECT 
+        SELECT
             s.id,
             s.md5,
             s.db_type_id,
@@ -367,9 +368,9 @@ switch ( objectClass.objectClassValue ) {
             d.context,
             d.batch_separator,
             coalesce(hosts_available.total, 0) as num_hosts_available
-        FROM 
-            schema_defs s 
-                INNER JOIN db_types d ON 
+        FROM
+            schema_defs s
+                INNER JOIN db_types d ON
                     s.db_type_id = d.id
                 LEFT OUTER JOIN (
                     SELECT h.db_type_id, count(*) as total
@@ -403,7 +404,7 @@ switch ( objectClass.objectClassValue ) {
                     batch_separator : row.batch_separator
                 ]
             attribute 'structure', structure
-            
+
         }
 
     }
@@ -433,7 +434,7 @@ switch ( objectClass.objectClassValue ) {
     }
 
     sql.eachRow("""
-        SELECT 
+        SELECT
             q.schema_def_id,
             q.id,
             s.db_type_id,
@@ -449,7 +450,7 @@ switch ( objectClass.objectClassValue ) {
             qs.error_message,
             qs.sql as query_set_sql,
             qs.columns_list
-        FROM 
+        FROM
             schema_defs s
                 INNER JOIN queries q ON
                     q.schema_def_id = s.id

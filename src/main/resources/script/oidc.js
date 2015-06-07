@@ -22,7 +22,7 @@
             getResolvers: function (isExternal) {
                 var resolvers = oidcModule.properties.resolvers;
 
-                return  _.map(resolvers, function (r) { 
+                return  _.map(resolvers, function (r) {
                             if (isExternal) {
                                 return _.omit(r, "client_secret", "well-known");
                             } else {
@@ -57,7 +57,7 @@
                     });
                 } catch (e) {
                     throw {
-                        "code" : e.javaException.getCode(), 
+                        "code" : e.javaException.getCode(),
                         "message" : e.javaException.getMessage(),
                         "detail" : e.javaException.getDetail()
                     };
@@ -77,15 +77,18 @@
 
                 claims = JSON.parse( new java.lang.String(base64.decode( response.id_token.split(".")[1]) ) );
 
-                claims.iss = claims.iss.replace(/^https?:\/\//, '');
+                claims = _.transform(claims, function (result, val, key) {
+                    result[key] = encodeURIComponent(val);
+                });
 
-                user = openidm.read("system/fiddles/users/" + claims.iss + ":" + claims.sub);
+                // we have to double-encode the claims parts because internal calls will decode them before handing them to the search script
+                user = openidm.read("system/fiddles/users/" + encodeURIComponent(claims.iss) + ":" + encodeURIComponent(claims.sub));
 
                 // if the user isn't found in our local user cache, create a record for them
                 if (user === null) {
 
                     // "email" is a poor-man's subject, standing in for the real value we might be missing
-                    user = openidm.read("system/fiddles/users/" + claims.iss + ":" + claims.email);
+                    user = openidm.read("system/fiddles/users/" + encodeURIComponent(claims.iss) + ":" + encodeURIComponent(claims.email));
 
                     if (user === null) {
                         openidm.create("system/fiddles/users", null, {
@@ -94,7 +97,7 @@
                             "email" : claims.email
                         });
                     } else {
-                        openidm.update("system/fiddles/users/" + user._id, null, {
+                        openidm.update("system/fiddles/users/" + encodeURIComponent(user._id), null, {
                             "issuer" : claims.iss,
                             "subject" : claims.sub,
                             "email" : claims.email
