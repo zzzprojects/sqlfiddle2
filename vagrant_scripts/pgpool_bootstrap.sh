@@ -8,6 +8,7 @@ apt-get --yes upgrade
 apt-get --yes --force-yes install pgpool2=3.3.2-1ubuntu1 libpgpool0=3.3.2-1ubuntu1
 
 cp /vagrant/src/main/resources/db/sqlfiddle/pgpool.conf /etc/pgpool2/pgpool.conf
+chown postgres /etc/pgpool2/*
 
 
 echo postgres:`pg_md5 password` >> /etc/pgpool2/pcp.conf
