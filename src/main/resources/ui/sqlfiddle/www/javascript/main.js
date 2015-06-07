@@ -4,7 +4,7 @@ requirejs.config({
         jquery: 'libs/jquery/jquery-1.11.1.min',
         jqBlockUI: 'libs/jquery/jquery.blockUI',
         jqCookie: 'libs/jquery/jquery.cookie',
-        underscore: 'libs/lodash.underscore.min',
+        underscore: 'libs/lodash.min',
         Backbone: 'libs/backbone-min',
         Bootstrap: 'libs/bootstrap.min',
         Handlebars: 'libs/handlebars',
