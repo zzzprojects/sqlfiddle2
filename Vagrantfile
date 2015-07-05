@@ -96,6 +96,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "postgresql93" do |postgresql93|
     postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
+    postgresql93.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
+
     postgresql93.vm.box = "ubuntu/trusty64"
     postgresql93.vm.network "private_network", ip: "10.0.0.19"
 
