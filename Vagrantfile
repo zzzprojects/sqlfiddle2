@@ -128,38 +128,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     appdb1.vm.network "private_network", ip: "10.0.0.16"
   end
 
-  config.vm.define "appdb2", autostart: false do |appdb2|
-    appdb2.vm.provider "aws" do |aws, override|
-      aws.private_ip_address = "10.0.0.26"
-      aws.block_device_mapping = [{
-        'VirtualName' => "postgresql_data",
-        'DeviceName' => '/dev/sda1',
-        'Ebs.VolumeSize' => 50,
-        'Ebs.DeleteOnTermination' => true,
-        'Ebs.VolumeType' => 'io1',
-        'Ebs.Iops' => 500
-      }]
-
-      override.vm.provision :shell, :path => "vagrant_scripts/appdb_aws.sh"
-    end
-
-    appdb2.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
-    appdb2.vm.provision :shell, :path => "vagrant_scripts/appdb_bootstrap.sh"
-    appdb2.vm.box = "ubuntu/trusty64"
-    appdb2.vm.network "private_network", ip: "10.0.0.26"
-  end
-
-  config.vm.define "pgpool" do |pgpool|
-    pgpool.vm.provision :shell, :path => "vagrant_scripts/pgpool_bootstrap.sh"
-    pgpool.vm.box = "ubuntu/trusty64"
-    pgpool.vm.network "private_network", ip: "10.0.0.20"
-
-    pgpool.vm.provider "aws" do |aws, override|
-      aws.instance_type = "t2.micro"
-      aws.private_ip_address = "10.0.0.20"
-    end
-  end
-
   config.vm.define "idm", primary: true do |idm|
 
     idm.vm.box = "ubuntu/trusty64"
