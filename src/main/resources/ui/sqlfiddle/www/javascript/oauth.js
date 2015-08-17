@@ -1,7 +1,7 @@
 requirejs.config({
     paths: {
         jquery: 'libs/jquery/jquery-1.11.1.min',
-        underscore: 'libs/lodash.underscore.min',
+        underscore: 'libs/lodash.min',
         utils: 'fiddle_backbone/utils'
     }
 });
