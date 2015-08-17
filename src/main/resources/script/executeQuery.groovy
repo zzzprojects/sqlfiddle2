@@ -23,6 +23,7 @@ assert content.schema_short_code
 assert content.sql.size() <= 8000
 
 def execQueryStatement(connection, statement, rethrow) {
+    println statement
 
     def set = [ RESULTS: [ COLUMNS: [], DATA: [] ], SUCCEEDED: true, STATEMENT: statement ]
     long startTime = (new Date()).toTimestamp().getTime()
@@ -88,13 +89,16 @@ def execQueryStatement(connection, statement, rethrow) {
         })
 
     } catch (e) {
+        println e
         def errorMessage = e.getMessage()
         // terrible, but if you have a better idea please post it here: http://stackoverflow.com/q/22592508/808921
         if (
                 ((Boolean) errorMessage =~ /ResultSet is from UPDATE. No Data./) || // MySQL when using SELECT ... INTO @var
                 ((Boolean) errorMessage =~ /No results were returned by the query/) || // PostgreSQL
                 ((Boolean) errorMessage =~ /The executeQuery method must return a result set./) || // SQL Server
-                ((Boolean) errorMessage =~ /Cannot perform fetch on a PLSQL statement/) // Oracle
+                ((Boolean) errorMessage =~ /Cannot perform fetch on a PLSQL statement/) || // Oracle
+                ((Boolean) errorMessage =~ /ORA-01002: fetch out of sequence/) || // Also Oracle
+                ((Boolean) errorMessage =~ /ORA-00900: invalid SQL statement/) // Oracle again :(
             ) {
             set.EXECUTIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
         } else if ( ((Boolean) errorMessage =~ /current transaction is aborted, commands ignored until end of transaction block$/) && rethrow) {
@@ -127,8 +131,8 @@ schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
 openidm.update("system/fiddles/schema_defs/" + schema_def._id, null, schema_def)
 
 // Save a copy of this query (or retrieve the details of one that already exists)
-def query = openidm.create("system/fiddles/queries", 
-    null, 
+def query = openidm.create("system/fiddles/queries",
+    null,
     [
         "md5": "n/a",
         "sql": content.sql,
@@ -204,7 +208,7 @@ if (db_type.context == "host") {
             String newline = (char) 10
             String carrageReturn = (char) 13
 
-            // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
+            // this monster regexp parses the query block by breaking it up into statements, each with three groups -
             // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
             // 2) The main statement body - this is the one we execute
             // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
@@ -214,7 +218,7 @@ if (db_type.context == "host") {
                 content.sql = content.sql.replaceAll(Pattern.compile(newline + db_type.batch_separator + carrageReturn + "?(" + newline + '|$)', Pattern.CASE_INSENSITIVE), separator)
             }
             if (db_type.simple_name == "Oracle") {
-                hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
+                //hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
             } else if (db_type.simple_name == "PostgreSQL" ) {
                 hostConnection.execute("INSERT INTO " + deferred_table + " VALUES (2)")
             }
@@ -233,7 +237,7 @@ if (db_type.context == "host") {
                             executionPlanSQL = executionPlanSQL.replaceAll("#query_id#", query.query_id.toString())
 
                             if (db_type.batch_separator && db_type.batch_separator?.size()) {
-                                // this monster regexp parses the query block by breaking it up into statements, each with three groups - 
+                                // this monster regexp parses the query block by breaking it up into statements, each with three groups -
                                 // 1) Positive lookbehind - this group checks that the preceding characters are either the start or a previous separator
                                 // 2) The main statement body - this is the one we execute
                                 // 3) The end of the statement, as indicated by a terminator at the end of the line or the end of the whole DDL
@@ -273,7 +277,7 @@ if (db_type.context == "host") {
 
                                 }
                             }
-                            
+
                             if (db_type.simple_name == "PostgreSQL") {
                                 hostConnection.execute("ROLLBACK TO sp;")
                             }
