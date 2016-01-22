@@ -45,7 +45,7 @@
         "testScriptFileName" : "TestScript.groovy",
         "searchScriptFileName" : "SearchScript.groovy",
         "updateScriptFileName" : "UpdateScript.groovy",
-        "classpath" : [
+        "scriptRoots" : [
             "&{launcher.project.location}/tools/fiddles"
         ]
     },
@@ -474,7 +474,7 @@
                             "type" : "integer"
                         },
                         "context" : {
-                            "type" : "string" 
+                            "type" : "string"
                         },
                         "simple_name" : {
                             "type" : "string"

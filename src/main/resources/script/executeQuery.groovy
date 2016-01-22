@@ -1,4 +1,4 @@
-import org.forgerock.json.resource.SecurityContext
+import org.forgerock.services.context.SecurityContext
 import groovy.json.JsonBuilder
 import groovy.transform.InheritConstructors
 import groovy.sql.Sql
@@ -145,9 +145,9 @@ def response = [ID: query.query_id]
 
 def securityContext = context.asContext(SecurityContext.class)
 
-if (securityContext.authorizationId.component == "system/fiddles/users") {
+if (securityContext.authorization.component == "system/fiddles/users") {
 
-    openidm.update("system/fiddles/users/" + securityContext.authorizationId.id, null, [
+    openidm.update("system/fiddles/users/" + securityContext.authorization.id, null, [
         "fiddles" : [
             ["schema_def_id": schema_def.schema_def_id, "query_id": query.query_id]
         ]

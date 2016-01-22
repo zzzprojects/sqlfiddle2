@@ -37,6 +37,16 @@
                         "openidm-authorized"
                     ]
                 },
+                "enabled" : false
+            },
+            {
+                "name" : "STATIC_USER",
+                "properties" : {
+                    "queryOnResource" : "repo/internal/user",
+                    "username" : "anonymous",
+                    "password" : "anonymous",
+                    "defaultUserRoles" : [ "openidm-reg" ]
+                },
                 "enabled" : true
             },
             {

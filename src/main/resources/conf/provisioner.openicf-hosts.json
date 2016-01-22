@@ -39,7 +39,7 @@
         "testScriptFileName" : "TestScript.groovy",
         "searchScriptFileName" : "SearchScript.groovy",
         "deleteScriptFileName" : "DeleteScript.groovy",
-        "classpath" : [
+        "scriptRoots" : [
             "&{launcher.project.location}/tools/hosts"
         ]
     },

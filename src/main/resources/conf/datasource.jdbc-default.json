@@ -1,0 +1,11 @@
+{
+    "driverClass" : "org.postgresql.Driver",
+    "jdbcUrl" : "jdbc:postgresql://OPENIDM_REPO_HOST:5432/openidm",
+    "databaseName" : "openidm",
+    "username" : "openidm",
+    "password" : "openidm",
+    "connectionTimeout" : 30000,
+    "connectionPool" : {
+        "type" : "bonecp"
+    }
+}

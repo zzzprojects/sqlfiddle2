@@ -1,13 +1,13 @@
-import org.forgerock.json.resource.SecurityContext
+import org.forgerock.services.context.SecurityContext
 
 def securityContext = context.asContext(SecurityContext.class)
 def userId = null
 
-if (securityContext.authorizationId.component == "system/fiddles/users") {
-    userId = securityContext.authorizationId.id
+if (securityContext.authorization.component == "system/fiddles/users") {
+    userId = securityContext.authorization.id
 }
 
-def fragment_parts = request.resourceName.split("_")
+def fragment_parts = request.resourcePath.split("_")
 
 assert fragment_parts.size() > 1
 

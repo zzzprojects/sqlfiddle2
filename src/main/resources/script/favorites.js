@@ -17,7 +17,7 @@
         }
 
         return openidm.query("system/fiddles/user_fiddles", {
-                    "_queryFilter": '/favorite eq true AND /user_id eq "' + context.security.authorizationId.id + '"'
+                    "_queryFilter": '/favorite eq true AND /user_id eq "' + context.security.authorization.id + '"'
                 });
 
     } else { // request.method === "update"

@@ -81,16 +81,23 @@
                 <include>security/*</include>
                 <include>connectors/*</include>
                 <include>lib/*</include>
+                <include>ui/admin/**</include>
             </includes>
             <excludes>
                 <exclude>conf/endpoint-*.json</exclude>
-                <exclude>conf/ui.context-enduser.json</exclude>
+                <exclude>conf/ui.context-selfservice.json</exclude>
                 <exclude>conf/ui-countries.json</exclude>
-                <exclude>conf/ui-secquestions.json</exclude>
                 <exclude>conf/workflow.json</exclude>
                 <exclude>conf/process-access.json</exclude>
                 <exclude>conf/repo.orientdb.json</exclude>
             </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/idm-staging/openidm/db/postgresql</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>conf/repo.jdbc.json</include>
+            </includes>
         </fileSet>
     </fileSets>
     <dependencySets>

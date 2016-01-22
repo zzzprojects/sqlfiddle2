@@ -1,6 +1,11 @@
 {
-    "eventTypes" : { },
-    "logTo" : [ ],
+    "auditServiceConfig" : {
+        "handlerForQueries" : "repo",
+        "availableAuditEventHandlers" : [ ],
+        "filterPolicies" : { }
+    },
+    "eventHandlers" : [ ],
+    "eventTopics" : { },
     "exceptionFormatter" : {
         "type" : "text/javascript",
         "file" : "bin/defaults/script/audit/stacktraceFormatter.js"

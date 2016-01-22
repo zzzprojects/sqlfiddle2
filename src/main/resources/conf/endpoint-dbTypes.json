@@ -1,5 +1,5 @@
 {
     "context" : "endpoint/dbTypes",
     "type" : "text/javascript",
-    "source" : "openidm.query('system/fiddles/db_types', {'_queryFilter': 'full_name gt \"\"'})"
+    "source" : "openidm.query('system/fiddles/db_types', {'_queryFilter': 'true'})"
 }

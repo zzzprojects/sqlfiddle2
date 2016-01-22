@@ -1,8 +1,6 @@
 {
     "enabled" : true,
     "urlContextRoot" : "/sqlfiddle",
-    "bundle" : {
-        "name" : "org.forgerock.openidm.ui",
-        "resourceDir" : "/www"
-    }
+    "defaultDir" : "&{launcher.install.location}/ui/sqlfiddle/www",
+    "extensionDir" : "&{launcher.install.location}/ui/sqlfiddle/extension"
 }

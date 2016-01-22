@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <openidm.version>3.1.0</openidm.version>
+        <openidm.version>4.0.0</openidm.version>
     </properties>
 
     <repositories>
