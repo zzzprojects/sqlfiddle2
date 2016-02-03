@@ -22,16 +22,18 @@
             getResolvers: function (isExternal) {
                 var resolvers = oidcModule.properties.resolvers;
 
-                return  _.map(resolvers, function (r) {
+                return  {
+                    "resolvers": _.map(resolvers, function (r) {
                             if (isExternal) {
                                 return _.omit(r, "client_secret", "well-known");
                             } else {
                                 return r;
                             }
-                        });
+                        })
+                    };
             },
             getToken: function (name, code, redirect_uri) {
-                var resolver = _.find(this.getResolvers(false), function (r) {
+                var resolver = _.find(this.getResolvers(false).resolvers, function (r) {
                         return r.name === name;
                     }),
                     response,

@@ -37,7 +37,7 @@
                         "openidm-authorized"
                     ]
                 },
-                "enabled" : false
+                "enabled" : true
             },
             {
                 "name" : "STATIC_USER",

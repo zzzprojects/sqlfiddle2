@@ -73,7 +73,7 @@ define(["underscore", "jquery", "fiddle_backbone/models/OpenIDMResource"], funct
                 })
                 .then(
                     function (details) {
-                        if (details.authorizationId.id !== encodeURIComponent(claims.iss) + ":" + encodeURIComponent(claims.sub)) {
+                        if (details.authorization.id !== encodeURIComponent(claims.iss) + ":" + encodeURIComponent(claims.sub)) {
                             localStorage.removeItem("oidcToken");
                             return null;
                         }

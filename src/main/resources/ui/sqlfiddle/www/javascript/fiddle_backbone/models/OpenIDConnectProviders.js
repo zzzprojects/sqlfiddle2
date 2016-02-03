@@ -6,7 +6,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
                 url: "endpoint/oidc"
             })
             .then(function (data) {
-                _this.reset(_.map(data, function (r) {
+                _this.reset(_.map(data.resolvers, function (r) {
                     return new Backbone.Model(r);
                 }));
                 return _this;
