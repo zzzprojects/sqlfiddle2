@@ -1,7 +1,7 @@
 SQL Fiddle
 ==========
 
-##About
+## About
 
 See [the SQL Fiddle about page](http://sqlfiddle.com/about.html) page for background on the site.
 
