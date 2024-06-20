@@ -158,7 +158,12 @@ require([
         $('#fiddleFormDDL .CodeMirror, .ddl_actions').css('display', 'block');
         $('#browser, .browser_actions').css('display', 'none');
 
-    })
+    });
+    $("#collaborate").on('click', function(e) {
+        e.preventDefault();
+        TogetherJS(this);
+        return false;
+    });
 
 
     /* RESIZING UI*/
